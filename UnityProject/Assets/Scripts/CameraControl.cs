@@ -4,7 +4,7 @@ using System.Collections;
 public class CameraControl : MonoBehaviour 
 {
 
-	public Transform target ;
+	public Transform target;
 	public float targetHeight = 2.0f;
 	public float distance = 2.8f;
 	public float maxDistance = 10;
@@ -16,8 +16,9 @@ public class CameraControl : MonoBehaviour
 	public float zoomRate = 20;
 	public float rotationDampening = 3.0f;
 	bool isTalking = false;
-	public bool rotationDampeningEnabled = true;
-	
+	public bool rotationDampeningEnabled = false;
+
+	private Vector3 smoothCamVel = Vector3.zero; //don't touch
 	private float x = 0.0f;
 	private float y = 0.0f;
 
@@ -35,19 +36,13 @@ public class CameraControl : MonoBehaviour
 	{
 		if(target == null) return;
 		
-		if( Input.GetMouseButton(0) || Input.GetMouseButton(1) )
-		{
-			x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
-			y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
+		x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
+		y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
 
-		}
-		else
-		{
-			float targetRotationAngle = target.eulerAngles.y;
-			float currentRotationAngle = transform.eulerAngles.y;
-			if(rotationDampeningEnabled)
-				x = Mathf.LerpAngle(currentRotationAngle, targetRotationAngle, rotationDampening * Time.deltaTime);
-		}
+		float targetRotationAngle = target.eulerAngles.y;
+		float currentRotationAngle = transform.eulerAngles.y;
+		if(rotationDampeningEnabled) 
+			x = Mathf.LerpAngle(currentRotationAngle, targetRotationAngle, rotationDampening * Time.deltaTime);
 		
 		
 		distance -= (Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime) * zoomRate * Mathf.Abs(distance);
@@ -62,7 +57,7 @@ public class CameraControl : MonoBehaviour
 		// POSITION CAMERA:
 		Vector3 position = target.position - (rotation * Vector3.forward * distance + new Vector3(0,-targetHeight,0));
 		transform.position = position;
-		
+
 		// IS VIEW BLOCKED?
 		RaycastHit hit; 
 		Vector3 trueTargetPosition = target.transform.position - new Vector3(0, -targetHeight, 0);
@@ -75,6 +70,11 @@ public class CameraControl : MonoBehaviour
 			position = target.position - (rotation * Vector3.forward * tempDistance + new Vector3(0,-targetHeight,0));
 			transform.position = position;
 		}
+	}
+
+	public void SelectTarget(Transform go)
+	{
+		target = go;
 	}
 	
 	private float ClampAngle(float angle, float min, float max) 

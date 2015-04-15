@@ -4,7 +4,7 @@ using System.Collections;
 public class Player : MonoBehaviour 
 {
 	public float speed = 8.0f, 
-				 rotSpeed = 0.2f,
+				 rotSpeed = 5.0f,
 				 jumpForce = 0.2f;
 
 	public bool selected = false;
@@ -23,12 +23,14 @@ public class Player : MonoBehaviour
 			float axisX = Input.GetAxis("Horizontal"), axisY = Input.GetAxis("Vertical");
 
 			if (axisX == 0 && axisY == 0) Camera.main.GetComponent<CameraControl> ().rotationDampeningEnabled = false;
-			else Camera.main.GetComponent<CameraControl> ().rotationDampeningEnabled = true;
 
-			if(axisY >= 0) transform.rotation *= Quaternion.AngleAxis(rotSpeed * axisX, Vector3.up);
-			else  transform.rotation *= Quaternion.AngleAxis(-rotSpeed * axisX, Vector3.up);
+			Vector3 move = (Camera.main.transform.forward * axisY) + (Camera.main.transform.right * axisX);
+			move.y = 0;
+			move.Normalize();
+			controller.Move(move * speed * Time.deltaTime);
 
-			controller.Move(transform.forward * axisY * speed * Time.deltaTime);
+			Quaternion newRot = Quaternion.LookRotation(move);
+			transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * speed);
 		}
 
 		CollisionFlags cf = controller.Move(Vector3.up * Core.gravity * Time.deltaTime); //gravity

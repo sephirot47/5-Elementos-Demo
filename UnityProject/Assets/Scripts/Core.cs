@@ -3,28 +3,48 @@ using System.Collections;
 
 public class Core : MonoBehaviour 
 {
+	public Player selectedPlayer;
 	public Player kaji, zap, lluvia;
-
 	public static float gravity = -10.0f;
+
 	void Start() 
 	{
 		kaji = GameObject.Find ("Kaji").GetComponent<Player>();
 		zap = GameObject.Find ("Zap").GetComponent<Player>();
 		lluvia = GameObject.Find ("Lluvia").GetComponent<Player>();
-		zap.selected = true;
+		SelectPlayer(zap);
 	}
 
 	void Update() 
 	{
-		if (Input.GetKeyDown(KeyCode.Alpha1)) ChangePlayer(kaji);
-		else if (Input.GetKeyDown(KeyCode.Alpha2)) ChangePlayer(zap);
-		else if (Input.GetKeyDown(KeyCode.Alpha3)) ChangePlayer(lluvia);
+		if (Input.GetKeyDown(KeyCode.Alpha1)) SelectPlayer(kaji);
+		else if (Input.GetKeyDown(KeyCode.Alpha2)) SelectPlayer(zap);
+		else if (Input.GetKeyDown(KeyCode.Alpha3)) SelectPlayer(lluvia);
+		else if (Input.GetKeyDown(KeyCode.Q)) SwitchPlayer(true);
+		else if (Input.GetKeyDown(KeyCode.E)) SwitchPlayer(false);
+	}
+	
+	void SwitchPlayer(bool right)
+	{
+		if(right)
+		{
+			if(selectedPlayer == kaji) SelectPlayer(zap);
+			else if(selectedPlayer == zap) SelectPlayer(lluvia);
+			else SelectPlayer(kaji);
+		}
+		else
+		{
+			if(selectedPlayer == kaji) SelectPlayer(lluvia);
+			else if(selectedPlayer == zap) SelectPlayer(kaji);
+			else SelectPlayer(zap);
+		}
 	}
 
-	void ChangePlayer(Player p)
+	void SelectPlayer(Player p)
 	{
 		kaji.selected = zap.selected = lluvia.selected = false;
 		p.selected = true;
-		Camera.main.GetComponent<CameraControl>().target = p.gameObject.transform;
+		selectedPlayer = p;
+		Camera.main.GetComponent<CameraControl>().SelectTarget(p.gameObject.transform);
 	}
 }
