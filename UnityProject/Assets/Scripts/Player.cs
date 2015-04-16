@@ -21,35 +21,70 @@ public class Player : MonoBehaviour
 
 	void Update () 
 	{
-		if(selected)
-		{
-			float axisX = Input.GetAxis("Horizontal"), axisY = Input.GetAxis("Vertical");
+		if (selected) {
+			float axisX = Input.GetAxis ("Horizontal"), axisY = Input.GetAxis ("Vertical");
 
 			Vector3 move = (Camera.main.transform.forward * axisY) + (Camera.main.transform.right * axisX);
 			move.y = 0;
 			move = move.normalized * speed * Time.deltaTime;
 
 			//BOOST HANDLING
-			if(Input.GetKeyDown(KeyCode.W))
-			{
-				if(timeSinceForwardPressed < 0.3f) Boost();
+			if (Input.GetKeyDown (KeyCode.W)) {
+				if (timeSinceForwardPressed < 0.3f)
+					Boost ();
 				timeSinceForwardPressed = 0.0f;
 			}
 			timeSinceForwardPressed += Time.deltaTime;
 
-			Debug.Log(boostMultiplier);
-			if(boostMultiplier < 0.4f) boostMultiplier = 0;
+			Debug.Log (boostMultiplier);
+			if (boostMultiplier < 0.4f)
+				boostMultiplier = 0;
 			move += Camera.main.transform.forward * speed * boostMultiplier * Time.deltaTime;
 			move.y = 0;
-			controller.Move(move);
+			controller.Move (move);
 			/////////////////
 
-			if(move.magnitude > 0)
-			{
-				Quaternion newRot = Quaternion.LookRotation(move);
-				transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * speed);
+			if (move.magnitude > 0) {
+				Quaternion newRot = Quaternion.LookRotation (move);
+				transform.rotation = Quaternion.Lerp (transform.rotation, newRot, Time.deltaTime * speed);
 			}
+		} 
+		else //SIGUEN AL PERSONAJE PRINCIPAL
+		{
+			Vector3 movement = Vector3.zero;
+
+			Vector3 selectedPlayerPos = Core.selectedPlayer.gameObject.transform.position;
+			float toSelectedDist = Vector3.Distance(transform.position, selectedPlayerPos);
+			if(toSelectedDist > Core.playerToPlayerFollowDistance)
+			{
+				Vector3 dir = selectedPlayerPos - transform.position;
+				movement += dir.normalized * Time.deltaTime * toSelectedDist;
+				movement.y = 0;
+				if(movement.magnitude > speed * Time.deltaTime)  
+					movement = movement.normalized * speed * Time.deltaTime; 
+				transform.forward = Vector3.Lerp(transform.forward, movement, Time.deltaTime * rotSpeed);
+
+				//Separamos a los seguidores
+				Vector3 otherFollowerPos = Core.GetOtherFollowerPlayer(GetComponent<Player>()).gameObject.transform.position; 
+				float dist = Vector3.Distance(transform.position, otherFollowerPos); 
+				if(dist < Core.playerToPlayerFollowDistance * toSelectedDist) //Cuanto mas alejados esten del seleccionado, mayor es la repulsion
+				{
+					//Repulsion entre los seguidores
+					Vector3 repulsionDir = transform.position - otherFollowerPos;
+					repulsionDir.y = 0;
+					movement += repulsionDir.normalized * speed * Time.deltaTime * (toSelectedDist*0.3f)/dist; //Que se separen
+				}
+				
+				if(movement == Vector3.zero)
+				{
+					Vector3 selectedForward = Core.selectedPlayer.gameObject.transform.forward;
+					transform.forward = Vector3.Lerp(transform.forward, selectedForward, Time.deltaTime * rotSpeed);
+				}
+			}
+
+			controller.Move(movement);
 		}
+
 		boostMultiplier *= boostFading;
 		CollisionFlags cf = controller.Move(Vector3.up * Core.gravity * Time.deltaTime); //gravity
 	}

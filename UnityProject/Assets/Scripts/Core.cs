@@ -3,8 +3,9 @@ using System.Collections;
 
 public class Core : MonoBehaviour 
 {
-	public Player selectedPlayer;
-	public Player kaji, zap, lluvia;
+	public static float playerToPlayerFollowDistance = 4.0f;
+	public static Player selectedPlayer;
+	public static Player kaji, zap, lluvia;
 	public static float gravity = -10.0f;
 
 	void Start() 
@@ -46,5 +47,13 @@ public class Core : MonoBehaviour
 		p.selected = true;
 		selectedPlayer = p;
 		Camera.main.GetComponent<CameraControl>().SelectTarget(p.gameObject.transform);
+	}
+
+	public static Player GetOtherFollowerPlayer(Player p)
+	{
+		if(kaji != p && kaji != selectedPlayer) return kaji;
+		if(lluvia != p && lluvia != selectedPlayer) return lluvia;
+		if(zap != p && zap != selectedPlayer) return zap;
+		return null;
 	}
 }
