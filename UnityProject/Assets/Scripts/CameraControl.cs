@@ -58,11 +58,12 @@ public class CameraControl : MonoBehaviour
 		Vector3 position = target.position - (rotation * Vector3.forward * distance + new Vector3(0,-targetHeight,0));
 		transform.position = position;
 
+	
 		// IS VIEW BLOCKED?
 		RaycastHit hit; 
-		Vector3 trueTargetPosition = target.transform.position - new Vector3(0, -targetHeight, 0);
+		Vector3 trueTargetPosition = target.transform.position;
 		// Cast the line to check:
-		if (Physics.Linecast(trueTargetPosition, transform.position, out hit)) 
+		if( Physics.Linecast(trueTargetPosition, transform.position, out hit, ~(1 << LayerMask.NameToLayer("Player")) ) ) 
 		{  
 			// If so, shorten distance so camera is in front of object:
 			float tempDistance = Vector3.Distance(trueTargetPosition, hit.point) - 0.28f;

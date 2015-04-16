@@ -6,10 +6,11 @@ public class Player : MonoBehaviour
 	public float speed = 8.0f, boostMultiplierForce = 4.0f, boostFading = 0.95f,
 				 rotSpeed = 5.0f,
 				 jumpForce = 0.2f;
+	private float boostMultiplier = 0.0f;
+	private int jumpsDone = 0;
 
 	public bool selected = false;
 
-	private float boostMultiplier = 0.0f;
 	private float timeSinceForwardPressed = 0.0f;
 
 	private CharacterController controller;
@@ -36,7 +37,6 @@ public class Player : MonoBehaviour
 			}
 			timeSinceForwardPressed += Time.deltaTime;
 
-			Debug.Log (boostMultiplier);
 			if (boostMultiplier < 0.4f)
 				boostMultiplier = 0;
 			move += Camera.main.transform.forward * speed * boostMultiplier * Time.deltaTime;
@@ -48,6 +48,12 @@ public class Player : MonoBehaviour
 				Quaternion newRot = Quaternion.LookRotation (move);
 				transform.rotation = Quaternion.Lerp (transform.rotation, newRot, Time.deltaTime * speed);
 			}
+			
+			if(Input.GetAxis("Jump") > 0 && jumpsDone < 2)
+			{
+				Jump();
+			}
+
 		} 
 		else //SIGUEN AL PERSONAJE PRINCIPAL
 		{
@@ -85,11 +91,23 @@ public class Player : MonoBehaviour
 			controller.Move(movement);
 		}
 
+
 		boostMultiplier *= boostFading;
 		CollisionFlags cf = controller.Move(Vector3.up * Core.gravity * Time.deltaTime); //gravity
+
+		if (cf - CollisionFlags.CollidedBelow == 0) 
+		{
+			jumpsDone = 0;
+		}
 	}
 
-	void Boost()
+	private void Jump()
+	{
+		++jumpsDone;
+		controller.Move(Vector3.up * jumpForce * Time.deltaTime);
+	}
+
+	private void Boost()
 	{
 		if(boostMultiplier > 1.0f) return; //Aun no ha acabado el boost anterior
 		boostMultiplier = boostMultiplierForce;
