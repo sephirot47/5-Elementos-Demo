@@ -12,40 +12,40 @@ public class Player : MonoBehaviour
 	public bool selected = false;
 
 	private float timeSinceForwardPressed = 0.0f;
-
+	private Vector3 movement = Vector3.zero;
 	private CharacterController controller;
 
-	void Start() 
+	void Start()
 	{
 		controller = GetComponent<CharacterController>();
 	}
 
 	void Update () 
 	{
-		if (selected) {
+		movement = Vector3.zero;
+		if(selected) 
+		{
 			float axisX = Input.GetAxis ("Horizontal"), axisY = Input.GetAxis ("Vertical");
 
-			Vector3 move = (Camera.main.transform.forward * axisY) + (Camera.main.transform.right * axisX);
-			move.y = 0;
-			move = move.normalized * speed * Time.deltaTime;
+			movement = (Camera.main.transform.forward * axisY) + (Camera.main.transform.right * axisX);
+			movement.y = 0;
+			movement = movement.normalized * speed;
 
 			//BOOST HANDLING
 			if (Input.GetKeyDown (KeyCode.W)) {
-				if (timeSinceForwardPressed < 0.3f)
-					Boost ();
+				if (timeSinceForwardPressed < 0.3f) Boost();
 				timeSinceForwardPressed = 0.0f;
 			}
 			timeSinceForwardPressed += Time.deltaTime;
 
-			if (boostMultiplier < 0.4f)
-				boostMultiplier = 0;
-			move += Camera.main.transform.forward * speed * boostMultiplier * Time.deltaTime;
-			move.y = 0;
-			controller.Move (move);
+			if (boostMultiplier < 0.4f) boostMultiplier = 0;
+
+			movement += Camera.main.transform.forward * speed * boostMultiplier;
+			movement.y = 0;
 			/////////////////
 
-			if (move.magnitude > 0) {
-				Quaternion newRot = Quaternion.LookRotation (move);
+			if (movement.magnitude > 0) {
+				Quaternion newRot = Quaternion.LookRotation(movement);
 				transform.rotation = Quaternion.Lerp (transform.rotation, newRot, Time.deltaTime * speed);
 			}
 			
@@ -53,21 +53,17 @@ public class Player : MonoBehaviour
 			{
 				Jump();
 			}
-
 		} 
 		else //SIGUEN AL PERSONAJE PRINCIPAL
 		{
-			Vector3 movement = Vector3.zero;
-
 			Vector3 selectedPlayerPos = Core.selectedPlayer.gameObject.transform.position;
 			float toSelectedDist = Vector3.Distance(transform.position, selectedPlayerPos);
 			if(toSelectedDist > Core.playerToPlayerFollowDistance)
 			{
 				Vector3 dir = selectedPlayerPos - transform.position;
-				movement += dir.normalized * Time.deltaTime * toSelectedDist;
+				movement += dir.normalized * toSelectedDist;
 				movement.y = 0;
-				if(movement.magnitude > speed * Time.deltaTime)  
-					movement = movement.normalized * speed * Time.deltaTime; 
+				if(movement.magnitude > speed * Time.deltaTime) movement = movement.normalized * speed;
 				transform.forward = Vector3.Lerp(transform.forward, movement, Time.deltaTime * rotSpeed);
 
 				//Separamos a los seguidores
@@ -78,7 +74,7 @@ public class Player : MonoBehaviour
 					//Repulsion entre los seguidores
 					Vector3 repulsionDir = transform.position - otherFollowerPos;
 					repulsionDir.y = 0;
-					movement += repulsionDir.normalized * speed * Time.deltaTime * (toSelectedDist*0.3f)/dist; //Que se separen
+					movement += repulsionDir.normalized * speed * (toSelectedDist*0.3f)/dist; //Que se separen
 				}
 				
 				if(movement == Vector3.zero)
@@ -87,31 +83,23 @@ public class Player : MonoBehaviour
 					transform.forward = Vector3.Lerp(transform.forward, selectedForward, Time.deltaTime * rotSpeed);
 				}
 			}
-
-			controller.Move(movement);
 		}
-
 
 		boostMultiplier *= boostFading;
-		CollisionFlags cf = controller.Move(Vector3.up * Core.gravity * Time.deltaTime); //gravity
-
-		if (cf - CollisionFlags.CollidedBelow == 0) 
-		{
-			jumpsDone = 0;
-		}
+		movement += Vector3.up * Core.gravity; //gravity
+		if (controller.isGrounded) jumpsDone = 0;
+		controller.Move(movement  * Time.deltaTime);
 	}
 
 	private void Jump()
 	{
 		++jumpsDone;
-		controller.Move(Vector3.up * jumpForce * Time.deltaTime);
+		movement += Vector3.up * jumpForce;
 	}
 
 	private void Boost()
 	{
 		if(boostMultiplier > 1.0f) return; //Aun no ha acabado el boost anterior
 		boostMultiplier = boostMultiplierForce;
-		Vector3 move = Camera.main.transform.forward;
-		controller.Move(move * speed * boostMultiplierForce * Time.deltaTime);
 	}
 }
