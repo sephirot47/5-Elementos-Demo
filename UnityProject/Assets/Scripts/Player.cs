@@ -22,8 +22,6 @@ public class Player : MonoBehaviour
 
 	void Update () 
 	{
-		if (controller.isGrounded) jumpsDone = 0;
-
 		if(selected) SelectedMove();
 		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
 
@@ -33,7 +31,11 @@ public class Player : MonoBehaviour
 		movement.y = Mathf.Max(movement.y, -2000.0f * Time.deltaTime); //evitar caida brusca al saltar
 		controller.Move(movement  * Time.deltaTime);
 
-		if(selected) Debug.Log(jumpsDone);
+		if(selected) Debug.Log("JUMPS DONE: " + jumpsDone);
+		if (IsGrounded()) { 
+			Debug.Log("GROUNDED");
+			jumpsDone = 0;
+		}
 		//
 	}
 
@@ -66,7 +68,7 @@ public class Player : MonoBehaviour
 		}
 
 		movement.y = movementY; //Reestablecido
-		if(Input.GetKey(KeyCode.Space) && jumpsDone < 2) Jump();
+		if(Input.GetKeyDown(KeyCode.Space) && jumpsDone < 2) Jump();
 	}
 
 	private void FollowSelected()
@@ -117,5 +119,15 @@ public class Player : MonoBehaviour
 	{
 		if(boostMultiplier > 1.0f) return; //Aun no ha acabado el boost anterior
 		boostMultiplier = boostMultiplierForce;
+	}
+
+	private bool IsGrounded()
+	{
+		RaycastHit hit;
+		Debug.DrawRay(controller.transform.position, Vector3.down * 0.3f, Color.green);       //draw the line to be seen in scene window
+		if (Physics.Raycast(controller.transform.position, Vector3.down, out hit, 0.3f, ~(1 << LayerMask.NameToLayer ("Player")))) {
+			return true;
+		}
+		return false;
 	}
 }
