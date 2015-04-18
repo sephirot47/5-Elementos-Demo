@@ -10,9 +10,9 @@ public class Core : MonoBehaviour
 
 	void Start() 
 	{
-		kaji = GameObject.Find ("Kaji").GetComponent<Player>();
-		zap = GameObject.Find ("Zap").GetComponent<Player>();
-		lluvia = GameObject.Find ("Lluvia").GetComponent<Player>();
+		kaji = GameObject.Find("Kaji").GetComponent<Player>();
+		zap = GameObject.Find("Zap").GetComponent<Player>();
+		lluvia = GameObject.Find("Lluvia").GetComponent<Player>();
 		SelectPlayer(zap);
 	}
 

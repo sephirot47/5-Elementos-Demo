@@ -11,6 +11,9 @@ public class Player : MonoBehaviour
 
 	public bool selected = false;
 
+	public float attack = 5.0f;
+	private float aggro = 0.0f;
+
 	private float timeSinceForwardPressed = 0.0f;
 	private Vector3 movement = Vector3.zero;
 	private CharacterController controller;
@@ -20,9 +23,16 @@ public class Player : MonoBehaviour
 		controller = GetComponent<CharacterController>();
 	}
 
-	void Update () 
+	void Update()
 	{
-		if(selected) SelectedMove();
+		if(selected)
+		{
+			SelectedMove();
+			if (Input.GetMouseButtonDown(0)) 
+			{
+				Shoot();
+			}
+		}
 		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
 
 		//Comun a todos
@@ -53,8 +63,6 @@ public class Player : MonoBehaviour
 		timeSinceForwardPressed += Time.deltaTime;
 		movement += transform.forward * speed * boostMultiplier;
 		//
-
-		/////////////////
 		
 		if (movement.magnitude > 0) 
 		{
@@ -106,6 +114,23 @@ public class Player : MonoBehaviour
 
 		movement.y = movementY; //Reestablecido
 	}
+	
+	private void Shoot()
+	{
+		GameObject proj = Instantiate(Resources.Load("Projectile"), 
+		                              transform.position + transform.forward * 2.0f + Vector3.up * 1.0f, 
+		                              Quaternion.identity) as GameObject;
+
+		Vector3 dir = Camera.main.transform.forward;
+		dir.Scale(new Vector3(1, 0, 1));
+		proj.GetComponent<Projectile>().dir = dir;
+		proj.GetComponent<Projectile>().shooterPlayer = this;
+	}
+
+	public void OnApplyDamage()
+	{
+		aggro += attack;
+	}
 
 	private void Jump()
 	{
@@ -117,6 +142,11 @@ public class Player : MonoBehaviour
 	{
 		if(boostMultiplier > 0.0f) return; //Aun no ha acabado el boost anterior
 		boostMultiplier = boostMultiplierForce;
+	}
+
+	public float GetAggro()
+	{
+		return aggro;
 	}
 
 	private bool IsGrounded()

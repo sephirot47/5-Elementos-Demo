@@ -3,39 +3,50 @@ using System.Collections;
 
 public class Enemy : MonoBehaviour 
 {
-	public float lifeBarAspect = 5.0f, lifeBarScale = 1.0f;
-	public Color lifeBarColor = Color.red, lifeBarOutline = Color.black;
-
+	private LifeBar lifeBar;
 	private CharacterController controller;
-	private Player target;
+	public Player target;
+
+	private float currentLife;
+
+	[SerializeField] //Para que se vea en el inspector ;)
+	protected float maxLife;
 
 	public float speed = 7.0f;
 
-	void Start () 
+	void Start() 
 	{
 		controller = GetComponent<CharacterController>();
 		target = null;
+
+		currentLife = maxLife;
 	}
 	
-	void Update () 
+	void Update() 
 	{
-		if(target == null) ChooseTarget();
+		if(target == null) return;
 
 		Vector3 movement = Vector3.zero;
 		Vector3 dir = target.gameObject.transform.position - transform.position;
 
 		movement += dir.normalized * speed;
 		movement += Vector3.up * Core.gravity; //gravity
-
 		controller.Move(movement * Time.deltaTime);
+
+		if(currentLife <= 0) Die();
 	}
 
-	void ChooseTarget()
+	public void ReceiveAttack(float damage, Player player)
 	{
-		int rand = Random.Range(0, 2);
-		if(rand == 0) target = Core.kaji;
-		else if(rand == 1) target = Core.zap;
-		else target = Core.lluvia;
+		currentLife -= damage;
+	}
+	
+	public float GetCurrentLife()  { return currentLife; }
+	public float GetMaxLife()  { return maxLife; }
+
+	void Die()
+	{
+		Destroy(gameObject);
 	}
 }
  
