@@ -19,6 +19,7 @@ public class CameraControl : MonoBehaviour
 	public bool rotationDampeningEnabled = false;
 
 	private Vector3 smoothCamVel = Vector3.zero; //don't touch
+	private Vector3 camPosition;
 	private float x = 0.0f;
 	private float y = 0.0f;
 
@@ -27,6 +28,8 @@ public class CameraControl : MonoBehaviour
 		Vector3 angles = transform.eulerAngles;
 		x = angles.y;
 		y = angles.x;
+
+		camPosition = Vector3.zero; 
 		
 		// Make the rigid body not change rotation
 		if (GetComponent<Rigidbody>()) GetComponent<Rigidbody>().freezeRotation = true;
@@ -43,8 +46,7 @@ public class CameraControl : MonoBehaviour
 		float currentRotationAngle = transform.eulerAngles.y;
 		if(rotationDampeningEnabled) 
 			x = Mathf.LerpAngle(currentRotationAngle, targetRotationAngle, rotationDampening * Time.deltaTime);
-		
-		
+
 		distance -= (Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime) * zoomRate * Mathf.Abs(distance);
 		distance = Mathf.Clamp(distance, minDistance, maxDistance);
 		
@@ -55,27 +57,25 @@ public class CameraControl : MonoBehaviour
 		transform.rotation = rotation;
 		
 		// POSITION CAMERA:
-		Vector3 position = target.position - (rotation * Vector3.forward * distance + new Vector3(0,-targetHeight,0));
-		transform.position = position;
+		transform.position = target.position -(rotation * Vector3.forward * distance + new Vector3(0, -targetHeight, 0));
 
 		// IS VIEW BLOCKED?
 		RaycastHit hit; 
-		Vector3 trueTargetPosition = target.transform.position + Vector3.up * 0.5f;
+		Vector3 trueTargetPosition = target.position + Vector3.up * 0.5f;
 		// Cast the line to check:
 		if( Physics.Linecast(trueTargetPosition, transform.position, out hit, ~(1 << LayerMask.NameToLayer("Player")) ) ) 
 		{  
-			Debug.Log ("colliding with: " + hit.collider.gameObject.name);
 			// If so, shorten distance so camera is in front of object:
 			float tempDistance = Vector3.Distance(trueTargetPosition, hit.point) - 0.28f;
 			// Finally, rePOSITION the CAMERA:
-			position = target.position - (rotation * Vector3.forward * tempDistance + new Vector3(0,-targetHeight,0));
-			transform.position = position;
+			transform.position = target.position - (rotation * Vector3.forward * tempDistance + new Vector3(0,-targetHeight,0));
 		}
 	}
 
 	public void SelectTarget(Transform go)
 	{
 		target = go;
+		camPosition = target.position;
 	}
 	
 	private float ClampAngle(float angle, float min, float max) 

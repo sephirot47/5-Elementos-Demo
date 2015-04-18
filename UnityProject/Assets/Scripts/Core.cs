@@ -6,7 +6,7 @@ public class Core : MonoBehaviour
 	public static float playerToPlayerFollowDistance = 4.0f;
 	public static Player selectedPlayer;
 	public static Player kaji, zap, lluvia;
-	public static float gravity = -10.0f;
+	public static float gravity = -3.0f;
 
 	void Start() 
 	{
