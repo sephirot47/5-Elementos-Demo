@@ -3,6 +3,9 @@ using System.Collections;
 
 public class Enemy : MonoBehaviour 
 {
+	public float lifeBarAspect = 5.0f, lifeBarScale = 1.0f;
+	public Color lifeBarColor = Color.red, lifeBarOutline = Color.black;
+
 	private CharacterController controller;
 	private Player target;
 

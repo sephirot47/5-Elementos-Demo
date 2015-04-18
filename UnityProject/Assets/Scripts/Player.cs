@@ -31,20 +31,16 @@ public class Player : MonoBehaviour
 		movement.y = Mathf.Max(movement.y, -2000.0f * Time.deltaTime); //evitar caida brusca al saltar
 		controller.Move(movement  * Time.deltaTime);
 
-		if(selected) Debug.Log("JUMPS DONE: " + jumpsDone);
-		if (IsGrounded()) { 
-			Debug.Log("GROUNDED");
-			jumpsDone = 0;
-		}
+		if (IsGrounded()) jumpsDone = 0;
 		//
 	}
 
 	private void SelectedMove()
 	{
+		float axisX = Input.GetAxis ("Horizontal"), axisY = Input.GetAxis ("Vertical");
+
 		float movementY = movement.y; //Lo reestablecemos al final para que no quede afectado por el movimiento en x, z;
 		movement = Vector3.zero;
-
-		float axisX = Input.GetAxis ("Horizontal"), axisY = Input.GetAxis ("Vertical");
 
 		Vector3 dir = ((Camera.main.transform.forward * axisY) + (Camera.main.transform.right * axisX)).normalized;
 		movement += dir * speed;
@@ -81,12 +77,14 @@ public class Player : MonoBehaviour
 
 		if(distanceToSelected > Core.playerToPlayerFollowDistance)
 		{
+			//Ve hacia al jugador
 			Vector3 dir = (selectedPlayerPos - transform.position); 
 			dir.y = 0; dir.Normalize();
 
 			movement += dir * distanceToSelected;
 			if(movement.magnitude > speed) movement = dir * speed;
 			movement.y = 0;
+			//
 
 			//Separamos a los seguidores
 			Vector3 otherFollowerPos = Core.GetOtherFollowerPlayer(GetComponent<Player>()).gameObject.transform.position; 
@@ -117,17 +115,13 @@ public class Player : MonoBehaviour
 
 	private void Boost()
 	{
-		if(boostMultiplier > 1.0f) return; //Aun no ha acabado el boost anterior
+		if(boostMultiplier > 0.0f) return; //Aun no ha acabado el boost anterior
 		boostMultiplier = boostMultiplierForce;
 	}
 
 	private bool IsGrounded()
 	{
 		RaycastHit hit;
-		Debug.DrawRay(controller.transform.position, Vector3.down * 0.3f, Color.green);       //draw the line to be seen in scene window
-		if (Physics.Raycast(controller.transform.position, Vector3.down, out hit, 0.3f, ~(1 << LayerMask.NameToLayer ("Player")))) {
-			return true;
-		}
-		return false;
+		return Physics.Raycast( controller.transform.position, Vector3.down, out hit, 0.3f, ~(1 << LayerMask.NameToLayer ("Player")) );
 	}
 }
