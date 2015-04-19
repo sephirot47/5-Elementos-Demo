@@ -3,21 +3,35 @@ using System.Collections;
 
 public class Projectile : MonoBehaviour 
 {
+	private float time = 0.0f;
+	public float autoDestructionTime = 5.0f;
 	public Player shooterPlayer;
 	public Vector3 dir;
 
 	void Start() 
 	{
-		Destroy(gameObject, 3);
+		if(dir == Vector3.zero) Die();
 	}
 
 	void Update() 
 	{
-		transform.position += dir;
+		transform.position += dir.normalized;
+		if(dir != Vector3.zero) transform.forward = dir.normalized;
+
+		time += Time.deltaTime;
+		if(time >= autoDestructionTime) Die();
 	}
 
-	void OnCollisionEnter(Collision col) 
+	void OnTriggerEnter(Collider col) 
 	{
+		if(!col.gameObject.CompareTag("Player") && 
+		   !col.gameObject.CompareTag("Projectile")) 
+			Die();
+	}
+
+	private void Die()
+	{
+		Debug.Log("DIED");
 		Destroy(gameObject);
 	}
 }

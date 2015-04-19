@@ -27,7 +27,7 @@ public class EnemyAggro : MonoBehaviour
 		if(aggro < Core.lluvia.GetAggro()) enemy.target = Core.lluvia;
 	}
 	
-	void OnCollisionEnter(Collision col)
+	void OnTriggerEnter(Collider col)
 	{
 		if(col.gameObject.CompareTag("Projectile")) 
 		{

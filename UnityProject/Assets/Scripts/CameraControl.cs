@@ -15,7 +15,6 @@ public class CameraControl : MonoBehaviour
 	public float yMaxLimit = 80;
 	public float zoomRate = 20;
 	public float rotationDampening = 3.0f;
-	bool isTalking = false;
 	public bool rotationDampeningEnabled = false;
 
 	private Vector3 smoothCamVel = Vector3.zero; //don't touch
@@ -38,9 +37,12 @@ public class CameraControl : MonoBehaviour
 	void LateUpdate () 
 	{
 		if(target == null) return;
-		
-		x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
-		y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
+
+		if(Input.GetMouseButton(1))
+		{
+			x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
+			y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
+		}
 
 		float targetRotationAngle = target.eulerAngles.y;
 		float currentRotationAngle = transform.eulerAngles.y;
@@ -63,7 +65,7 @@ public class CameraControl : MonoBehaviour
 		RaycastHit hit; 
 		Vector3 trueTargetPosition = target.position + Vector3.up * 0.5f;
 		// Cast the line to check:
-		if( Physics.Linecast(trueTargetPosition, transform.position, out hit, ~(1 << LayerMask.NameToLayer("Player")) ) ) 
+		if( Physics.Linecast(trueTargetPosition, transform.position, out hit, (1 << LayerMask.NameToLayer("Scenario")) ) ) 
 		{  
 			// If so, shorten distance so camera is in front of object:
 			float tempDistance = Vector3.Distance(trueTargetPosition, hit.point) - 0.28f;

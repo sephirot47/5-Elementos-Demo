@@ -14,7 +14,9 @@ public class Player : MonoBehaviour
 	public float attack = 5.0f;
 	private float aggro = 0.0f;
 
-	private float timeSinceForwardPressed = 0.0f;
+	private float timeSinceLastKeyPressed = 0.0f;
+	private KeyCode lastKeyPressed = KeyCode.W;
+
 	private Vector3 movement = Vector3.zero;
 	private CharacterController controller;
 
@@ -28,10 +30,7 @@ public class Player : MonoBehaviour
 		if(selected)
 		{
 			SelectedMove();
-			if (Input.GetMouseButtonDown(0)) 
-			{
-				Shoot();
-			}
+			if (Input.GetMouseButtonDown(0)) Shoot();
 		}
 		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
 
@@ -56,19 +55,32 @@ public class Player : MonoBehaviour
 		movement += dir * speed;
 		
 		//BOOST HANDLING
-		if (Input.GetKeyDown (KeyCode.W)) {
-			if (timeSinceForwardPressed < 0.3f) Boost();
-			timeSinceForwardPressed = 0.0f;
+
+		if(Input.GetKeyDown(KeyCode.W)) lastKeyPressed = KeyCode.W;
+		else if(Input.GetKeyDown(KeyCode.A)) lastKeyPressed = KeyCode.A;
+		else if(Input.GetKeyDown(KeyCode.S)) lastKeyPressed = KeyCode.S;
+		else if(Input.GetKeyDown(KeyCode.D)) lastKeyPressed = KeyCode.D;
+		if(Input.GetKeyDown(lastKeyPressed)) 
+		{
+			if (timeSinceLastKeyPressed < Time.deltaTime * 2.0f) Boost();
+			timeSinceLastKeyPressed = 0.0f;
 		}
-		timeSinceForwardPressed += Time.deltaTime;
-		movement += transform.forward * speed * boostMultiplier;
+		timeSinceLastKeyPressed += Time.deltaTime;
+
+		Vector3 boostDir = transform.forward;
+		if(lastKeyPressed == KeyCode.W) boostDir = transform.forward;
+		else if(lastKeyPressed == KeyCode.A) boostDir = -transform.right;
+		else if(lastKeyPressed == KeyCode.S) boostDir = -transform.forward;
+		else if(lastKeyPressed == KeyCode.D) boostDir =  transform.right;
+
+		movement += boostDir * speed * boostMultiplier;
 		//
 		
-		if (movement.magnitude > 0) 
+		movement.y = 0;
+		if (movement.magnitude > 0.5f) 
 		{
-			movement.y = 0;
 			Quaternion newRot = Quaternion.LookRotation(movement);
-			transform.rotation = Quaternion.Lerp (transform.rotation, newRot, Time.deltaTime * speed);
+			transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * speed);
 		}
 
 		movement.y = movementY; //Reestablecido
@@ -117,14 +129,23 @@ public class Player : MonoBehaviour
 	
 	private void Shoot()
 	{
+		Vector3 origin = transform.position + Vector3.up * 1.0f;
+
 		GameObject proj = Instantiate(Resources.Load("Projectile"), 
-		                              transform.position + transform.forward * 2.0f + Vector3.up * 1.0f, 
+		                              origin + transform.forward, 
 		                              Quaternion.identity) as GameObject;
 
-		Vector3 dir = Camera.main.transform.forward;
-		dir.Scale(new Vector3(1, 0, 1));
-		proj.GetComponent<Projectile>().dir = dir;
-		proj.GetComponent<Projectile>().shooterPlayer = this;
+		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		RaycastHit hit;
+		int layer = (1 << LayerMask.NameToLayer("Scenario")) | (1 << LayerMask.NameToLayer("Enemies"));
+
+		if(Physics.Raycast(origin, ray.direction, out hit, 9999.0f, layer)); 
+		{
+			Debug.DrawLine(origin, hit.point, Color.red, 9999.0f, false);
+			Vector3 dir = hit.point - origin;
+			proj.GetComponent<Projectile>().dir = dir;
+			proj.GetComponent<Projectile>().shooterPlayer = this;
+		}
 	}
 
 	public void OnApplyDamage()
