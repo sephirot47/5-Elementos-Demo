@@ -22,7 +22,7 @@ public class LifeBar : MonoBehaviour
 		originalLifeBarFillScale = lifeBarFill.localScale;
 	}
 
-	void Update()
+	void LateUpdate()
 	{
 		ScaleLifeBar();
 		LookAtCamera();

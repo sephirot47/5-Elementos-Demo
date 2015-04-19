@@ -4,6 +4,7 @@ using System.Collections;
 public class EnemyAggro : MonoBehaviour 
 {
 	Enemy enemy;
+	public float visionField = 15.0f;
 
 	void Start() 
 	{
@@ -12,7 +13,22 @@ public class EnemyAggro : MonoBehaviour
 	
 	void Update() 
 	{
-		ChooseTarget();
+		if(IsViewingSomebody())
+		{
+			ChooseTarget();
+		}
+		else
+		{
+			enemy.target = null;
+		}
+	}
+
+	private bool IsViewingSomebody()
+	{
+		if(Vector3.Distance(transform.position, Core.kaji.gameObject.transform.position) <= visionField) return true;
+		if(Vector3.Distance(transform.position, Core.zap.gameObject.transform.position) <= visionField) return true;
+		if(Vector3.Distance(transform.position, Core.lluvia.gameObject.transform.position) <= visionField) return true;
+		return false;
 	}
 	
 	void ChooseTarget()
@@ -25,15 +41,5 @@ public class EnemyAggro : MonoBehaviour
 			enemy.target = Core.zap;
 		}
 		if(aggro < Core.lluvia.GetAggro()) enemy.target = Core.lluvia;
-	}
-	
-	void OnTriggerEnter(Collider col)
-	{
-		if(col.gameObject.CompareTag("Projectile")) 
-		{
-			Projectile p = col.gameObject.GetComponent<Projectile>();
-			enemy.ReceiveAttack(10.0f, p.shooterPlayer);
-			p.shooterPlayer.OnApplyDamage();
-		}
 	}
 }
