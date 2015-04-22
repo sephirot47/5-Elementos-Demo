@@ -20,6 +20,8 @@ public class Player : MonoBehaviour
 	private Vector3 movement = Vector3.zero;
 	private CharacterController controller;
 
+	public GameObject target;
+
 	void Start()
 	{
 		controller = GetComponent<CharacterController>();
@@ -40,7 +42,7 @@ public class Player : MonoBehaviour
 		{
 			SelectedMoveKeys();
 			SelectedMove();
-			if (Input.GetMouseButton(0)) Shoot();
+			if (Input.GetMouseButtonDown(0)) Shoot();
 			
 			//Debug.Log("movement: " + movement);
 			//Debug.Log("forward: " + transform.forward);
@@ -145,20 +147,12 @@ public class Player : MonoBehaviour
 		Vector3 origin = transform.position + Vector3.up * 1.0f;
 
 		GameObject proj = Instantiate(Resources.Load("Projectile"), 
-		                              origin + transform.forward, 
-		                              Quaternion.identity) as GameObject;
+		                              origin, Quaternion.identity) as GameObject;
 
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-		int layer = (1 << LayerMask.NameToLayer("Scenario")) | (1 << LayerMask.NameToLayer("Enemies"));
+		if(target != null) proj.GetComponent<Projectile>().dir = (target.transform.position - origin).normalized;
+		else proj.GetComponent<Projectile>().dir = (CameraControl.GetLookPoint() - origin).normalized;
 
-		if(Physics.Raycast(ray, out hit, 99999.9f, layer)); 
-		{
-			Debug.DrawRay(origin, hit.point - origin, Color.red, 9999.0f, false);
-			Vector3 dir = hit.point - origin;
-			proj.GetComponent<Projectile>().dir = dir;
-			proj.GetComponent<Projectile>().shooterPlayer = this;
-		}
+		proj.GetComponent<Projectile>().shooterPlayer = this;
 	}
 
 	public void OnApplyDamage()

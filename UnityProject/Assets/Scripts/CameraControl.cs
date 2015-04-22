@@ -38,7 +38,7 @@ public class CameraControl : MonoBehaviour
 	{
 		if(target == null) return;
 
-		if(Input.GetMouseButton(1))
+		if(Input.GetMouseButton(1) || true)
 		{
 			x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
 			y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
@@ -85,6 +85,18 @@ public class CameraControl : MonoBehaviour
 		if (angle < -360.0f) angle += 360.0f;
 		if (angle > 360.0f) angle -= 360.0f;
 		return Mathf.Clamp (angle, min, max);
+	}
+
+	public static Vector3 GetLookPoint()
+	{
+		Vector2 screenCenter = new Vector2(Screen.width / 2, Screen.height / 2);
+			
+		Ray ray = Camera.main.ScreenPointToRay(screenCenter);
+		RaycastHit hit;
 		
+		int layer = (1 << LayerMask.NameToLayer("Scenario")) | (1 << LayerMask.NameToLayer("Enemies"));
+		
+		if(Physics.Raycast(ray, out hit, 99999.9f, layer)) return hit.point;
+		return Vector3.zero;
 	}
 }

@@ -31,7 +31,6 @@ public class Projectile : MonoBehaviour
 
 	private void Die()
 	{
-		Debug.Log("DIED");
 		Destroy(gameObject);
 	}
 }
