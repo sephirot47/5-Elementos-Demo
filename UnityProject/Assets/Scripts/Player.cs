@@ -25,23 +25,47 @@ public class Player : MonoBehaviour
 		controller = GetComponent<CharacterController>();
 	}
 
+	void FixedUpdate()
+	{
+		//En fixed update ya que son aceleraciones
+		boostMultiplier *= boostFading;
+		movement.y += Core.gravity; //gravity
+		movement.y = Mathf.Max(movement.y, -2000.0f * Time.deltaTime); //evitar caida brusca al saltar
+		//
+	}
+
 	void Update()
 	{
 		if(selected)
 		{
+			SelectedMoveKeys();
 			SelectedMove();
 			if (Input.GetMouseButtonDown(0)) Shoot();
+			
+			Debug.Log("movement: " + movement);
+			Debug.Log("forward: " + transform.forward);
 		}
 		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
 
-		//Comun a todos
-		boostMultiplier *= boostFading;
-		movement.y += Core.gravity; //gravity
-		movement.y = Mathf.Max(movement.y, -2000.0f * Time.deltaTime); //evitar caida brusca al saltar
 		controller.Move(movement  * Time.deltaTime);
 
 		if (IsGrounded()) jumpsDone = 0;
 		//
+	}
+
+	private void SelectedMoveKeys()
+	{
+		if(Input.GetKeyDown(KeyCode.W)) lastKeyPressed = KeyCode.W;
+		else if(Input.GetKeyDown(KeyCode.A)) lastKeyPressed = KeyCode.A;
+		else if(Input.GetKeyDown(KeyCode.S)) lastKeyPressed = KeyCode.S;
+		else if(Input.GetKeyDown(KeyCode.D)) lastKeyPressed = KeyCode.D;
+		if(Input.GetKeyDown(lastKeyPressed)) 
+		{
+			if (timeSinceLastKeyPressed < Time.deltaTime * 2.0f) Boost();
+			timeSinceLastKeyPressed = 0.0f;
+		}
+
+		if(Input.GetKeyDown(KeyCode.Space) && jumpsDone < 2) Jump();
 	}
 
 	private void SelectedMove()
@@ -55,16 +79,6 @@ public class Player : MonoBehaviour
 		movement += dir * speed;
 		
 		//BOOST HANDLING
-
-		if(Input.GetKeyDown(KeyCode.W)) lastKeyPressed = KeyCode.W;
-		else if(Input.GetKeyDown(KeyCode.A)) lastKeyPressed = KeyCode.A;
-		else if(Input.GetKeyDown(KeyCode.S)) lastKeyPressed = KeyCode.S;
-		else if(Input.GetKeyDown(KeyCode.D)) lastKeyPressed = KeyCode.D;
-		if(Input.GetKeyDown(lastKeyPressed)) 
-		{
-			if (timeSinceLastKeyPressed < Time.deltaTime * 2.0f) Boost();
-			timeSinceLastKeyPressed = 0.0f;
-		}
 		timeSinceLastKeyPressed += Time.deltaTime;
 
 		Vector3 boostDir = transform.forward;
@@ -84,7 +98,6 @@ public class Player : MonoBehaviour
 		}
 
 		movement.y = movementY; //Reestablecido
-		if(Input.GetKeyDown(KeyCode.Space) && jumpsDone < 2) Jump();
 	}
 
 	private void FollowSelected()

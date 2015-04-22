@@ -25,7 +25,7 @@ public class EnemyWander : MonoBehaviour
 	void Update () 
 	{	
 		Vector3 movement = Vector3.zero;
-		Vector3 dirToOriginal = (originalPosition - transform.position).normalized;
+		Vector3 dirToOriginal = (originalPosition - transform.position);
 		if(enemy.target == null)
 		{
 			if(dirToOriginal.magnitude < wanderRange)
@@ -36,7 +36,7 @@ public class EnemyWander : MonoBehaviour
 					time = 0.0f;
 					if(!IsWalking() || Random.Range(0.0f, 100.0f) > (100.0f * stopProbabilities))
 					{
-						randomDir = dirToOriginal + GetRandomDeviation();
+						randomDir = dirToOriginal.normalized + GetRandomDeviation();
 						randomDir.y = 0;
 						randomDir.Normalize();
 					}
@@ -58,7 +58,7 @@ public class EnemyWander : MonoBehaviour
 			else //Esta fuera de su zona, ha de volver echando leches hihi
 			{
 				transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dirToOriginal), Time.deltaTime);
-				movement += transform.forward * enemy.speed;
+				movement += transform.forward * enemy.speed * 0.5f;
 			}
 		}
 		enemy.controller.Move(movement * Time.deltaTime);
