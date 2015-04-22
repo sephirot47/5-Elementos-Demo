@@ -40,10 +40,10 @@ public class Player : MonoBehaviour
 		{
 			SelectedMoveKeys();
 			SelectedMove();
-			if (Input.GetMouseButtonDown(0)) Shoot();
+			if (Input.GetMouseButton(0)) Shoot();
 			
-			Debug.Log("movement: " + movement);
-			Debug.Log("forward: " + transform.forward);
+			//Debug.Log("movement: " + movement);
+			//Debug.Log("forward: " + transform.forward);
 		}
 		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
 
@@ -152,9 +152,9 @@ public class Player : MonoBehaviour
 		RaycastHit hit;
 		int layer = (1 << LayerMask.NameToLayer("Scenario")) | (1 << LayerMask.NameToLayer("Enemies"));
 
-		if(Physics.Raycast(origin, ray.direction, out hit, 9999.0f, layer)); 
+		if(Physics.Raycast(ray, out hit, 99999.9f, layer)); 
 		{
-			Debug.DrawLine(origin, hit.point, Color.red, 9999.0f, false);
+			Debug.DrawRay(origin, hit.point - origin, Color.red, 9999.0f, false);
 			Vector3 dir = hit.point - origin;
 			proj.GetComponent<Projectile>().dir = dir;
 			proj.GetComponent<Projectile>().shooterPlayer = this;
