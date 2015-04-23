@@ -7,13 +7,11 @@ public class PlayerTarget : MonoBehaviour
 	public float maxTargetDistance = 50.0f;
 	public float sensibility = 5.0f;
 
-	private GameObject crossfire;
 	private Player player;
 
 	void Start()
 	{
 		player = GetComponent<Player>();
-		crossfire = GameObject.Find("Crossfire");
 	}
 	
 	void Update () 
@@ -21,20 +19,6 @@ public class PlayerTarget : MonoBehaviour
 		if(player.selected)
 		{
 			ChooseTarget();
-			if(player.target != null)
-			{
-				crossfire.GetComponent<MeshRenderer>().enabled = true;
-
-				Vector3 dirPlayerToEnemy = (player.target.transform.position - transform.position).normalized;
-				Vector3 crossfirePos = player.target.transform.position - dirPlayerToEnemy * 1.0f;
-
-				crossfire.transform.position = crossfirePos;
-				crossfire.transform.forward = Camera.main.transform.position - crossfire.transform.position;
-			}
-			else
-			{
-				crossfire.GetComponent<MeshRenderer>().enabled = false;
-			}
 		}
 	}
 
@@ -43,7 +27,7 @@ public class PlayerTarget : MonoBehaviour
 		player.target = null;
 		List<GameObject> enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
 
-		Vector3 lookPoint = CameraControl.GetLookPoint();
+		Vector3 lookPoint =  CameraControl.GetLookPoint();
 
 		if(enemies.Count > 0 && lookPoint != Vector3.zero)
 		{
@@ -66,6 +50,7 @@ public class PlayerTarget : MonoBehaviour
 
 			float distanceToPlayer = Vector3.Distance(Core.selectedPlayer.transform.position, 
 			                                          closestEnemy.transform.position);
+
 			if(minDistance < sensibility && 
 			   distanceToPlayer < maxTargetDistance)
 			{

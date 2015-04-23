@@ -89,14 +89,19 @@ public class CameraControl : MonoBehaviour
 
 	public static Vector3 GetLookPoint()
 	{
-		Vector2 screenCenter = new Vector2(Screen.width / 2, Screen.height / 2);
-			
-		Ray ray = Camera.main.ScreenPointToRay(screenCenter);
+		Vector3 screenPoint = GetLookScreenPoint();
+		Ray ray = Camera.main.ScreenPointToRay(screenPoint);
 		RaycastHit hit;
 		
 		int layer = (1 << LayerMask.NameToLayer("Scenario")) | (1 << LayerMask.NameToLayer("Enemies"));
 		
 		if(Physics.Raycast(ray, out hit, 99999.9f, layer)) return hit.point;
 		return Vector3.zero;
+	}
+
+	public static Vector3 GetLookScreenPoint()
+	{
+		Vector2 offset = new Vector2(0, Screen.height * 0.15f);
+		return new Vector2(Screen.width / 2, Screen.height / 2) + offset;
 	}
 }

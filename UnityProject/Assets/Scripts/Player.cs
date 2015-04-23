@@ -169,7 +169,7 @@ public class Player : MonoBehaviour
 	private void Boost()
 	{
 		if(boostMultiplier > 0.0f) return; //Aun no ha acabado el boost anterior
-		boostMultiplier = boostMultiplierForce;
+		//boostMultiplier = boostMultiplierForce;
 	}
 
 	public float GetAggro()
