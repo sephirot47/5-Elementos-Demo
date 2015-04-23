@@ -15,7 +15,7 @@ public class Canvas : MonoBehaviour
 
 	void OnGUI()
 	{
-		DrawCrossfire();
+		//DrawCrossfire();
 		DrawEnemyTargetCrossfire();
 	}
 

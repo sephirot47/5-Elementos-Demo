@@ -17,6 +17,8 @@ public class CameraControl : MonoBehaviour
 	public float rotationDampening = 3.0f;
 	public bool rotationDampeningEnabled = false;
 
+	public float camSmoothing = 0.2f;
+
 	private Vector3 smoothCamVel = Vector3.zero; //don't touch
 	private Vector3 camPosition;
 	private float x = 0.0f;
@@ -28,7 +30,7 @@ public class CameraControl : MonoBehaviour
 		x = angles.y;
 		y = angles.x;
 
-		camPosition = Vector3.zero; 
+		camPosition = transform.position; 
 		
 		// Make the rigid body not change rotation
 		if (GetComponent<Rigidbody>()) GetComponent<Rigidbody>().freezeRotation = true;
@@ -59,7 +61,9 @@ public class CameraControl : MonoBehaviour
 		transform.rotation = rotation;
 		
 		// POSITION CAMERA:
-		transform.position = target.position -(rotation * Vector3.forward * distance + new Vector3(0, -targetHeight, 0));
+		//transform.position = target.position -(rotation * Vector3.forward * distance + new Vector3(0, -targetHeight, 0));
+		camPosition = Vector3.SmoothDamp(camPosition, target.position, ref smoothCamVel, camSmoothing);
+		transform.position = camPosition - (rotation * Vector3.forward * distance + new Vector3(0, -targetHeight, 0));
 
 		// IS VIEW BLOCKED?
 		RaycastHit hit; 
@@ -77,7 +81,6 @@ public class CameraControl : MonoBehaviour
 	public void SelectTarget(Transform go)
 	{
 		target = go;
-		camPosition = target.position;
 	}
 	
 	private float ClampAngle(float angle, float min, float max) 
@@ -101,7 +104,7 @@ public class CameraControl : MonoBehaviour
 
 	public static Vector3 GetLookScreenPoint()
 	{
-		Vector2 offset = new Vector2(0, Screen.height * 0.15f);
+		Vector2 offset = new Vector2(0, 0);
 		return new Vector2(Screen.width / 2, Screen.height / 2) + offset;
 	}
 }
