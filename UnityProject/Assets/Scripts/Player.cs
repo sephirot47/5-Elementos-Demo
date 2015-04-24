@@ -149,17 +149,14 @@ public class Player : MonoBehaviour
 		GameObject proj = Instantiate(Resources.Load("Projectile"), 
 		                              origin, Quaternion.identity) as GameObject;
 
+		Vector3 shootDir = (CameraControl.GetLookPoint() - origin).normalized;
 		if(target != null) 
 		{
-			Vector3 shootDir = (target.transform.position - origin).normalized;
-			proj.GetComponent<Projectile>().dir = shootDir;
+			shootDir = (target.transform.position - origin).normalized;
 		}
-		else
-		{
-			Vector3 shootDir = (target.transform.position - origin).normalized;
-			proj.GetComponent<Projectile>().dir = (CameraControl.GetLookPoint() - origin).normalized;
-		}
-
+		
+		proj.GetComponent<Projectile>().dir = shootDir;
+		proj.transform.forward = shootDir; 
 		proj.GetComponent<Projectile>().shooterPlayer = this;
 	}
 
