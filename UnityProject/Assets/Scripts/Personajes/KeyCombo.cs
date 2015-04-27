@@ -2,15 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Combo 
+public class KeyCombo 
 {
 	public static KeyCode[] allKeys =
 	{
 		KeyCode.A, KeyCode.B, KeyCode.C, KeyCode.D, KeyCode.E, KeyCode.F, KeyCode.G, KeyCode.H, KeyCode.I, KeyCode.J,
 		KeyCode.K, KeyCode.L, KeyCode.M, KeyCode.N, KeyCode.O, KeyCode.P, KeyCode.Q, KeyCode.R, KeyCode.S, KeyCode.T,
-		KeyCode.U, KeyCode.V, KeyCode.W, KeyCode.X, KeyCode.Y, KeyCode.Z, KeyCode.Space, 
-		KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, 
-		KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, 
+		KeyCode.U, KeyCode.V, KeyCode.W, KeyCode.X, KeyCode.Y, KeyCode.Z, KeyCode.Space,
+		KeyCode.Alpha0, KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6,
+		KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9,
 		KeyCode.LeftControl, KeyCode.RightControl, KeyCode.LeftAlt, KeyCode.RightAlt, KeyCode.LeftShift, KeyCode.RightShift,
 		KeyCode.Less, KeyCode.Greater, KeyCode.Tab
 	};
@@ -23,7 +23,7 @@ public class Combo
 	Player player;
 	string name;
 
-	public Combo(KeyCode[] keys, double timeBetweenKeys, string comboName, Player p)
+	public KeyCombo(KeyCode[] keys, double timeBetweenKeys, string comboName, Player p)
 	{
 		this.keys = new List< Pair<KeyCode, bool> >();
 		foreach(KeyCode k in keys)
@@ -68,7 +68,7 @@ public class Combo
 			{
 				if(k.first == keyPressed)
 				{
-					player.OnComboKeyDown(name, k.first); //Notificamos al jugador que se ha pulsado una tecla del combo
+					player.OnKeyComboKeyDown(name, k.first); //Notificamos al jugador que se ha pulsado una tecla del combo
 					timePassed = 0.0;
 					k.second = true;
 				}
@@ -90,7 +90,7 @@ public class Combo
 
 		if(Done())
 		{
-			player.OnComboDone(name); //Notificamos que el combo se ha hecho :)
+			player.OnKeyComboDone(name); //Notificamos que el combo se ha hecho :)
 			Reset();
 		}
 	}

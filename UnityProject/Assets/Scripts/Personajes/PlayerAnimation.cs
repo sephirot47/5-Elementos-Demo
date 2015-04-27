@@ -25,7 +25,7 @@ public class PlayerAnimation : MonoBehaviour
 				}
 				else
 				{
-					if(!anim.IsPlaying("Combo1"))
+					if(!anim.IsPlaying("Combo1") && !anim.IsPlaying("ReceiveDamage"))
 						anim.Stop();
 					//Play("Idle");
 				}

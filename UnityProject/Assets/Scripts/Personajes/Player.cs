@@ -3,21 +3,19 @@ using System.Collections;
 
 public class Player : MonoBehaviour 
 {
-	public float speed = 8.0f, boostMultiplierForce = 4.0f, boostFading = 0.95f,
+	public float speed = 8.0f, boostFading = 0.95f,
 				 rotSpeed = 5.0f,
 				 jumpForce = 0.2f;
-	private float boostMultiplier = 0.0f;
-	private int jumpsDone = 0;
+	public float boostForce = 2.0f;
 
 	public bool selected = false;
-
 	public float attack = 5.0f;
-	private float aggro = 0.0f;
-
-	private float timeSinceLastKeyPressed = 0.0f;
-	private KeyCode lastKeyPressed = KeyCode.W;
-
+	
 	public Vector3 movement = Vector3.zero;
+
+	public Vector3 boost = Vector3.zero;
+	private int jumpsDone = 0;
+	private float aggro = 0.0f;
 	private CharacterController controller;
 
 	public GameObject target;
@@ -30,7 +28,7 @@ public class Player : MonoBehaviour
 	void FixedUpdate()
 	{
 		//En fixed update ya que son aceleraciones
-		boostMultiplier *= boostFading;
+		boost *= boostFading;
 		movement.y += Core.gravity; //gravity
 		movement.y = Mathf.Max(movement.y, -2000.0f * Time.deltaTime); //evitar caida brusca al saltar
 		//
@@ -40,32 +38,14 @@ public class Player : MonoBehaviour
 	{
 		if(selected)
 		{
-			SelectedMoveKeys();
 			SelectedMove();
-			if (Input.GetMouseButtonDown(0)) Shoot();
+			if(Input.GetKeyDown(KeyCode.Space) && jumpsDone < 2) Jump();
 		}
 		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
 
-		controller.Move(movement  * Time.deltaTime);
-
+		controller.Move((movement + boost * speed) * Time.deltaTime);
 		if (IsGrounded()) jumpsDone = 0;
-
 		//
-	}
-
-	private void SelectedMoveKeys()
-	{
-		if(Input.GetKeyDown(KeyCode.W)) lastKeyPressed = KeyCode.W;
-		else if(Input.GetKeyDown(KeyCode.A)) lastKeyPressed = KeyCode.A;
-		else if(Input.GetKeyDown(KeyCode.S)) lastKeyPressed = KeyCode.S;
-		else if(Input.GetKeyDown(KeyCode.D)) lastKeyPressed = KeyCode.D;
-		if(Input.GetKeyDown(lastKeyPressed)) 
-		{
-			if (timeSinceLastKeyPressed < Time.deltaTime * 2.0f) Boost();
-			timeSinceLastKeyPressed = 0.0f;
-		}
-
-		if(Input.GetKeyDown(KeyCode.Space) && jumpsDone < 2) Jump();
 	}
 
 	private void SelectedMove()
@@ -77,18 +57,6 @@ public class Player : MonoBehaviour
 
 		Vector3 dir = ((Camera.main.transform.forward * axisY) + (Camera.main.transform.right * axisX)).normalized;
 		movement += dir * speed;
-		
-		//BOOST HANDLING
-		timeSinceLastKeyPressed += Time.deltaTime;
-
-		Vector3 boostDir = transform.forward;
-		if(lastKeyPressed == KeyCode.W) boostDir = transform.forward;
-		else if(lastKeyPressed == KeyCode.A) boostDir = -transform.right;
-		else if(lastKeyPressed == KeyCode.S) boostDir = -transform.forward;
-		else if(lastKeyPressed == KeyCode.D) boostDir =  transform.right;
-
-		movement += boostDir * speed * boostMultiplier;
-		//
 		
 		movement.y = 0;
 		if (movement.magnitude > 0.5f) 
@@ -160,16 +128,43 @@ public class Player : MonoBehaviour
 		proj.GetComponent<Projectile>().shooterPlayer = this;
 	}
 
-	public void OnComboDone(string comboName)
+	//COMBO RELATED STUFF /////////////////////////
+	public void OnClickComboDown(KeyCode heldControlKey, int clicksSeguidos, int pressedButton) // 0 = left, 1 = right
 	{
-		Debug.Log("Combo " + comboName + " DONE!");
-		if(comboName == "patadaVoladora") GetComponent<PlayerAnimation>().Play("Combo1");
+		if(heldControlKey == KeyCode.None)
+		{
+			Shoot();
+		}
+		else if(heldControlKey == KeyCode.LeftControl)
+		{
+			GetComponent<PlayerAnimation>().Play("Combo1");
+		}
+		else if(heldControlKey == KeyCode.LeftShift)
+		{
+			GetComponent<PlayerAnimation>().Play("ReceiveDamage");
+		}
 	}
 
-	public void OnComboKeyDown(string comboName, KeyCode key)
+	public void OnClickCombo(KeyCode heldControlKey, int clicksSeguidos, int pressedButton) //Mantener pulsado
 	{
-		//Debug.Log ("Combo " + comboName +  " key " + key.ToString() + " pressed");
+
 	}
+
+	public void OnKeyComboDone(string comboName)
+	{
+		Debug.Log (comboName);
+		if(comboName == "forwardBoost") Boost(Camera.main.transform.forward);
+		else if(comboName == "rightBoost") Boost(Camera.main.transform.right);
+		else if(comboName == "leftBoost") Boost(-Camera.main.transform.right);
+		else if(comboName == "backBoost") Boost(-Camera.main.transform.forward);
+	}
+
+	public void OnKeyComboKeyDown(string comboName, KeyCode key)
+	{
+
+	}
+	///////////////////////////////
+
 
 	public void OnApplyDamage()
 	{
@@ -182,10 +177,10 @@ public class Player : MonoBehaviour
 		movement.y = jumpForce;
 	}
 
-	private void Boost()
+	private void Boost(Vector3 dir)
 	{
-		if(boostMultiplier > 0.0f) return; //Aun no ha acabado el boost anterior
-		//boostMultiplier = boostMultiplierForce;
+		if(boost.magnitude > 0.2f) return; //Aun no ha acabado el boost anterior
+		boost = dir * boostForce;
 	}
 
 	public float GetAggro()

@@ -17,7 +17,7 @@ public class Core : MonoBehaviour
 		lluvia = GameObject.Find("Lluvia").GetComponent<Player>();
 		SelectPlayer(kaji);
 
-		ComboManager.Init();
+		KeyComboManager.Init();
 	}
 
 	void Update() 

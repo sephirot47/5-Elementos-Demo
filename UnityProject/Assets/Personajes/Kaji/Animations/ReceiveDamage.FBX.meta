@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: c5f7ec7a736a60545b509091bb5518ba
-timeCreated: 1429891721
+guid: d838fe38e7c113b41989dfeeaab43b57
+timeCreated: 1430167324
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -117,10 +117,8 @@ ModelImporter:
     400106: Base HumanSpine4
     400108: default
     400110: //RootNode
-    2300000: default
-    3300000: default
     4300000: default
-    7400000: OldRun
+    7400000: ReceiveDamage
     9500000: //RootNode
     11100000: //RootNode
     13700000: default
@@ -141,10 +139,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: OldRun
+      name: ReceiveDamage
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 100
+      lastFrame: 34
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -378,9 +376,9 @@ ModelImporter:
     secondaryUVPackMargin: 4
     useFileScale: 1
   tangentSpace:
-    normalSmoothAngle: 180
+    normalSmoothAngle: 60
     splitTangentsAcrossUV: 1
-    normalImportMode: 1
+    normalImportMode: 0
     tangentImportMode: 1
   importAnimation: 1
   copyAvatar: 0
@@ -394,7 +392,7 @@ ModelImporter:
     armStretch: .0500000007
     legStretch: .0500000007
     feetSpacing: 0
-    rootMotionBoneName: default
+    rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 1
   additionalBone: 0
