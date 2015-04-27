@@ -8,14 +8,10 @@ public class KeyComboManager : MonoBehaviour
 
 	public static void Init() 
 	{
-		combos.Add( new KeyCombo(new KeyCode[]{KeyCode.W, KeyCode.W}, 1.0, "forwardBoost", Core.kaji) );
-		combos.Add( new KeyCombo(new KeyCode[]{KeyCode.D, KeyCode.D}, 1.0, "rightBoost", Core.kaji) );
-		combos.Add( new KeyCombo(new KeyCode[]{KeyCode.A, KeyCode.A}, 1.0, "leftBoost", Core.kaji) );
-		combos.Add( new KeyCombo(new KeyCode[]{KeyCode.S, KeyCode.S}, 1.0, "backBoost", Core.kaji) );
-		combos.Add( new KeyCombo(new KeyCode[]{KeyCode.R, KeyCode.T, KeyCode.T}, 1.0, "salto", Core.kaji) );
-
-		combos.Add( new KeyCombo(new KeyCode[]{KeyCode.R, KeyCode.R, KeyCode.F}, 1.0, "zapPunetazo", Core.zap) );
-		combos.Add( new KeyCombo(new KeyCode[]{KeyCode.R, KeyCode.R, KeyCode.T, KeyCode.A}, 1.0, "zapPunetazo", Core.zap) );
+		combos.Add( new KeyCombo(new KeyCode[]{KeyCode.W, KeyCode.W}, 0.5, "forwardBoost", Core.kaji) );
+		combos.Add( new KeyCombo(new KeyCode[]{KeyCode.D, KeyCode.D}, 0.5, "rightBoost", Core.kaji) );
+		combos.Add( new KeyCombo(new KeyCode[]{KeyCode.A, KeyCode.A}, 0.5, "leftBoost", Core.kaji) );
+		combos.Add( new KeyCombo(new KeyCode[]{KeyCode.S, KeyCode.S}, 0.5, "backBoost", Core.kaji) );
 	}
 	
 	void Update() 
