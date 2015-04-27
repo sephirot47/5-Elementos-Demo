@@ -29,7 +29,8 @@ public class Enemy : MonoBehaviour
 		{	
 			//A perseguir al player que mas aggro tieneeee!		
 			Vector3 dir = target.gameObject.transform.position - transform.position;
-			
+			dir = new Vector3(dir.x, 0, dir.z);
+
 			movement += dir.normalized * speed;
 			
 			if(currentLife <= 0) Die();

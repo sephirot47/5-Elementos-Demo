@@ -104,7 +104,7 @@ public class CameraControl : MonoBehaviour
 
 	public static Vector3 GetLookScreenPoint()
 	{
-		Vector2 offset = new Vector2(0, 0);
+		Vector2 offset = new Vector2(0, Screen.height * 0.15f);
 		return new Vector2(Screen.width / 2, Screen.height / 2) + offset;
 	}
 }

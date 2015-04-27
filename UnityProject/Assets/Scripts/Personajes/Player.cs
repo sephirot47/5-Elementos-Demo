@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
 	private float timeSinceLastKeyPressed = 0.0f;
 	private KeyCode lastKeyPressed = KeyCode.W;
 
-	private Vector3 movement = Vector3.zero;
+	public Vector3 movement = Vector3.zero;
 	private CharacterController controller;
 
 	public GameObject target;
@@ -43,15 +43,13 @@ public class Player : MonoBehaviour
 			SelectedMoveKeys();
 			SelectedMove();
 			if (Input.GetMouseButtonDown(0)) Shoot();
-			
-			//Debug.Log("movement: " + movement);
-			//Debug.Log("forward: " + transform.forward);
 		}
 		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
 
 		controller.Move(movement  * Time.deltaTime);
 
 		if (IsGrounded()) jumpsDone = 0;
+
 		//
 	}
 
@@ -104,6 +102,8 @@ public class Player : MonoBehaviour
 
 	private void FollowSelected()
 	{
+		if(Core.selectedPlayer == null) return;
+
 		float movementY = movement.y; //Lo reestablecemos al final para que no quede afectado por el movimiento en x, z;
 		movement = Vector3.zero;
 
@@ -160,6 +160,17 @@ public class Player : MonoBehaviour
 		proj.GetComponent<Projectile>().shooterPlayer = this;
 	}
 
+	public void OnComboDone(string comboName)
+	{
+		Debug.Log("Combo " + comboName + " DONE!");
+		if(comboName == "patadaVoladora") GetComponent<PlayerAnimation>().Play("Combo1");
+	}
+
+	public void OnComboKeyDown(string comboName, KeyCode key)
+	{
+		//Debug.Log ("Combo " + comboName +  " key " + key.ToString() + " pressed");
+	}
+
 	public void OnApplyDamage()
 	{
 		aggro += attack;
@@ -186,5 +197,10 @@ public class Player : MonoBehaviour
 	{
 		RaycastHit hit;
 		return Physics.Raycast( controller.transform.position, Vector3.down, out hit, 0.3f, ~(1 << LayerMask.NameToLayer ("Player")) );
+	}
+
+	public bool IsJumping()
+	{
+		return jumpsDone > 0;
 	}
 }
