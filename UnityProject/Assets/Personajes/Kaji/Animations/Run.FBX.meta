@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 5260d2a9c86202f48b1cd9c5b5849c13
-timeCreated: 1430065762
+guid: 4abaaef055bfb764e9343ddbaeda1027
+timeCreated: 1430342264
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -117,8 +117,6 @@ ModelImporter:
     400106: Base HumanSpine4
     400108: default
     400110: //RootNode
-    2300000: default
-    3300000: default
     4300000: default
     7400000: Run
     9500000: //RootNode
@@ -394,7 +392,7 @@ ModelImporter:
     armStretch: .0500000007
     legStretch: .0500000007
     feetSpacing: 0
-    rootMotionBoneName: default
+    rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 1
   additionalBone: 0
