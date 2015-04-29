@@ -15,6 +15,8 @@ public class Projectile : MonoBehaviour
 
 	void Update() 
 	{
+		if(Core.paused) return;
+
 		transform.position += dir.normalized;
 		if(dir != Vector3.zero) transform.forward = dir.normalized;
 

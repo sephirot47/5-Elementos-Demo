@@ -16,6 +16,8 @@ public class PlayerTarget : MonoBehaviour
 	
 	void Update () 
 	{
+		if(Core.paused) return;
+
 		if(player.selected)
 		{
 			ChooseTarget();

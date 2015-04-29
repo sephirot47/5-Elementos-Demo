@@ -24,6 +24,7 @@ public class LifeBar : MonoBehaviour
 
 	void LateUpdate()
 	{
+		if(Core.paused) return;
 		ScaleLifeBar();
 		LookAtCamera();
 	}

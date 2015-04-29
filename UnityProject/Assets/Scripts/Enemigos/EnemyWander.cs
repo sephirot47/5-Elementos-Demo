@@ -24,6 +24,8 @@ public class EnemyWander : MonoBehaviour
 
 	void Update () 
 	{	
+		if(Core.paused) return;
+
 		Vector3 movement = Vector3.zero;
 		Vector3 dirToOriginal = (originalPosition - transform.position);
 		if(enemy.target == null)

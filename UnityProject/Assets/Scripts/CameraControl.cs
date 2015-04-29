@@ -38,6 +38,7 @@ public class CameraControl : MonoBehaviour
 	
 	void LateUpdate () 
 	{
+		if(Core.paused) return;
 		if(target == null) return;
 
 		if(Input.GetMouseButton(1) || true)

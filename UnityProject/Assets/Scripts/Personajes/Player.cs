@@ -27,6 +27,8 @@ public class Player : MonoBehaviour
 
 	void FixedUpdate()
 	{
+		if(Core.paused) return;
+
 		//En fixed update ya que son aceleraciones
 		boost *= boostFading;
 		movement.y += Core.gravity; //gravity
@@ -36,6 +38,8 @@ public class Player : MonoBehaviour
 
 	void Update()
 	{
+		if(Core.paused) return;
+
 		if(selected)
 		{
 			SelectedMove();

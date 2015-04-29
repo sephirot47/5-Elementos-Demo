@@ -17,6 +17,8 @@ public class ClickComboManager : MonoBehaviour
 
 	void Update() 
 	{
+		if(Core.paused) return;
+
 		time += Time.deltaTime;
 		if (time >= maxDelay) Reset();
 

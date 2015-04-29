@@ -23,6 +23,8 @@ public class Enemy : MonoBehaviour
 	
 	void Update() 
 	{
+		if(Core.paused) return;
+
 		movement = Vector3.zero;
 
 		if(target != null)

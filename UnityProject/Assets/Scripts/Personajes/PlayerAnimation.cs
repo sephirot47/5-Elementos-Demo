@@ -12,8 +12,14 @@ public class PlayerAnimation : MonoBehaviour
 		anim = GetComponent<Animation>();
 	}
 	
-	void Update () 
+	void Update() 
 	{
+		if(Core.paused) 
+		{
+			anim.Stop();
+			return;
+		}
+
 		if(anim)
 		{
 			if(!player.IsJumping())

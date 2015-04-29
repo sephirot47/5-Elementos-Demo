@@ -1,22 +1,47 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Canvas : MonoBehaviour 
+public class CanvasManager : MonoBehaviour 
 {
+	private static GameObject pausePanel, pauseBackground;
+
 	void Start()
 	{
-	
+		pausePanel = GameObject.Find("PausePanel");
+		pauseBackground = GameObject.Find("PauseBackground");
+
+		pausePanel.GetComponent<CanvasRenderer>().SetAlpha(0);
+		pauseBackground.GetComponent<CanvasRenderer>().SetAlpha(0);
 	}
 
 	void Update()
 	{
-	
+		if(Core.paused)
+		{
+		}
+		else
+		{
+		}
+	}
+
+	public static void OnPause()
+	{
+		pausePanel.GetComponent<CanvasRenderer>().SetAlpha(1);
+		pauseBackground.GetComponent<CanvasRenderer>().SetAlpha(0.5f);
+	}
+
+	public static void OnResume()
+	{
+		pausePanel.GetComponent<CanvasRenderer>().SetAlpha(0);
+		pauseBackground.GetComponent<CanvasRenderer>().SetAlpha(0);
 	}
 
 	void OnGUI()
 	{
-		//DrawCrossfire();
-		DrawEnemyTargetCrossfire();
+		if(!Core.paused)
+		{
+			DrawEnemyTargetCrossfire();
+		}
 	}
 
 	void DrawCrossfire()

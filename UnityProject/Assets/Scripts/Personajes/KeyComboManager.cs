@@ -16,6 +16,8 @@ public class KeyComboManager : MonoBehaviour
 	
 	void Update() 
 	{
+		if(Core.paused) return;
+
 		foreach(KeyCombo c in combos) c.Update();
 	}
 }

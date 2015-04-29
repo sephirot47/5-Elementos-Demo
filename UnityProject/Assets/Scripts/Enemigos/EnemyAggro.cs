@@ -13,6 +13,8 @@ public class EnemyAggro : MonoBehaviour
 	
 	void Update() 
 	{
+		if(Core.paused) return;
+
 		if(IsViewingSomebody())
 		{
 			ChooseTarget();

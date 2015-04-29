@@ -8,6 +8,8 @@ public class Core : MonoBehaviour
 	public static Player kaji, zap, lluvia;
 	public static float gravity = -3.0f;
 
+	public static bool paused = false;
+
 	void Start() 
 	{
 		Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Projectiles")); 
@@ -29,6 +31,13 @@ public class Core : MonoBehaviour
 		else if (Input.GetKeyDown(KeyCode.Alpha3)) SelectPlayer(lluvia);
 		else if (Input.GetKeyDown(KeyCode.Q)) SwitchPlayer(true);
 		else if (Input.GetKeyDown(KeyCode.E)) SwitchPlayer(false);
+
+		if (Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape))
+		{
+			paused = !paused;
+			if(paused) CanvasManager.OnPause();
+			else CanvasManager.OnResume();
+		}
 	}
 	
 	void SwitchPlayer(bool right)
