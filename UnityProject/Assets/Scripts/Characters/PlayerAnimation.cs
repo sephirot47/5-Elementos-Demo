@@ -28,7 +28,7 @@ public class PlayerAnimation : MonoBehaviour
 
 		if(!player.IsJumping())
 		{
-			Vector2 planeMovement = new Vector2(player.movement.x, player.movement.z);
+			Vector2 planeMovement = new Vector2(player.GetMovement().x, player.GetMovement().z);
 			if(planeMovement.magnitude > 0.1f)
 			{
 				Play("Run");

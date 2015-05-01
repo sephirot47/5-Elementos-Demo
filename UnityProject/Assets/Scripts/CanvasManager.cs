@@ -63,7 +63,7 @@ public class CanvasManager : MonoBehaviour
 			DrawBox(new Rect(targetScreenPos.x - crossfireSize/2, 
 			                 Screen.height - targetScreenPos.y - crossfireSize/2, 
 			                 crossfireSize, crossfireSize), 
-			        		 Color.yellow);
+			        		 Color.red);
 		}
 	}
 

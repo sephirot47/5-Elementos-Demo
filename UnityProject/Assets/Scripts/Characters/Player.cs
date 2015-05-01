@@ -3,122 +3,29 @@ using System.Collections;
 
 public class Player : MonoBehaviour 
 {
-	public float speed = 8.0f, boostFading = 0.95f,
-				 rotSpeed = 5.0f,
-				 jumpForce = 0.2f;
-	public float boostForce = 2.0f;
+	PlayerAnimation anim;
 
 	public bool selected = false;
 	public float attack = 5.0f;
-	
-	public Vector3 movement = Vector3.zero;
 
-	private float currentLife, maxLife;
+	public float maxLife;
+	private float currentLife;
 
-	public Vector3 boost = Vector3.zero;
-	private int jumpsDone = 0;
 	private float aggro = 0.0f;
-	private CharacterController controller;
-
-	PlayerAnimation anim;
 
 	public GameObject target;
 
 	void Start()
 	{
-		controller = GetComponent<CharacterController>();
 		anim = GetComponent<PlayerAnimation>();
-		maxLife = 100.0f;
-		currentLife = maxLife;
-	}
-
-	void FixedUpdate()
-	{
-		if(Core.paused) return;
-
-		//En fixed update ya que son aceleraciones
-		boost *= boostFading;
-		movement.y += Core.gravity; //gravity
-		movement.y = Mathf.Max(movement.y, -2000.0f * Time.deltaTime); //evitar caida brusca al saltar
-		//
+		currentLife = maxLife = 100.0f;
 	}
 
 	void Update()
 	{
 		if(Core.paused) return;
 
-		if(selected)
-		{
-			SelectedMove();
-			if(Input.GetKeyDown(KeyCode.Space) && jumpsDone < 2) Jump();
-		}
-		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
 
-		controller.Move((movement + boost * speed) * Time.deltaTime);
-		if (IsGrounded()) jumpsDone = 0;
-		//
-	}
-
-	private void SelectedMove()
-	{
-		float axisX = Input.GetAxis ("Horizontal"), axisY = Input.GetAxis ("Vertical");
-
-		float movementY = movement.y; //Lo reestablecemos al final para que no quede afectado por el movimiento en x, z;
-		movement = Vector3.zero;
-
-		Vector3 dir = ((Camera.main.transform.forward * axisY) + (Camera.main.transform.right * axisX)).normalized;
-		movement += dir * speed;
-		
-		movement.y = 0;
-		if (movement.magnitude > 0.5f) 
-		{
-			Quaternion newRot = Quaternion.LookRotation(movement);
-			transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * speed);
-		}
-
-		movement.y = movementY; //Reestablecido
-	}
-
-	private void FollowSelected()
-	{
-		if(Core.selectedPlayer == null) return;
-
-		float movementY = movement.y; //Lo reestablecemos al final para que no quede afectado por el movimiento en x, z;
-		movement = Vector3.zero;
-
-		Vector3 selectedPlayerPos = Core.selectedPlayer.gameObject.transform.position;
-		float distanceToSelected = Vector3.Distance(transform.position, selectedPlayerPos);
-
-		if(distanceToSelected > Core.playerToPlayerFollowDistance)
-		{
-			//Ve hacia al jugador
-			Vector3 dir = (selectedPlayerPos - transform.position); 
-			dir.y = 0; dir.Normalize();
-
-			movement += dir * distanceToSelected;
-			if(movement.magnitude > speed) movement = dir * speed;
-			movement.y = 0;
-			//
-
-			//Separamos a los seguidores
-			Vector3 otherFollowerPos = Core.GetOtherFollowerPlayer(GetComponent<Player>()).gameObject.transform.position; 
-			float dist = Vector3.Distance(transform.position, otherFollowerPos); 
-
-			//Repulsion entre los seguidores
-			Vector3 repulsionDir = transform.position - otherFollowerPos;
-			repulsionDir.y = 0; repulsionDir.Normalize();
-			movement += repulsionDir.normalized * speed * 1.0f/dist;
-
-			//Modificamos hacia donde miran
-			if(movement == Vector3.zero) //Si estan quietos, que miren donde mira el pj seleccionado
-			{
-				Vector3 selectedForward = Core.selectedPlayer.gameObject.transform.forward;
-				transform.forward = Vector3.Lerp(transform.forward, selectedForward, Time.deltaTime * rotSpeed);
-			}
-			else transform.forward = Vector3.Lerp(transform.forward, movement, Time.deltaTime * rotSpeed);
-		}
-
-		movement.y = movementY; //Reestablecido
 	}
 	
 	private void Shoot()
@@ -148,11 +55,11 @@ public class Player : MonoBehaviour
 		}
 		else if(heldControlKey == KeyCode.LeftControl)
 		{
-			GetComponent<PlayerAnimation>().Play("Combo1");
+			anim.Play("Combo1");
 		}
 		else if(heldControlKey == KeyCode.LeftShift)
 		{
-			GetComponent<PlayerAnimation>().Play("ReceiveDamage");
+			anim.Play("ReceiveDamage");
 		}
 	}
 
@@ -163,11 +70,10 @@ public class Player : MonoBehaviour
 
 	public void OnKeyComboDone(string comboName)
 	{
-		Debug.Log (comboName);
-		if(comboName == "forwardBoost") Boost(Camera.main.transform.forward);
-		else if(comboName == "rightBoost") Boost(Camera.main.transform.right);
-		else if(comboName == "leftBoost") Boost(-Camera.main.transform.right);
-		else if(comboName == "backBoost") Boost(-Camera.main.transform.forward);
+		if(comboName == "forwardBoost") GetComponent<PlayerMovement>().Boost(Camera.main.transform.forward);
+		else if(comboName == "rightBoost") GetComponent<PlayerMovement>().Boost(Camera.main.transform.right);
+		else if(comboName == "leftBoost") GetComponent<PlayerMovement>().Boost(-Camera.main.transform.right);
+		else if(comboName == "backBoost") GetComponent<PlayerMovement>().Boost(-Camera.main.transform.forward);
 	}
 
 	public void OnKeyComboKeyDown(string comboName, KeyCode key)
@@ -177,43 +83,30 @@ public class Player : MonoBehaviour
 	///////////////////////////////
 
 
-	public void OnApplyDamage()
-	{
-		aggro += attack;
-	}
-
-	private void Jump()
-	{
-		++jumpsDone;
-		movement.y = jumpForce;
-	}
-
-	private void Boost(Vector3 dir)
-	{
-		if(boost.magnitude > 0.2f) return; //Aun no ha acabado el boost anterior
-		boost = dir * boostForce;
-	}
 
 	public float GetAggro() { return aggro; }
+
+	public void OnApplyDamage() { aggro += attack; }
 	public float GetCurrentLife() { return currentLife; }
 	public float GetMaxLife() { return maxLife; }
 
-	private bool IsGrounded()
-	{
-		RaycastHit hit;
-		return Physics.Raycast( controller.transform.position, Vector3.down, out hit, 0.3f, ~(1 << LayerMask.NameToLayer ("Player")) );
-	}
+	public Vector3 GetMovement() { return GetComponent<PlayerMovement>().movement; }
 
 	public void ReceiveAttack(Enemy e)
 	{
 		currentLife -= e.GetAttack();
 
-		if(currentLife <= 0) anim.Play("Die");
-		else anim.Play("ReceiveDamage");
+		if(currentLife <= 0 && anim != null) anim.Play("Die");
+		else if (anim != null) anim.Play("ReceiveDamage");
 	}
 
+	public bool IsSelected()
+	{
+		return Core.selectedPlayer == this;
+	}
+	
 	public bool IsJumping()
 	{
-		return jumpsDone > 0;
+		return GetComponent<PlayerMovement>().IsJumping();
 	}
 }
