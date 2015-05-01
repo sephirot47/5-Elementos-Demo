@@ -17,6 +17,7 @@ public class Core : MonoBehaviour
 		kaji = GameObject.Find("Kaji").GetComponent<Player>();
 		zap = GameObject.Find("Zap").GetComponent<Player>();
 		lluvia = GameObject.Find("Lluvia").GetComponent<Player>();
+
 		SelectPlayer(kaji);
 
 		KeyComboManager.Init();
@@ -24,8 +25,6 @@ public class Core : MonoBehaviour
 
 	void Update() 
 	{
-		if(selectedPlayer == null) SelectPlayer(kaji);
-
 		if (Input.GetKeyDown(KeyCode.Alpha1)) SelectPlayer(kaji);
 		else if (Input.GetKeyDown(KeyCode.Alpha2)) SelectPlayer(zap);
 		else if (Input.GetKeyDown(KeyCode.Alpha3)) SelectPlayer(lluvia);
