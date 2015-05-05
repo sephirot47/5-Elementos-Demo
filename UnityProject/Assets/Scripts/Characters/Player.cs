@@ -43,8 +43,7 @@ public class Player : MonoBehaviour
 
 	private void SpeakTo(NPC npc)
 	{
-		GameState.ChangeState(GameState.Speaking);
-		NPCCanvasManager.SetSpeakingNPC(npc);
+		npc.OnSpeakWithMe();
 	}
 	
 	private void Shoot()

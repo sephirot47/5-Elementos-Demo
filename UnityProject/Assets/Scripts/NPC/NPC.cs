@@ -1,22 +1,47 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class NPC : MonoBehaviour 
 {
-	public float rotSpeed = 1.0f;
+	[SerializeField]
+	private string id = "";
+
+	private string npcName;
+	private List<string> texts;
 
 	void Start() 
 	{
+		npcName = FileManager.GetNPCName(this);
+		texts = FileManager.GetNPCTexts(this);
+
+		if(id == "") 
+			Debug.LogError("Este NPC no tiene ninguna id asignada!!!! Se rompera todo si no le pones alguna :(" );
 	}
 	
 	void Update() 
 	{
-		if(Core.selectedPlayer == null || !GameState.IsPlaying()) return;
 
-		Vector3 from = Core.PlaneVector(transform.position);
-		Vector3 to = Core.PlaneVector(Core.selectedPlayer.transform.position);
+	}
 
-		Quaternion newRot = Quaternion.LookRotation(to - from, Vector3.up);
-		transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * rotSpeed);
+	public void OnSpeakWithMe()
+	{
+		GameState.ChangeState(GameState.Speaking);
+		NPCCanvasManager.SetSpeakingNPC(this);
+	}
+
+	public string GetName()
+	{
+		return npcName;
+	}
+
+	public string GetText()
+	{
+		return texts[0];
+	}
+
+	public string GetId()
+	{
+		return id;
 	}
 }
