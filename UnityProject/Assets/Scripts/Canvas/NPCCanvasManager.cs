@@ -19,16 +19,17 @@ public class NPCCanvasManager : MonoBehaviour
 	
 	void Update() 
 	{
-		if(GameState.IsSpeaking() && speakingNPC != null)
-		{
-			speakingTitle.text = speakingNPC.GetName();
-			speakingText.text = speakingNPC.GetText();
-		}
 	}
 
 	public static void OnSpeakingStart()
 	{
 		ShowGroup(speakingPanel);
+
+		if(speakingNPC != null)
+		{
+			speakingTitle.text = speakingNPC.GetName();
+			speakingText.GetComponent<TextController>().ShowText(speakingNPC.GetText());
+		}
 	}
 
 	public static void OnSpeakingFinish()

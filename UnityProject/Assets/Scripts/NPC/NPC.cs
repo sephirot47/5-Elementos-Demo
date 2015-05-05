@@ -26,8 +26,8 @@ public class NPC : MonoBehaviour
 
 	public void OnSpeakWithMe()
 	{
-		GameState.ChangeState(GameState.Speaking);
 		NPCCanvasManager.SetSpeakingNPC(this);
+		GameState.ChangeState(GameState.Speaking);
 	}
 
 	public string GetName()
