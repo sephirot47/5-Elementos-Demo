@@ -17,7 +17,7 @@ public class ClickComboManager : MonoBehaviour
 
 	void Update() 
 	{
-		if(Core.paused) return;
+		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
 
 		time += Time.deltaTime;
 		if (time >= maxDelay) Reset();

@@ -15,7 +15,7 @@ public class Projectile : MonoBehaviour
 
 	void Update() 
 	{
-		if(Core.paused) return;
+		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
 
 		transform.position += dir.normalized;
 		if(dir != Vector3.zero) transform.forward = dir.normalized;

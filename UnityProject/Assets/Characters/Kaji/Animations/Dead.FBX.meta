@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 3190ad2141e829045974c2b566e7aeee
-timeCreated: 1430342263
+guid: 611dae485984ad04db4b9c3dc108a88e
+timeCreated: 1430551908
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -59,8 +59,8 @@ ModelImporter:
     100102: Base HumanSpine2
     100104: Base HumanSpine3
     100106: Base HumanSpine4
-    100108: default
-    100110: //RootNode
+    100108: //RootNode
+    100110: default
     400000: Base Human
     400002: Base HumanHead
     400004: Base HumanLCalf
@@ -115,10 +115,10 @@ ModelImporter:
     400102: Base HumanSpine2
     400104: Base HumanSpine3
     400106: Base HumanSpine4
-    400108: default
-    400110: //RootNode
+    400108: //RootNode
+    400110: default
     4300000: default
-    7400000: Die
+    7400000: Dead
     9500000: //RootNode
     11100000: //RootNode
     13700000: default
@@ -139,9 +139,9 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Die
+      name: Dead
       takeName: Take 001
-      firstFrame: 0
+      firstFrame: 45
       lastFrame: 45
       wrapMode: 8
       orientationOffsetY: 0
@@ -360,7 +360,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 50
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1

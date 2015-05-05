@@ -20,7 +20,7 @@ public class PlayerAnimation : MonoBehaviour
 	{
 		if(anim == null) return;
 
-		if(Core.paused) 
+		if(!GameState.IsPlaying()) 
 		{
 			anim.Stop();
 			return;
@@ -59,7 +59,16 @@ public class PlayerAnimation : MonoBehaviour
 
 	public void Play(string state)
 	{
-		if(!anim.IsPlaying(state))	
-			anim.Play(state);
+		if(anim.IsPlaying("Die") && player.GetCurrentLife() <= 0 ) return;
+		if(!anim.IsPlaying("Combo1") && !anim.IsPlaying("ReceiveDamage") && !anim.IsPlaying("Die"))
+		{
+			if(!anim.IsPlaying(state)) 
+				anim.Play(state);
+		}
+	}
+
+	public void PlayQueued(string state)
+	{
+		anim.PlayQueued(state);
 	}
 }

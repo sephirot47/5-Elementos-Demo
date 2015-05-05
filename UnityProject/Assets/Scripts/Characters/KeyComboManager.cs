@@ -16,7 +16,7 @@ public class KeyComboManager : MonoBehaviour
 	
 	void Update() 
 	{
-		if(Core.paused) return;
+		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
 
 		foreach(KeyCombo c in combos) c.Update();
 	}

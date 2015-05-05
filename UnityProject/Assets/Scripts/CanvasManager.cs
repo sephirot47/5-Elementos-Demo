@@ -3,6 +3,7 @@ using System.Collections;
 
 public class CanvasManager : MonoBehaviour 
 {
+	private static GameObject kajiLifebar, zapLifebar, lluviaLifebar;
 	private static GameObject pausePanel, pauseBackground;
 
 	void Start()
@@ -10,37 +11,54 @@ public class CanvasManager : MonoBehaviour
 		pausePanel = GameObject.Find("PausePanel");
 		pauseBackground = GameObject.Find("PauseBackground");
 
-		pausePanel.GetComponent<CanvasRenderer>().SetAlpha(0);
-		pauseBackground.GetComponent<CanvasRenderer>().SetAlpha(0);
+		kajiLifebar = GameObject.Find("KajiLifebar");
+		zapLifebar = GameObject.Find("ZapLifebar");
+		lluviaLifebar = GameObject.Find("LluviaLifebar");
+		
+		Hide(pausePanel);
+		Hide(pauseBackground);
 	}
 
 	void Update()
 	{
-		if(Core.paused)
+		if(!GameState.IsPlaying())
 		{
 		}
 		else
 		{
+			if(GameState.AllPlayersDead())
+			{
+				Show(pauseBackground, 0.5f);
+			}
+		}
+
+		if(GameState.IsSpeaking())
+		{
+			HideLifebars();
+		}
+		else if(GameState.IsPlaying())
+		{
+			ShowLifebars();
 		}
 	}
 
-	public static void OnPause()
+	public static void OnPauseStart()
 	{
-		pausePanel.GetComponent<CanvasRenderer>().SetAlpha(1);
-		pauseBackground.GetComponent<CanvasRenderer>().SetAlpha(0.5f);
+		Show(pausePanel);
+		Show(pauseBackground, 0.5f);
 	}
 
-	public static void OnResume()
+	public static void OnPauseFinish()
 	{
-		pausePanel.GetComponent<CanvasRenderer>().SetAlpha(0);
-		pauseBackground.GetComponent<CanvasRenderer>().SetAlpha(0);
+		Hide(pausePanel);
+		Hide(pauseBackground);
 	}
 
 	void OnGUI()
 	{
-		if(!Core.paused)
+		if(!!GameState.IsPlaying())
 		{
-			DrawEnemyTargetCrossfire();
+			DrawTargetCrossfire();
 		}
 	}
 
@@ -51,20 +69,31 @@ public class CanvasManager : MonoBehaviour
 		DrawBox(new Rect(v.x - 5, v.y/2 - 1, 10, 3), Color.red);
 	}
 
-	void DrawEnemyTargetCrossfire()
+	void DrawTargetCrossfire()
 	{
-		if(Core.selectedPlayer != null && Core.selectedPlayer.target != null)
+		Player player = Core.selectedPlayer;
+		if(player != null)
 		{
-			Vector3 targetPos = Core.selectedPlayer.target.transform.position;
-			Vector2 targetScreenPos = Camera.main.WorldToScreenPoint(targetPos);
+			GameObject target = player.GetTarget();
+			if(target != null)
+			{
+				Vector3 targetPos = target.transform.position;
+				Vector2 targetScreenPos = Camera.main.WorldToScreenPoint(targetPos);
 
-
-			float crossfireSize = Mathf.Ceil(160.0f / Vector3.Distance(Camera.main.transform.position, targetPos));
-			DrawBox(new Rect(targetScreenPos.x - crossfireSize/2, 
-			                 Screen.height - targetScreenPos.y - crossfireSize/2, 
-			                 crossfireSize, crossfireSize), 
-			        		 Color.red);
+				float crossfireSize = Mathf.Ceil(160.0f / Vector3.Distance(Camera.main.transform.position, targetPos));
+				DrawBox(new Rect(targetScreenPos.x - crossfireSize/2, 
+				                 Screen.height - targetScreenPos.y - crossfireSize/2, 
+				                 crossfireSize, crossfireSize), 
+				      	  		 GetTargetColor(target));
+			}
 		}
+	}
+
+	private Color GetTargetColor(GameObject target)
+	{
+		if(target.CompareTag("Enemy")) return Color.red;
+		if(target.CompareTag("NPC")) return Color.yellow;
+		return Color.gray;
 	}
 
 	void DrawBox(Rect r, Color c)
@@ -75,4 +104,26 @@ public class CanvasManager : MonoBehaviour
 		style.normal.background.Apply();
 		GUI.Box(r, "", style);
 	}
+
+	private static void Show(GameObject go) {go.GetComponent<CanvasRenderer>().SetAlpha(1); }
+	private static void Show(GameObject go, float alpha) {go.GetComponent<CanvasRenderer>().SetAlpha(alpha); }
+	private static void Hide(GameObject go) {go.GetComponent<CanvasRenderer>().SetAlpha(0); }
+	
+	private static void ShowLifebars() 
+	{
+		ShowGroup(kajiLifebar);
+		ShowGroup(zapLifebar);
+		ShowGroup(lluviaLifebar);
+	}
+
+	private static void HideLifebars() 
+	{
+		HideGroup(kajiLifebar);
+		HideGroup(zapLifebar);
+		HideGroup(lluviaLifebar);
+	}
+	
+	private static void ShowGroup(GameObject go) {go.GetComponent<CanvasGroup>().alpha = 1; }
+	private static void ShowGroup(GameObject go, float alpha) {go.GetComponent<CanvasGroup>().alpha = alpha; }
+	private static void HideGroup(GameObject go) {go.GetComponent<CanvasGroup>().alpha = 0; }
 }

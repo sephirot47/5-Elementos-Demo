@@ -17,7 +17,7 @@ public class PlayerLifebar : MonoBehaviour
 	void LateUpdate()
 	{
 		if(player == null) return;
-		if(Core.paused) return;
+		if(!GameState.IsPlaying()) return;
 
 		ScaleLifeBar();
 	}

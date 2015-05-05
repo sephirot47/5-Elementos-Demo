@@ -22,11 +22,11 @@ public class PlayerMovement : MonoBehaviour
 		player = GetComponent<Player>();
 		controller = GetComponent<CharacterController>();
 	}
-	
-	// Update is called once per frame
+
 	void Update () 
 	{
-		if(Core.paused) return;
+		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
+		if(player.IsDead()) return;
 
 		if(player.IsSelected())
 		{
@@ -42,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		if(Core.paused) return;
+		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
 		
 		boost *= boostFading;
 		movement.y += Core.gravity; //gravity

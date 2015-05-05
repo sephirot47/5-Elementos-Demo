@@ -16,9 +16,9 @@ public class PlayerTarget : MonoBehaviour
 	
 	void Update () 
 	{
-		if(Core.paused) return;
+		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
 
-		if(player.selected)
+		if(player.IsSelected())
 		{
 			ChooseTarget();
 		}
@@ -26,37 +26,38 @@ public class PlayerTarget : MonoBehaviour
 
 	void ChooseTarget()
 	{
-		player.target = null;
-		List<GameObject> enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
+		player.SetTarget(null);
+		List<GameObject> targetables = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
+		targetables.AddRange(GameObject.FindGameObjectsWithTag("NPC"));
 
 		Vector3 lookPoint =  CameraControl.GetLookPoint();
 
-		if(enemies.Count > 0 && lookPoint != Vector3.zero && Core.selectedPlayer != null)
+		if(targetables.Count > 0 && lookPoint != Vector3.zero && Core.selectedPlayer != null)
 		{
 			//Debug.DrawLine(player.gameObject.transform.position, lookPoint, Color.green, 9999.9f, false);
 
 			//Obtenemos el enemigo mas cerca de donde esta mirando el personaje
-			GameObject closestEnemy = enemies[0];
+			GameObject closestTargetable = targetables[0];
 			float minDistance = float.PositiveInfinity;
 
-			foreach(GameObject e in enemies)
+			foreach(GameObject e in targetables)
 			{
 				float d = Vector3.Distance(e.transform.position, lookPoint);
 				if(d < minDistance)
 				{
-					closestEnemy = e;
+					closestTargetable = e;
 					minDistance = d;
 				}
 			}
 			//
 
 			float distanceToPlayer = Vector3.Distance(Core.selectedPlayer.transform.position, 
-			                                          closestEnemy.transform.position);
+			                                          closestTargetable.transform.position);
 
 			if(minDistance < sensibility && 
 			   distanceToPlayer < maxTargetDistance)
 			{
-				player.target = closestEnemy;
+				player.SetTarget(closestTargetable);
 			}
 		}
 	}

@@ -13,6 +13,8 @@ public class EnemyLifeBar : MonoBehaviour
 
 	void Start () 
 	{
+		if(!GameState.IsPlaying()) return;
+
 		SetVisible(false);
 
 		foreach(Transform t in transform)
@@ -29,7 +31,7 @@ public class EnemyLifeBar : MonoBehaviour
 
 	void LateUpdate()
 	{
-		if(Core.paused) return;
+		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
 
 		time += Time.deltaTime;
 

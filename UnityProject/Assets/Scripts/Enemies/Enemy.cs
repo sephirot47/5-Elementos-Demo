@@ -22,23 +22,13 @@ public class Enemy : MonoBehaviour
 	
 	void Update() 
 	{
-		if(Core.paused) return;
+		if(!GameState.IsPlaying()) return;
 
 		movement = Vector3.zero;
-
-		if(target != null)
-		{	
-			//A perseguir al player que mas aggro tieneeee!		
-			Vector3 dir = target.gameObject.transform.position - transform.position;
-			dir = new Vector3(dir.x, 0, dir.z);
-
-			movement += dir.normalized * speed;
-
-			if(currentLife <= 0) Die();
-		}
-		else {	/* A 'vagar', esta programado en EnemyWander.cs */ }
-
 		movement += Vector3.up * Core.gravity; //gravity
+
+		if(currentLife <= 0) Die();
+
 		controller.Move(movement * Time.deltaTime);
 	}
 	

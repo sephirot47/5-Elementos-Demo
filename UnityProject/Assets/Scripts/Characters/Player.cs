@@ -5,7 +5,6 @@ public class Player : MonoBehaviour
 {
 	PlayerAnimation anim;
 
-	public bool selected = false;
 	public float attack = 5.0f;
 
 	public float maxLife;
@@ -13,7 +12,7 @@ public class Player : MonoBehaviour
 
 	private float aggro = 0.0f;
 
-	public GameObject target;
+	private GameObject target;
 
 	void Start()
 	{
@@ -23,13 +22,35 @@ public class Player : MonoBehaviour
 
 	void Update()
 	{
-		if(Core.paused) return;
+		if(!IsSelected()) return;
 
+		if(GameState.IsSpeaking())
+		{
+			if(Input.GetKeyDown(KeyCode.R))
+				GameState.ChangeState(GameState.Playing);
+		}
+		else if(GameState.IsPlaying() && !GameState.AllPlayersDead())
+		{
+			if(Input.GetKeyDown(KeyCode.R))
+			{
+				if(target != null && target.CompareTag("NPC"))
+				{
+					SpeakTo(target.GetComponent<NPC>());
+				}
+			}
+		}
+	}
 
+	private void SpeakTo(NPC npc)
+	{
+		GameState.ChangeState(GameState.Speaking);
+		NPCCanvasManager.SetSpeakingNPC(npc);
 	}
 	
 	private void Shoot()
 	{
+		if(IsDead ()) return;
+
 		Vector3 origin = transform.position + Vector3.up * 1.0f;
 
 		GameObject proj = Instantiate(Resources.Load("Projectile"), 
@@ -82,10 +103,7 @@ public class Player : MonoBehaviour
 	}
 	///////////////////////////////
 
-
-
 	public float GetAggro() { return aggro; }
-
 	public void OnApplyDamage() { aggro += attack; }
 	public float GetCurrentLife() { return currentLife; }
 	public float GetMaxLife() { return maxLife; }
@@ -96,8 +114,33 @@ public class Player : MonoBehaviour
 	{
 		currentLife -= e.GetAttack();
 
-		if(currentLife <= 0 && anim != null) anim.Play("Die");
+		if(IsDead() && anim != null)
+		{
+			Die();
+		}
+
 		else if (anim != null) anim.Play("ReceiveDamage");
+	}
+	
+	public void SetTarget(GameObject t)
+	{
+		target = t;
+	}
+
+	public GameObject GetTarget()
+	{
+		return target;
+	}
+
+	public void Die()
+	{
+		currentLife = 0;
+		anim.Play("Die");
+	}
+
+	public bool IsDead()
+	{
+		return currentLife <= 0;
 	}
 
 	public bool IsSelected()
