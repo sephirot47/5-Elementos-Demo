@@ -105,10 +105,6 @@ public class CanvasManager : MonoBehaviour
 		style.normal.background.Apply();
 		GUI.Box(r, "", style);
 	}
-
-	private static void Show(GameObject go) {go.GetComponent<CanvasRenderer>().SetAlpha(1); }
-	private static void Show(GameObject go, float alpha) {go.GetComponent<CanvasRenderer>().SetAlpha(alpha); }
-	private static void Hide(GameObject go) {go.GetComponent<CanvasRenderer>().SetAlpha(0); }
 	
 	private static void ShowLifebars() 
 	{
@@ -116,15 +112,19 @@ public class CanvasManager : MonoBehaviour
 		ShowGroup(zapLifebar);
 		ShowGroup(lluviaLifebar);
 	}
-
+	
 	private static void HideLifebars() 
 	{
 		HideGroup(kajiLifebar);
 		HideGroup(zapLifebar);
 		HideGroup(lluviaLifebar);
 	}
+
+	public static void Show(GameObject go) {go.GetComponent<CanvasRenderer>().SetAlpha(1); }
+	public static void Show(GameObject go, float alpha) {go.GetComponent<CanvasRenderer>().SetAlpha(alpha); }
+	public static void Hide(GameObject go) {go.GetComponent<CanvasRenderer>().SetAlpha(0); }
 	
-	private static void ShowGroup(GameObject go) {go.GetComponent<CanvasGroup>().alpha = 1; }
-	private static void ShowGroup(GameObject go, float alpha) {go.GetComponent<CanvasGroup>().alpha = alpha; }
-	private static void HideGroup(GameObject go) {go.GetComponent<CanvasGroup>().alpha = 0; }
+	public static void ShowGroup(GameObject go) {go.GetComponent<CanvasGroup>().alpha = 1; }
+	public static void ShowGroup(GameObject go, float alpha) {go.GetComponent<CanvasGroup>().alpha = alpha; }
+	public static void HideGroup(GameObject go) {go.GetComponent<CanvasGroup>().alpha = 0; }
 }

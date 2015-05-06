@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Core : MonoBehaviour 
+public class Core : MonoBehaviour
 {
 	public static float playerToPlayerFollowDistance = 4.0f;
 	public static Player selectedPlayer;

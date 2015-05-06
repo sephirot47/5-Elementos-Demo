@@ -24,14 +24,9 @@ public class Player : MonoBehaviour
 	{
 		if(!IsSelected()) return;
 
-		if(GameState.IsSpeaking())
+		if(GameState.IsPlaying() && !GameState.AllPlayersDead())
 		{
-			if(Input.GetKeyDown(KeyCode.R))
-				GameState.ChangeState(GameState.Playing);
-		}
-		else if(GameState.IsPlaying() && !GameState.AllPlayersDead())
-		{
-			if(Input.GetKeyDown(KeyCode.R))
+			if(Input.GetButtonDown("Speak"))
 			{
 				if(target != null && target.CompareTag("NPC"))
 				{
