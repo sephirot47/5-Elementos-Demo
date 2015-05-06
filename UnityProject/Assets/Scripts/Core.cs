@@ -14,7 +14,6 @@ public class Core : MonoBehaviour
 	void Start() 
 	{
 		Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Projectiles")); 
-		Cursor.visible = false;
 
 		kaji = GameObject.Find("Kaji").GetComponent<Player>();
 		zap = GameObject.Find("Zap").GetComponent<Player>();
@@ -25,6 +24,8 @@ public class Core : MonoBehaviour
 		playerList = new List<Player>(players);
 
 		KeyComboManager.Init();
+		
+		CanvasUtils.HideCursor();
 	}
 
 	void Update() 

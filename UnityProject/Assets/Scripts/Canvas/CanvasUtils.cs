@@ -38,4 +38,14 @@ public class CanvasUtils
 			go.GetComponent<CanvasRenderer>().SetAlpha(0); 
 		}
 	}
+
+	public static void ShowCursor()
+	{
+		Cursor.visible = true;
+	}
+
+	public static void HideCursor()
+	{
+		Cursor.visible = false;
+	}
 }

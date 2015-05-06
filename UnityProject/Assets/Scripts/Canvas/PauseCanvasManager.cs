@@ -29,11 +29,13 @@ public class PauseCanvasManager : MonoBehaviour
 	public static void OnPauseStart()
 	{
 		CanvasUtils.Show(pauseMenu);
+		CanvasUtils.ShowCursor();
 	}
 
 	public static void OnPauseFinish()
 	{
 		CanvasUtils.Hide(pauseMenu);
+		CanvasUtils.HideCursor();
 	}
 
 	void OnGUI()
