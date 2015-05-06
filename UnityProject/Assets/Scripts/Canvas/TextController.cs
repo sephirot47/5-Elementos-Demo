@@ -104,27 +104,31 @@ public class TextController : MonoBehaviour
 	private List<string> GetTextParts(string text)
 	{
 		List<string> result = new List<string>();
-
-		textbox.text = "";
-
+		
 		int i = 0;
-		while(i < text.Length)
+		while(text.Length > 0 && i < text.Length)
 		{
+			textbox.text = "";
+
 			//Vamos poniendo letra a letra en el textbox para comprobar cuando se pasa de largo
 			//Y asi podemos detectar las partes en las que ensenarlo
+			i = 0;
 			while(!TextOverflowed() && i < text.Length)
 			{
 				textbox.text += text[i];
 				++i;
 			}
+			--i; //Esto deja a la i en el primer caracter de la siguiente parte
 
 			//Cogemos todos menos el ultimo caracter(porque hemos overfloweado)
-			result.Add( textbox.text.Substring(0, Mathf.Max( 0, textbox.text.Length - 1) ) );
+			int final = textbox.text.Length;
+			string part = text.Substring(0, Mathf.Max(0, final) );
+			part = part.Trim(new char[]{'\n', '\r'}); //Quitamos saltos de linea al principio y final
+			
+			result.Add(part);
 
-			//Retrocedemos un caracter(porque hemos overfloweado) El if es para evitar que al final se quede en bucle infinito
-			if(i < text.Length - 1) --i; 
-
-			textbox.text = ""; //Volvemos a repetir con lo que queda de texto
+			text = text.Substring( Mathf.Min(i, text.Length) ); //de i pal final
+			text = text.TrimStart(new char[]{'\n', '\r'}); //Quitamos saltos de linea del PRINCIPIO solo
 		}
 
 		return result;
