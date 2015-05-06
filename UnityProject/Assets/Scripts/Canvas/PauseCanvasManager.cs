@@ -5,10 +5,17 @@ using System.Collections;
 public class PauseCanvasManager : MonoBehaviour 
 {
 	private static GameObject pauseMenu;
+	private static Button resumeButton, exitButton;
 
 	void Start()
 	{
 		pauseMenu = Core.GetSubGameObject(gameObject, "PauseMenu");
+		resumeButton = Core.GetSubGameObject(gameObject, "ResumeButton").GetComponent<Button>();
+		exitButton = Core.GetSubGameObject(gameObject, "ExitButton").GetComponent<Button>();
+
+		resumeButton.onClick.AddListener( () => OnResumeButtonClick() ); //Ni idea de esto, copy pasted, it works
+		exitButton.onClick.AddListener( () => OnExitButtonClick() );
+
 		CanvasUtils.Hide(pauseMenu);
 	}
 
@@ -36,6 +43,17 @@ public class PauseCanvasManager : MonoBehaviour
 	{
 		CanvasUtils.Hide(pauseMenu);
 		CanvasUtils.HideCursor();
+	}
+
+	private static void OnResumeButtonClick()
+	{
+		GameState.ChangeState(GameState.Playing);
+	}
+
+	private static void OnExitButtonClick()
+	{
+		UnityEditor.EditorApplication.isPlaying = false; //Para pararlo en el editor :)
+		Application.Quit();
 	}
 
 	void OnGUI()

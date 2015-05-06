@@ -44,12 +44,18 @@ public class Core : MonoBehaviour
 	{
 		return new Vector3(v.x, 0.0f, v.z);
 	}
-
+	
+	//Busca por toda la jerarquia del parent, hasta el fondo de todos los objetos, infinite deep (DFS)
 	public static GameObject GetSubGameObject(GameObject parent, string goName)
 	{
 		foreach(Transform t in parent.transform)
 		{
 			if(t.gameObject.name == goName) return t.gameObject;
+			else
+			{
+				GameObject go = GetSubGameObject(t.gameObject, goName);
+				if(go != null) return go;
+			}
 		}
 		return null;
 	}

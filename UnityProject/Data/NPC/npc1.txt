@@ -6,7 +6,9 @@ TEXT
 Hola Kaji, que te cuentas?
 Vete del pueblo o te raho.
 ....aaaa
-Te quiero cris...
+un pinguino naranja
+un gusano rosa
+un pepino lila
 ;
 
 TEXT
