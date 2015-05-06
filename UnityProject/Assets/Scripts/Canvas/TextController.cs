@@ -57,11 +57,11 @@ public class TextController : MonoBehaviour
 		if(currentText.Length == fullText.Length && currentPart < textParts.Count - 1)
 		{
 			//Si ya esta el texto completo y aun quedan partes por ensenar...
-			CanvasManager.Show(nextPartArrow);
+			CanvasUtils.Show(nextPartArrow);
 		}
 		else
 		{
-			CanvasManager.Hide(nextPartArrow);
+			CanvasUtils.Hide(nextPartArrow);
 		}
 
 		frameWhereShowDemanded = false;

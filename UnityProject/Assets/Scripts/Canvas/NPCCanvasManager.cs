@@ -14,7 +14,7 @@ public class NPCCanvasManager : MonoBehaviour
 		speakingTitle = Core.GetSubGameObject(speakingPanel, "Title").GetComponent<Text>();
 		speakingText = Core.GetSubGameObject(speakingPanel, "Content").GetComponent<Text>();
 
-		CanvasManager.HideGroup(speakingPanel);
+		CanvasUtils.Hide(speakingPanel);
 	}
 	
 	void Update() 
@@ -23,7 +23,7 @@ public class NPCCanvasManager : MonoBehaviour
 
 	public static void OnSpeakingStart()
 	{
-		CanvasManager.ShowGroup(speakingPanel);
+		CanvasUtils.Show(speakingPanel);
 
 		if(speakingNPC != null)
 		{
@@ -34,7 +34,7 @@ public class NPCCanvasManager : MonoBehaviour
 
 	public static void OnSpeakingFinish()
 	{
-		CanvasManager.HideGroup(speakingPanel);
+		CanvasUtils.Hide(speakingPanel);
 	}
 
 	public static void SetSpeakingNPC(NPC npc)

@@ -35,7 +35,7 @@ public class GameState : MonoBehaviour
 
 	private static void OnPausedStart()
 	{
-		CanvasManager.OnPauseStart();
+		PauseCanvasManager.OnPauseStart();
 	}
 	
 	private static void OnSpeakingStart()
@@ -52,12 +52,12 @@ public class GameState : MonoBehaviour
 	{
 		if(prevState == Paused)
 		{
-			CanvasManager.OnPauseFinish();
+			PauseCanvasManager.OnPauseFinish();
 		}
 
 		if(currentState == Paused)
 		{
-			CanvasManager.OnPauseStart();
+			PauseCanvasManager.OnPauseStart();
 		}
 		
 		if(prevState == Speaking)

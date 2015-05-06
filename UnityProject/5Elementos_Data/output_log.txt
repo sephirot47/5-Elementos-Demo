@@ -12,16 +12,29 @@ Platform assembly: C:\Users\sephirot47\Desktop\CerdoAgridulce\UnityProject\5Elem
 Loading C:\Users\sephirot47\Desktop\CerdoAgridulce\UnityProject\5Elementos_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
 Platform assembly: C:\Users\sephirot47\Desktop\CerdoAgridulce\UnityProject\5Elementos_Data\Managed\UnityEngine.UI.dll (this message is harmless)
 Loading C:\Users\sephirot47\Desktop\CerdoAgridulce\UnityProject\5Elementos_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
-- Completed reload, in  0.130 seconds
+- Completed reload, in  0.112 seconds
 desktop: 1440x900 60Hz; virtual: 1440x900 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
 Platform assembly: C:\Users\sephirot47\Desktop\CerdoAgridulce\UnityProject\5Elementos_Data\Managed\System.dll (this message is harmless)
+The referenced script on this Behaviour is missing!
+ 
+(Filename: C:/buildslave/unity/build/Runtime/Mono/MonoBehaviour.cpp Line: 1560)
+
 The file 'C:/Users/sephirot47/Desktop/CerdoAgridulce/UnityProject/5Elementos_Data/mainData' is corrupted! Remove it and launch unity again!
 [Position out of bounds!]
  
 (Filename: C:/buildslave/unity/build/Runtime/Serialize/SerializationCaching/CachedReader.cpp Line: 240)
 
+The file 'C:/Users/sephirot47/Desktop/CerdoAgridulce/UnityProject/5Elementos_Data/mainData' is corrupted! Remove it and launch unity again!
+[Position out of bounds!]
+ 
+(Filename: C:/buildslave/unity/build/Runtime/Serialize/SerializationCaching/CachedReader.cpp Line: 240)
+
+The referenced script on this Behaviour is missing!
+ 
+(Filename: C:/buildslave/unity/build/Runtime/Mono/MonoBehaviour.cpp Line: 1713)
+
 Setting up 1 worker threads for Enlighten.
-  Thread -> id: 1198 -> priority: 1 
+  Thread -> id: 1704 -> priority: 1 
