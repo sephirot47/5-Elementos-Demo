@@ -18,7 +18,6 @@ public class Core : MonoBehaviour
 		kaji = GameObject.Find("Kaji").GetComponent<Player>();
 		zap = GameObject.Find("Zap").GetComponent<Player>();
 		lluvia = GameObject.Find("Lluvia").GetComponent<Player>();
-		SelectPlayer(kaji);
 		
 		Player[] players = {Core.kaji, Core.zap, Core.lluvia};
 		playerList = new List<Player>(players);
@@ -30,44 +29,7 @@ public class Core : MonoBehaviour
 
 	void Update() 
 	{
-		if(Core.selectedPlayer != null && Core.selectedPlayer.IsDead()) 
-		{
-			SwitchPlayer(true);
-		}
 
-		if (Input.GetKeyDown(KeyCode.Alpha1) && !kaji.IsDead()) SelectPlayer(kaji);
-		else if (Input.GetKeyDown(KeyCode.Alpha2) && !zap.IsDead()) SelectPlayer(zap);
-		else if (Input.GetKeyDown(KeyCode.Alpha3) && !lluvia.IsDead()) SelectPlayer(lluvia);
-
-		else if (Input.GetKeyDown(KeyCode.Q)) SwitchPlayer(true);
-		else if (Input.GetKeyDown(KeyCode.E)) SwitchPlayer(false);
-	}
-	
-	void SwitchPlayer(bool right)
-	{
-		int step = right ? 1 : -1, 
-		    i = (selectedPlayer == null) ? 0 : playerList.IndexOf(selectedPlayer);
-
-		int counter = 0;
-		i = (i + playerList.Count * 2 + step) % playerList.Count;
-		while( (i <= playerList.Count && i >= 0) || counter <= playerList.Count)
-		{
-			int indexOfNewPlayer = (i + playerList.Count * 2) % playerList.Count;
-			if(!playerList[indexOfNewPlayer].IsDead())
-			{
-				SelectPlayer( playerList[indexOfNewPlayer] );
-				break;
-			}
-			i += step;
-			++counter;
-		}
-	}
-
-	void SelectPlayer(Player p)
-	{
-		if(p == null) return;
-		selectedPlayer = p;
-		Camera.main.GetComponent<CameraControl>().SelectTarget(p.gameObject.transform);
 	}
 
 	public static Player GetOtherFollowerPlayer(Player p)

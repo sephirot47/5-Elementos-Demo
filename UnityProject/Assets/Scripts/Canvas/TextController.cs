@@ -106,7 +106,7 @@ public class TextController : MonoBehaviour
 		List<string> result = new List<string>();
 		
 		int i = 0;
-		while(text.Length > 0 && i < text.Length)
+		while(text.Length > 0)
 		{
 			textbox.text = "";
 
@@ -127,7 +127,7 @@ public class TextController : MonoBehaviour
 			
 			result.Add(part);
 
-			text = text.Substring( Mathf.Min(i, text.Length) ); //de i pal final
+			text = text.Substring( Mathf.Min(i, text.Length), text.Length - i ); //de i pal final
 			text = text.TrimStart(new char[]{'\n', '\r'}); //Quitamos saltos de linea del PRINCIPIO solo
 		}
 
