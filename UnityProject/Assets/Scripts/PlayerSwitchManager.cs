@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterSwitchManager : MonoBehaviour 
+public class PlayerSwitchManager : MonoBehaviour 
 {
 	void Start () 
 	{
@@ -28,6 +28,8 @@ public class CharacterSwitchManager : MonoBehaviour
 
 	void SwitchPlayer(bool right)
 	{
+		Player lastPlayerSelected = Core.selectedPlayer;
+
 		int step = right ? 1 : -1, 
 		i = (Core.selectedPlayer == null) ? 0 : Core.playerList.IndexOf(Core.selectedPlayer);
 
@@ -48,10 +50,16 @@ public class CharacterSwitchManager : MonoBehaviour
 
 	void SelectPlayer(Player p)
 	{
+		Player lastPlayerSelected = Core.selectedPlayer;
+
 		if(p == null) return;
 		Core.selectedPlayer = p;
 		Camera.main.GetComponent<CameraControl>().SelectTarget(p.gameObject.transform);
 
-		HUDLifebarsCanvasManager.OnPlayerSelected(p);
+		if(lastPlayerSelected != Core.selectedPlayer) //Si realmente ha habido cambio de player
+		{
+			HUDLifebarsCanvasManager.OnPlayerSelected(p);
+			ComboManager.OnPlayerSelectedChange();
+		}
 	}
 }

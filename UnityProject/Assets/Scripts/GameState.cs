@@ -73,7 +73,7 @@ public class GameState : MonoBehaviour
 	
 	public static bool AllPlayersDead()
 	{
-		foreach(Player p in Core.playerList) if(p != null && !p.IsDead()) return false;
+		foreach(Player p in Core.playerList) if(!p.IsDead()) return false;
 		return true;
 	}
 

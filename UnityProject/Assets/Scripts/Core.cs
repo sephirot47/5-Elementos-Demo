@@ -9,7 +9,7 @@ public class Core : MonoBehaviour
 	public static Player kaji, zap, lluvia;
 	public static float gravity = -3.0f;
 
-	public static List<Player> playerList;
+	public static List<Player> playerList = new List<Player>();
 
 	void Start() 
 	{
@@ -20,7 +20,7 @@ public class Core : MonoBehaviour
 		lluvia = GameObject.Find("Lluvia").GetComponent<Player>();
 		
 		Player[] players = {Core.kaji, Core.zap, Core.lluvia};
-		playerList = new List<Player>(players);
+		playerList.AddRange(players);
 
 		KeyComboManager.Init();
 		

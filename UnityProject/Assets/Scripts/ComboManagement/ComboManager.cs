@@ -4,43 +4,10 @@ using System.Collections.Generic;
 
 public class ComboManager : MonoBehaviour 
 {
-	public static List<Combo> combos;
+	private static List<Combo> combos = new List<Combo>();
 
 	void Start () 
 	{
-		combos = new List<Combo>();
-		
-		ComboInputKey y = new ComboInputKey(KeyCode.Y);
-		ComboInputKey t = new ComboInputKey(KeyCode.T);
-		ComboInputKey g = new ComboInputKey(KeyCode.G);
-		ComboInputClick leftClick = new ComboInputClick(ComboInputClick.LEFT);
-
-		Combo aerialJumpCombo = new Combo(1.0f);
-		aerialJumpCombo.AppendStep( new ComboStep(t, 1.0f) );
-		aerialJumpCombo.AppendStep( new ComboStep(t, 1.0f) );
-
-		ComboStep lastStep = new ComboStep (t, 1.0f);
-		lastStep.SetIsLast(true);
-
-		aerialJumpCombo.AppendStep(lastStep);
-
-		Combo mecCombo = new Combo(1.0f);
-		mecCombo.AppendStep( new ComboStep(g) );
-		mecCombo.AppendStep( new ComboStep(g) );
-		mecCombo.AppendStep( new ComboStep(y) );
-		mecCombo.AppendStep( new ComboStep(t) );
-
-		Combo mecCombo2 = new Combo(1.0f);
-		mecCombo2.AppendStep( new ComboStep(g) );
-		mecCombo2.AppendStep( new ComboStep(g) );
-		mecCombo2.AppendStep( new ComboStep(t) );
-		mecCombo2.AppendStep( new ComboStep(leftClick) );
-
-
-
-		combos.Add(aerialJumpCombo);
-		combos.Add(mecCombo);
-		combos.Add(mecCombo2);
 	}
 	
 	void Update()
@@ -48,6 +15,62 @@ public class ComboManager : MonoBehaviour
 		foreach(Combo combo in combos)
 		{
 			combo.Update();
+		}
+	}
+
+	public static void AddCombo(Combo combo)
+	{
+		combos.Add(combo);
+	}
+
+	//Llamado por PlayerSwitchManager
+	public static void OnPlayerSelectedChange()
+	{
+		ResetAllCombos();
+	}
+
+	//Llamado cuando se ha empezado un combo
+	public static void OnComboStarted(string comboName)
+	{
+		foreach(Player p in Core.playerList)
+		{
+			p.GetComponent<PlayerComboHandler>().OnComboStarted(comboName);
+		}
+	}
+	
+	//Llamado cuando se ha acabado un combo entero
+	public static void OnComboDone(string comboName)
+	{
+		foreach(Player p in Core.playerList)
+		{
+			p.GetComponent<PlayerComboHandler>().OnComboDone(comboName);
+		}
+	}
+	
+	//SOLO llamado si el combo step es de mantener pulsado.
+	//Si no, se llamara a OnComboStepDone
+	public static void OnComboStepStarted(string stepName)
+	{
+		foreach(Player p in Core.playerList)
+		{
+			p.GetComponent<PlayerComboHandler>().OnComboStepStarted(stepName);
+		}
+	}
+	
+	//Llamado cuando un step de un combo se ha acabado
+	public static void OnComboStepDone(string stepName)
+	{
+		foreach(Player p in Core.playerList)
+		{
+			p.GetComponent<PlayerComboHandler>().OnComboStepDone(stepName);
+		}
+	}
+	
+	private static void ResetAllCombos()
+	{
+		foreach(Combo combo in combos)
+		{
+			combo.ResetCombo();
 		}
 	}
 }

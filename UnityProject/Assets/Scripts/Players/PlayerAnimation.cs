@@ -18,6 +18,7 @@ public class PlayerAnimation : MonoBehaviour
 	
 	void Update() 
 	{
+		if(player.IsDead()) return;
 		if(anim == null) return;
 
 		if(!GameState.IsPlaying()) 

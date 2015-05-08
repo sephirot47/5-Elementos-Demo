@@ -4,19 +4,19 @@ using System.Collections;
 
 public class PauseCanvasManager : MonoBehaviour 
 {
-	private static GameObject pauseMenu;
+	private static GameObject pauseCanvas;
 	private static Button resumeButton, exitButton;
 
 	void Start()
 	{
-		pauseMenu = Core.GetSubGameObject(gameObject, "PauseMenu");
-		resumeButton = Core.GetSubGameObject(gameObject, "ResumeButton").GetComponent<Button>();
-		exitButton = Core.GetSubGameObject(gameObject, "ExitButton").GetComponent<Button>();
+		pauseCanvas = gameObject;
+		resumeButton = Core.GetSubGameObject(pauseCanvas, "ResumeButton").GetComponent<Button>();
+		exitButton = Core.GetSubGameObject(pauseCanvas, "ExitButton").GetComponent<Button>();
 
 		resumeButton.onClick.AddListener( () => OnResumeButtonClick() ); //Ni idea de esto, copy pasted, it works
 		exitButton.onClick.AddListener( () => OnExitButtonClick() );
 
-		CanvasUtils.Hide(pauseMenu);
+		CanvasUtils.Hide(pauseCanvas);
 	}
 
 	void Update()
@@ -28,20 +28,20 @@ public class PauseCanvasManager : MonoBehaviour
 		{
 			if(GameState.AllPlayersDead())
 			{
-				CanvasUtils.Show(pauseMenu);
+				CanvasUtils.Show(pauseCanvas);
 			}
 		}
 	}
 
 	public static void OnPauseStart()
 	{
-		CanvasUtils.Show(pauseMenu);
+		CanvasUtils.Show(pauseCanvas);
 		CanvasUtils.ShowCursor();
 	}
 
 	public static void OnPauseFinish()
 	{
-		CanvasUtils.Hide(pauseMenu);
+		CanvasUtils.Hide(pauseCanvas);
 		CanvasUtils.HideCursor();
 	}
 

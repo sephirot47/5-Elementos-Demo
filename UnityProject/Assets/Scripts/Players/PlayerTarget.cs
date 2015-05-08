@@ -16,6 +16,7 @@ public class PlayerTarget : MonoBehaviour
 	
 	void Update () 
 	{
+		if(player.IsDead()) return;
 		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
 
 		if(player.IsSelected())

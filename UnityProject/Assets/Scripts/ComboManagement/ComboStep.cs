@@ -8,37 +8,44 @@ public class ComboStep
 	private List<IComboInput> inputSimultaneous; //Botones que hay que mantener pulsados SIMULTANEAMENTE para que el DOWN se acepte
 	private float timeRequired = 0.0f; //Tiempo que se ha de mantener el inputDown con sus inputSimultaneous para que se de por bueno el step
 	
-	private string id = "";
+	private string name = "No name";
 	private float timeDown = 0.0f; //Para contar el tiempo pasado
-	private bool startedPressing = false, cancelled = false, firstUpdate = true, lastStep = false;
-
-
+	private bool startedPressing = false, cancelled = false, firstUpdate = true, lastStep = false, finished = false;
+	
 	//Pulsacion instantanea de un input
-	public ComboStep(IComboInput inputDown)
+	public ComboStep(string name, bool lastStep, IComboInput inputDown)
 	{
+		this.name = name;
+		this.lastStep = lastStep;
 		this.inputDown = inputDown;
 		inputSimultaneous = new List<IComboInput>();
 	}
 
 	//Pulsacion de un input durante x tiempo
-	public ComboStep(IComboInput inputDown, float timeRequired)
+	public ComboStep(string name, bool lastStep, IComboInput inputDown, float timeRequired)
 	{
+		this.name = name;
+		this.lastStep = lastStep;
 		this.inputDown = inputDown;
 		this.inputSimultaneous = new List<IComboInput>();
 		this.timeRequired = timeRequired;
 	}
 
 	//Pulsacion instantanea de un input, con 1 o mas simultaneos pulsados
-	public ComboStep(IComboInput inputDown, IComboInput[] inputSimultaneous)
+	public ComboStep(string name, bool lastStep, IComboInput inputDown, IComboInput[] inputSimultaneous)
 	{
+		this.name = name;
+		this.lastStep = lastStep;
 		this.inputDown = inputDown;
 		this.inputSimultaneous = new List<IComboInput>();
 		this.inputSimultaneous.AddRange(inputSimultaneous);
 	}
 	
 	//Pulsacion de un input durante x tiempo, con simultaneos pulsados
-	public ComboStep(IComboInput inputDown, float timeRequired, IComboInput[] inputSimultaneous)
+	public ComboStep(string name, bool lastStep, IComboInput inputDown, float timeRequired, IComboInput[] inputSimultaneous)
 	{
+		this.name = name;
+		this.lastStep = lastStep;
 		this.inputDown = inputDown;
 		this.inputSimultaneous = new List<IComboInput>();
 		this.inputSimultaneous.AddRange(inputSimultaneous);
@@ -50,11 +57,23 @@ public class ComboStep
 	{
 		timeDown += Time.deltaTime;
 
+		if(!startedPressing && inputDown.Down())
+		{
+			ComboManager.OnComboStepStarted(name);
+			startedPressing = true;
+		}
+
 		if(inputDown.Down()) startedPressing = true;
 		else if(inputDown.Up() && startedPressing && timeDown < timeRequired) 
 		{
-			Debug.Log("Step cancelled");
+			//Debug.Log("Step cancelled");
 			cancelled = true; //el step se cancela si levantas despues de haberlo empezado(haberlo tenido pulsado 0.1 secs)
+		}
+
+		if(Done() && !finished)
+		{
+			finished = true;
+			ComboManager.OnComboStepDone(name);
 		}
 
 		if( !BeingDone() && timeDown < timeRequired) timeDown = 0.0f;
@@ -74,7 +93,8 @@ public class ComboStep
 			//Para evitar quedarse pulsando la misma tecla y hacerte el combo dejandola pulsada
 			//En el ultimo step, si te pasas del tiempo acaba el combo igualmente
 			//En los de antes, has de soltar antes de hacer el siguiente step
-			bool inputDownOk = (lastStep ? inputDown.Pressed() : inputDown.Up()); 
+			//bool inputDownOk = (lastStep ? inputDown.Pressed() : inputDown.Up()); 
+			bool inputDownOk = inputDown.Up(); //HE PENSADO QUE ES MEJOR UP para todos. Dejo linea de arriba comentada por si acaso
 
 			done = inputDownOk &&
 				   AllSimultaneousPressed() &&
@@ -86,8 +106,6 @@ public class ComboStep
 			Debug.Log(timeDown >= timeRequired);
 			Debug.Log("_________________");*/
 		}
-
-		if(done) Debug.Log (inputDown.GetId() + " done");
 
 		return done && !Cancelled();
 	}
@@ -125,17 +143,16 @@ public class ComboStep
 		return EverythingPressed();
 	}
 
-	public void SetId(string id)
+	public void SetName(string name)
 	{
-		this.id = id;
+		this.name = name;
 	}
 
-	public string GetId() { return id; }
 	//Ha de llamarlo Combo para resetearlo
 	public void Reset()
 	{
 		timeDown = 0.0f;
-		startedPressing = cancelled = false;
+		startedPressing = cancelled = finished = false;
 		firstUpdate = true;
 	}
 }
