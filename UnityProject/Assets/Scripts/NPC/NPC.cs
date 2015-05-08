@@ -15,7 +15,7 @@ public class NPC : MonoBehaviour
 		npcName = FileManager.GetNPCName(this);
 		texts = FileManager.GetNPCTexts(this);
 
-		if(id == "") 
+		if(id == "")
 			Debug.LogError("Este NPC no tiene ninguna id asignada!!!! Se rompera todo si no le pones alguna :(" );
 	}
 	

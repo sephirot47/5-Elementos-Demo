@@ -51,5 +51,7 @@ public class CharacterSwitchManager : MonoBehaviour
 		if(p == null) return;
 		Core.selectedPlayer = p;
 		Camera.main.GetComponent<CameraControl>().SelectTarget(p.gameObject.transform);
+
+		HUDLifebarsCanvasManager.OnPlayerSelected(p);
 	}
 }
