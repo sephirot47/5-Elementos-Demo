@@ -13,6 +13,7 @@ public class ComboManager : MonoBehaviour
 		ComboInputKey y = new ComboInputKey(KeyCode.Y);
 		ComboInputKey t = new ComboInputKey(KeyCode.T);
 		ComboInputKey g = new ComboInputKey(KeyCode.G);
+		ComboInputClick leftClick = new ComboInputClick(ComboInputClick.LEFT);
 
 		Combo aerialJumpCombo = new Combo(1.0f);
 		aerialJumpCombo.AppendStep( new ComboStep(t, 1.0f) );
@@ -23,15 +24,23 @@ public class ComboManager : MonoBehaviour
 
 		aerialJumpCombo.AppendStep(lastStep);
 
+		Combo mecCombo = new Combo(1.0f);
+		mecCombo.AppendStep( new ComboStep(g) );
+		mecCombo.AppendStep( new ComboStep(g) );
+		mecCombo.AppendStep( new ComboStep(y) );
+		mecCombo.AppendStep( new ComboStep(t) );
+
+		Combo mecCombo2 = new Combo(1.0f);
+		mecCombo2.AppendStep( new ComboStep(g) );
+		mecCombo2.AppendStep( new ComboStep(g) );
+		mecCombo2.AppendStep( new ComboStep(t) );
+		mecCombo2.AppendStep( new ComboStep(leftClick) );
+
+
+
 		combos.Add(aerialJumpCombo);
-
-		/*aerialJumpCombo.AppendStep( new ComboStep(t) );
-		aerialJumpCombo.AppendStep( new ComboStep(y) );
-		aerialJumpCombo.AppendStep( new ComboStep(g) );
-		aerialJumpCombo.AppendStep( new ComboStep(y) );*/
-		//aerialJumpCombo.AppendStep( new ComboStep(g, 2.0f) );
-		//aerialJumpCombo.AppendStep( new ComboStep(g) );
-
+		combos.Add(mecCombo);
+		combos.Add(mecCombo2);
 	}
 	
 	void Update()
@@ -39,14 +48,6 @@ public class ComboManager : MonoBehaviour
 		foreach(Combo combo in combos)
 		{
 			combo.Update();
-		}
-
-		if( combos[0].Done() )
-		{
-			Debug.LogError("DONE");
-			Debug.Break();
-			Debug.DebugBreak();
-			combos[0].ResetCombo();
 		}
 	}
 }

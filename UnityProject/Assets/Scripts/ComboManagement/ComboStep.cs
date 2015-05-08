@@ -51,7 +51,8 @@ public class ComboStep
 		timeDown += Time.deltaTime;
 
 		if(inputDown.Down()) startedPressing = true;
-		else if(inputDown.Up() && startedPressing && timeDown < timeRequired) {
+		else if(inputDown.Up() && startedPressing && timeDown < timeRequired) 
+		{
 			Debug.Log("Step cancelled");
 			cancelled = true; //el step se cancela si levantas despues de haberlo empezado(haberlo tenido pulsado 0.1 secs)
 		}

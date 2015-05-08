@@ -39,7 +39,17 @@ public class Combo
 	//Must be called by the ComboManager :)
 	public void Update()
 	{
+		if(Done()) 
+		{
+			//Combo done
+			Debug.LogError("DONE");
+			Debug.Break();
+			Debug.DebugBreak();
+			ResetCombo();
+		}
+
 		time += Time.deltaTime;
+
 		steps[currentStep].Update();
 
 		//Para evitar que el comboo se corte cuando se tiene que pulsar una tecla
@@ -81,7 +91,6 @@ public class Combo
 		{
 			step.Reset();
 		}
-
 	}
 	
 	public void SetDelay(float d)
