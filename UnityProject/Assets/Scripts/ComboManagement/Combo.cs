@@ -7,7 +7,6 @@ public class Combo
 	[SerializeField]
 	private List<ComboStep> steps;
 	private float time = 0.0f; //Para contar el tiempo pasado
-	private float delay = 1.0f; //Maximo delay entre pulsaciones
 	private string name = "No name";
 	private int currentStep = 0;
 	private bool started = false;
@@ -25,40 +24,30 @@ public class Combo
 		steps.AddRange(comboSteps);
 	}
 
-	public Combo(string name, float delay)
-	{
-		this.name = name;
-		this.delay = delay;
-		steps = new List<ComboStep>();
-	}
-
-	public Combo(string name, float delay, ComboStep[] comboSteps)
-	{
-		this.name = name;
-		this.delay = delay;
-		steps = new List<ComboStep>();
-		steps.AddRange(comboSteps);
-	}
-
 	//Must be called by the ComboManager :)
 	public void Update()
 	{
 		if(Done()) 
 		{
 			//Combo done
-			ComboManager.OnComboDone(name);
+			ComboManager.OnComboDone(this);
 			ResetCombo();
 		}
 
-		if(currentStep >= steps.Count) return;
-
 		time += Time.deltaTime;
+
+		//Esto solo se comprueba si el combo no se esta haciendo
+		if(!steps[currentStep].BeingDone())
+		{
+			if( AfterCorrectTime() ) ResetCombo(); //Se ha pasado, reseteamos combo
+			else if( BeforeCorrectTime() ) return; //Esperamos
+		}
 
 		if(steps[currentStep].BeingDone() && !started)
 		{
 			time = 0.0f;
 			started = true;
-			ComboManager.OnComboStarted(name);
+			ComboManager.OnComboStarted(this);
 		}
 
 		steps[currentStep].Update();
@@ -71,13 +60,8 @@ public class Combo
 			if(!started)
 			{
 				started = true;
-				ComboManager.OnComboStarted(name);
+				ComboManager.OnComboStarted(this);
 			}
-		}
-
-        else if (time > delay) //Reset
-		{
-			ResetCombo();
 		}
 
         if(steps[currentStep].Cancelled())
@@ -89,11 +73,16 @@ public class Combo
 			//Solo un step por frame
 			if(steps[currentStep].Done())
 			{
-				//Yay, step hecho, vamos al siguiente!!!
-				++currentStep; 
-				time = 0.0f; //El time del delay se reinicia obviamente
+				NextStep();
 			}
 		}
+	}
+
+	public void NextStep()
+	{
+		//Yay, step hecho, vamos al siguiente!!!
+		++currentStep; 
+		time = 0.0f; //El time se reinicia obviamente
 	}
 	
 	public bool BeingDone()
@@ -112,10 +101,17 @@ public class Combo
 			step.Reset();
 		}
 	}
-	
-	public void SetDelay(float d)
+
+	private bool BeforeCorrectTime()
 	{
-		delay = d;
+		if(currentStep - 1 < 0) return false;
+		return time < steps[currentStep].GetNextStepInputInterval().first;
+	}
+
+	private bool AfterCorrectTime()
+	{
+		if(currentStep - 1 < 0) return false;
+		return time > steps[currentStep].GetNextStepInputInterval().second;
 	}
 
 	public void AppendStep(ComboStep step)

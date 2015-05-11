@@ -24,13 +24,14 @@ public class PlayerComboManager : MonoBehaviour
 			
 			
 			Combo flamethrower = new Combo("Flamethrower");
-				flamethrower.AppendStep( new ComboStep("Flamethrower", attack, 9999.0f, new IComboInput[]{guard}) );
+				flamethrower.AppendStep( new ComboStep("Flamethrower", attack, 9999.0f, new IComboInput[]{guard}, 
+										 PlayerAnimationManager.GuardBegin) );
 			ComboManager.AddCombo(flamethrower);
 
-			Combo punching = new Combo("Punching", 1.0f);
-				punching.AppendStep( new ComboStep("Punch0", attack) );
-				punching.AppendStep( new ComboStep("Punch1", attack) );
-				punching.AppendStep( new ComboStep("Punch2", attack) );
+			Combo punching = new Combo("Punching");
+			punching.AppendStep( new ComboStep("Punch0", attack, PlayerAnimationManager.Explosion) );
+			punching.AppendStep( new ComboStep("Punch1", attack, PlayerAnimationManager.ComboGround) );
+			punching.AppendStep( new ComboStep("Punch2", attack, PlayerAnimationManager.ComboAerial) );
 			ComboManager.AddCombo(punching);
 		}
 		else if(player == Core.zap) //Combos de zap
@@ -48,20 +49,20 @@ public class PlayerComboManager : MonoBehaviour
 	}
 	
 	//Llamado cuando se ha empezado un combo
-	public void OnComboStarted(string comboName)
+	public void OnComboStarted(Combo combo)
 	{
 		if(!player.IsSelected()) return;
 
-		Debug.Log("Started " + comboName);
+		//Debug.Log("Started " + combo.GetName());
 		attacking = true;
 	}
 	
 	//Llamado cuando se ha acabado un combo entero
-	public void OnComboDone(string comboName)
+	public void OnComboDone(Combo combo)
 	{
 		if(!player.IsSelected()) return;
 
-		Debug.Log("Done " + comboName);
+		//Debug.Log("Done " + combo.GetName());
 		if(!ComboManager.AnyComboBeingDone())
 		{
 			attacking = false;
@@ -71,50 +72,34 @@ public class PlayerComboManager : MonoBehaviour
 	
 	//SOLO llamado si el combo step es de mantener pulsado.
 	//Si no, se llamara a OnComboStepDone
-	public void OnComboStepDoing(string stepName, float time)
+	public void OnComboStepDoing(ComboStep step, float time)
 	{
 		if(!player.IsSelected()) return;
 
-		if(stepName == "Flamethrower")
-		{
-			anim.Play(PlayerAnimationManager.ReceiveDamage);
-		}
-		else if(stepName == "Punch0")
-		{
-			anim.Play(PlayerAnimationManager.Explosion);
-		}
-		else if(stepName == "Punch1")
-		{
-			anim.Play(PlayerAnimationManager.ComboGround);
-		}
-		else if(stepName == "Punch2")
-		{
-			anim.Play(PlayerAnimationManager.ComboAerial);
-		}
+		anim.Play(step.GetAnimation());
 	}
 
 	//Llamado cuando un step de un combo se ha acabado
-	public void OnComboStepCancelled(string stepName)
+	public void OnComboStepCancelled(ComboStep step)
 	{
 		if(!player.IsSelected()) return;
-		
-		Debug.Log("Cancelled " + stepName);
+
+		//Debug.Log("Cancelled " + step.GetName());
 
 		//Si no hay ningun combo haciendose, vuelve a idle
 		if(!ComboManager.AnyComboBeingDone())
 		{
 			attacking = false;
-			Debug.Log ("PLAY IDLE0");
 			anim.Play(PlayerAnimationManager.Idle0);
 		}
 	}
 
 	//Llamado cuando un step de un combo se ha acabado
-	public void OnComboStepDone(string stepName)
+	public void OnComboStepDone(ComboStep step)
 	{
 		if(!player.IsSelected()) return;
 
-		Debug.Log("Done " + stepName);
+		//Debug.Log("Done " + step.GetName());
 	}
 
 	public void OnReceiveDamage()

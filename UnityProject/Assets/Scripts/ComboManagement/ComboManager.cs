@@ -30,47 +30,47 @@ public class ComboManager : MonoBehaviour
 	}
 
 	//Llamado cuando se ha empezado un combo
-	public static void OnComboStarted(string comboName)
+	public static void OnComboStarted(Combo combo)
 	{
 		foreach(Player p in Core.playerList)
 		{
-			p.GetComponent<PlayerComboManager>().OnComboStarted(comboName);
+			p.GetComponent<PlayerComboManager>().OnComboStarted(combo);
 		}
 	}
 	
 	//Llamado cuando se ha acabado un combo entero
-	public static void OnComboDone(string comboName)
+	public static void OnComboDone(Combo combo)
 	{
 		foreach(Player p in Core.playerList)
 		{
-			p.GetComponent<PlayerComboManager>().OnComboDone(comboName);
+			p.GetComponent<PlayerComboManager>().OnComboDone(combo);
 		}
 	}
 	
 	//SOLO llamado si el combo step es de mantener pulsado.
 	//Si no, se llamara a OnComboStepDone
-	public static void OnComboStepDoing(string stepName, float time)
+	public static void OnComboStepDoing(ComboStep step, float time)
 	{
 		foreach(Player p in Core.playerList)
 		{
-			p.GetComponent<PlayerComboManager>().OnComboStepDoing(stepName, time);
+			p.GetComponent<PlayerComboManager>().OnComboStepDoing(step, time);
 		}
 	}
 	
-	public static void OnComboStepCancelled(string stepName)
+	public static void OnComboStepCancelled(ComboStep step)
 	{
 		foreach(Player p in Core.playerList)
 		{
-			p.GetComponent<PlayerComboManager>().OnComboStepCancelled(stepName);
+			p.GetComponent<PlayerComboManager>().OnComboStepCancelled(step);
 		}
 	}
 
 	//Llamado cuando un step de un combo se ha acabado
-	public static void OnComboStepDone(string stepName)
+	public static void OnComboStepDone(ComboStep step)
 	{
 		foreach(Player p in Core.playerList)
 		{
-			p.GetComponent<PlayerComboManager>().OnComboStepDone(stepName);
+			p.GetComponent<PlayerComboManager>().OnComboStepDone(step);
 		}
 	}
 

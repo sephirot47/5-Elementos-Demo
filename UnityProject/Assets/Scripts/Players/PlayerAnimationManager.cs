@@ -106,6 +106,11 @@ public class PlayerAnimationManager : MonoBehaviour
 			anim.Stop ();
 	}
 
+	public static float GetAnimationDuration(PlayerAnimation animation, Player p)
+	{
+		return p.GetComponent<Animation>().GetClip(animation.GetName()).length;
+	}
+
 	private bool CanBePlayed(PlayerAnimation animation)
 	{
 		string state = animation.GetName();
