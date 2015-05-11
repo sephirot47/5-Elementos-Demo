@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 76117028319a2744987c9d8b7f60e4ec
-timeCreated: 1431121827
+guid: 6a8624bae01a82545951960b40555b3f
+timeCreated: 1431121823
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -148,7 +148,7 @@ ModelImporter:
     400138: default
     400140: //RootNode
     4300000: default
-    7400000: Idle2
+    7400000: GuardStill
     9500000: //RootNode
     11100000: //RootNode
     13700000: default
@@ -169,9 +169,9 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Idle2
+      name: GuardStill
       takeName: Take 001
-      firstFrame: 0
+      firstFrame: 10
       lastFrame: 100
       wrapMode: 0
       orientationOffsetY: 0

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 077c5af600582cc4eb12191b407b779b
-timeCreated: 1430342262
+guid: 8cb4fd05119368b4087c3d2c8299cc45
+timeCreated: 1431125111
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -148,7 +148,7 @@ ModelImporter:
     400138: default
     400140: //RootNode
     4300000: default
-    7400000: Combo1
+    7400000: Land
     9500000: //RootNode
     11100000: //RootNode
     13700000: default
@@ -169,11 +169,11 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Combo1
+      name: Land
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 135
-      wrapMode: 0
+      lastFrame: 10
+      wrapMode: 8
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0

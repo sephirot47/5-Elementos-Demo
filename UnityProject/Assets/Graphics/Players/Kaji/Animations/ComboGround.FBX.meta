@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 76117028319a2744987c9d8b7f60e4ec
-timeCreated: 1431121827
+guid: d67858efaa0883046899f3122e2ca473
+timeCreated: 1431121836
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -148,7 +148,7 @@ ModelImporter:
     400138: default
     400140: //RootNode
     4300000: default
-    7400000: Idle2
+    7400000: ComboGround
     9500000: //RootNode
     11100000: //RootNode
     13700000: default
@@ -169,10 +169,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Idle2
+      name: ComboGround
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 100
+      lastFrame: 135
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

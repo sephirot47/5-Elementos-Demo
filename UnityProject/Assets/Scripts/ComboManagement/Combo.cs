@@ -50,10 +50,13 @@ public class Combo
 			ResetCombo();
 		}
 
+		if(currentStep >= steps.Count) return;
+
 		time += Time.deltaTime;
 
 		if(steps[currentStep].BeingDone() && !started)
 		{
+			time = 0.0f;
 			started = true;
 			ComboManager.OnComboStarted(name);
 		}
@@ -92,6 +95,11 @@ public class Combo
 			}
 		}
 	}
+	
+	public bool BeingDone()
+	{
+		return started;
+	}
 
 	public void ResetCombo()
 	{
@@ -123,5 +131,12 @@ public class Combo
 	public string GetName()
 	{
 		return name;
+	}
+
+	public void Cancel()
+	{
+		//En este orden
+		steps[currentStep].Cancel();
+		ResetCombo();
 	}
 }

@@ -55,20 +55,13 @@ public class ComboStep
 	//Must be called by Combo Update, ONLY when its the currentstep!!! :)
 	public void Update()
 	{
-		timeDown += Time.deltaTime;
-
-		if(!startedPressing && inputDown.Down())
-		{
-			ComboManager.OnComboStepStarted(name);
-			startedPressing = true;
-		}
-
 		if(inputDown.Down()) startedPressing = true;
 		else if(inputDown.Up() && startedPressing && timeDown < timeRequired) 
 		{
-			//Debug.Log("Step cancelled");
-			cancelled = true; //el step se cancela si levantas despues de haberlo empezado(haberlo tenido pulsado 0.1 secs)
+			Cancel();
 		}
+
+		if(startedPressing) timeDown += Time.deltaTime;
 
 		if(Done() && !finished)
 		{
@@ -77,6 +70,8 @@ public class ComboStep
 		}
 
 		if( !BeingDone() && timeDown < timeRequired) timeDown = 0.0f;
+		
+		if(BeingDone()) ComboManager.OnComboStepDoing(name, timeDown);
 	}
 
 	public bool Done()
@@ -130,6 +125,13 @@ public class ComboStep
 		return true;
 	}
 
+	public void Cancel()
+	{
+		Reset();
+		ComboManager.OnComboStepCancelled(name);
+		cancelled = true; //el step se cancela si levantas despues de haberlo empezado(haberlo tenido pulsado 0.1 secs)
+	}
+
 	public bool Cancelled()
 	{
 		return cancelled;
@@ -140,7 +142,7 @@ public class ComboStep
 	//alguna manera de comprobar esto para que no corte el combo porque no registra ningun done al cabo de un segundo
 	public bool BeingDone()
 	{
-		return EverythingPressed();
+		return startedPressing && EverythingPressed();
 	}
 
 	public void SetName(string name)

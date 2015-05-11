@@ -3,11 +3,11 @@ using System.Collections;
 
 public class Player : MonoBehaviour 
 {
-	PlayerAnimation anim;
+	PlayerAnimationManager anim;
 
 	public float attack = 5.0f;
 
-	public float maxLife;
+	public float maxLife = 100.0f;
 	private float currentLife;
 
 	private float aggro = 0.0f;
@@ -16,8 +16,8 @@ public class Player : MonoBehaviour
 
 	void Start()
 	{
-		anim = GetComponent<PlayerAnimation>();
-		currentLife = maxLife = 100.0f;
+		anim = GetComponent<PlayerAnimationManager>();
+		currentLife = maxLife;
 	}
 
 	void Update()
@@ -61,42 +61,6 @@ public class Player : MonoBehaviour
 		proj.GetComponent<Projectile>().shooterPlayer = this;
 	}
 
-	//COMBO RELATED STUFF /////////////////////////
-	public void OnClickComboDown(KeyCode heldControlKey, int clicksSeguidos, int pressedButton) // 0 = left, 1 = right
-	{
-		if(heldControlKey == KeyCode.None)
-		{
-			Shoot();
-		}
-		else if(heldControlKey == KeyCode.LeftControl)
-		{
-			anim.Play("Combo1");
-		}
-		else if(heldControlKey == KeyCode.LeftShift)
-		{
-			anim.Play("ReceiveDamage");
-		}
-	}
-
-	public void OnClickCombo(KeyCode heldControlKey, int clicksSeguidos, int pressedButton) //Mantener pulsado
-	{
-
-	}
-
-	public void OnKeyComboDone(string comboName)
-	{
-		if(comboName == "forwardBoost") GetComponent<PlayerMovement>().Boost(Camera.main.transform.forward);
-		else if(comboName == "rightBoost") GetComponent<PlayerMovement>().Boost(Camera.main.transform.right);
-		else if(comboName == "leftBoost") GetComponent<PlayerMovement>().Boost(-Camera.main.transform.right);
-		else if(comboName == "backBoost") GetComponent<PlayerMovement>().Boost(-Camera.main.transform.forward);
-	}
-
-	public void OnKeyComboKeyDown(string comboName, KeyCode key)
-	{
-
-	}
-	///////////////////////////////
-
 	public float GetAggro() { return aggro; }
 	public void OnApplyDamage() { aggro += attack; }
 	public float GetCurrentLife() { return currentLife; }
@@ -107,13 +71,14 @@ public class Player : MonoBehaviour
 	public void ReceiveAttack(Enemy e)
 	{
 		currentLife -= e.GetAttack();
+		GetComponent<PlayerComboManager>().OnReceiveDamage();
 
 		if(IsDead() && anim != null)
 		{
 			Die();
 		}
 
-		else if (anim != null) anim.Play("ReceiveDamage");
+		else if (anim != null) anim.Play(PlayerAnimationManager.ReceiveDamage);
 	}
 	
 	public void SetTarget(GameObject t)
@@ -129,7 +94,7 @@ public class Player : MonoBehaviour
 	public void Die()
 	{
 		currentLife = 0;
-		anim.Play("Die");
+		anim.Play(PlayerAnimationManager.Die);
 	}
 
 	public bool IsDead()

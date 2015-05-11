@@ -1,75 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerAnimation : MonoBehaviour 
+public class PlayerAnimation
 {
-	Player player;
-	private Animation anim;
+	public enum Priority { Low = 0, Medium = 1, High = 2, VeryHigh = 3 }; 
 
-	public float randomIdleDelay = 5.0f;
-	private float idleTime;
+	private string name;
+	private Priority priority = Priority.Low;
 
-	void Start () 
+	public PlayerAnimation(string animationName, Priority p)
 	{
-		player = GetComponent<Player>();	
-		anim = GetComponent<Animation>();
-		idleTime = 0.0f;
-	}
-	
-	void Update() 
-	{
-		if(player.IsDead()) return;
-		if(anim == null) return;
-
-		if(!GameState.IsPlaying()) 
-		{
-			anim.Stop();
-			return;
-		}
-
-		if(!player.IsJumping())
-		{
-			Vector2 planeMovement = new Vector2(player.GetMovement().x, player.GetMovement().z);
-			if(planeMovement.magnitude > 0.1f)
-			{
-				Play("Run");
-			}
-			else
-			{
-				if(!anim.IsPlaying("Combo1") && !anim.IsPlaying("ReceiveDamage") && !anim.IsPlaying("Die"))
-				{
-					idleTime += Time.deltaTime;
-
-					if(idleTime > randomIdleDelay)
-					{
-						idleTime = 0.0f;
-						Play("Idle2");
-					}
-					else if(!anim.IsPlaying("Idle2"))
-					{
-						Play("IdleDefault");
-					}
-					else
-					{
-						idleTime = 0.0f;
-					}
-				}
-			}
-		}
+		this.name = animationName;
+		priority = p;
 	}
 
-	public void Play(string state)
-	{
-		if(anim.IsPlaying("Die") && player.GetCurrentLife() <= 0 ) return;
-		if(!anim.IsPlaying("Combo1") && !anim.IsPlaying("ReceiveDamage") && !anim.IsPlaying("Die"))
-		{
-			if(!anim.IsPlaying(state)) 
-				anim.Play(state);
-		}
-	}
-
-	public void PlayQueued(string state)
-	{
-		anim.PlayQueued(state);
-	}
+	public string GetName() { return name; }
+	public Priority GetPriority() { return priority; }
 }

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 76117028319a2744987c9d8b7f60e4ec
-timeCreated: 1431121827
+guid: 6ba36a0be35cadd4f8fd18a62ee73216
+timeCreated: 1431121824
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -148,7 +148,7 @@ ModelImporter:
     400138: default
     400140: //RootNode
     4300000: default
-    7400000: Idle2
+    7400000: Flamethrower
     9500000: //RootNode
     11100000: //RootNode
     13700000: default
@@ -169,11 +169,11 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Idle2
+      name: Flamethrower
       takeName: Take 001
       firstFrame: 0
       lastFrame: 100
-      wrapMode: 0
+      wrapMode: 8
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
