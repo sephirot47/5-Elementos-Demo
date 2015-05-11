@@ -121,6 +121,13 @@ public class Combo
 	public void AppendStep(ComboStep step)
 	{
 		steps.Add(step);
+
+		int i;
+		for(i = 0; i <  steps.Count - 1; ++i)
+		{
+			steps[i].SetIsLast(false);
+		}
+		steps[i].SetIsLast(true);
 	}
 
 	public bool Done()

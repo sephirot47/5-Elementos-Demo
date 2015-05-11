@@ -13,39 +13,35 @@ public class ComboStep
 	private bool startedPressing = false, cancelled = false, firstUpdate = true, lastStep = false, finished = false;
 	
 	//Pulsacion instantanea de un input
-	public ComboStep(string name, bool lastStep, IComboInput inputDown)
+	public ComboStep(string name, IComboInput inputDown)
 	{
 		this.name = name;
-		this.lastStep = lastStep;
 		this.inputDown = inputDown;
 		inputSimultaneous = new List<IComboInput>();
 	}
 
 	//Pulsacion de un input durante x tiempo
-	public ComboStep(string name, bool lastStep, IComboInput inputDown, float timeRequired)
+	public ComboStep(string name, IComboInput inputDown, float timeRequired)
 	{
 		this.name = name;
-		this.lastStep = lastStep;
 		this.inputDown = inputDown;
 		this.inputSimultaneous = new List<IComboInput>();
 		this.timeRequired = timeRequired;
 	}
 
 	//Pulsacion instantanea de un input, con 1 o mas simultaneos pulsados
-	public ComboStep(string name, bool lastStep, IComboInput inputDown, IComboInput[] inputSimultaneous)
+	public ComboStep(string name, IComboInput inputDown, IComboInput[] inputSimultaneous)
 	{
 		this.name = name;
-		this.lastStep = lastStep;
 		this.inputDown = inputDown;
 		this.inputSimultaneous = new List<IComboInput>();
 		this.inputSimultaneous.AddRange(inputSimultaneous);
 	}
 	
 	//Pulsacion de un input durante x tiempo, con simultaneos pulsados
-	public ComboStep(string name, bool lastStep, IComboInput inputDown, float timeRequired, IComboInput[] inputSimultaneous)
+	public ComboStep(string name, IComboInput inputDown, float timeRequired, IComboInput[] inputSimultaneous)
 	{
 		this.name = name;
-		this.lastStep = lastStep;
 		this.inputDown = inputDown;
 		this.inputSimultaneous = new List<IComboInput>();
 		this.inputSimultaneous.AddRange(inputSimultaneous);

@@ -24,13 +24,13 @@ public class PlayerComboManager : MonoBehaviour
 			
 			
 			Combo flamethrower = new Combo("Flamethrower");
-				flamethrower.AppendStep( new ComboStep("Flamethrower", true, attack, 9999.0f, new IComboInput[]{guard}) );
+				flamethrower.AppendStep( new ComboStep("Flamethrower", attack, 9999.0f, new IComboInput[]{guard}) );
 			ComboManager.AddCombo(flamethrower);
 
 			Combo punching = new Combo("Punching", 1.0f);
-				punching.AppendStep( new ComboStep("Punch0", false, attack) );
-				punching.AppendStep( new ComboStep("Punch1", false, attack) );
-				punching.AppendStep( new ComboStep("Punch2", true, attack) );
+				punching.AppendStep( new ComboStep("Punch0", attack) );
+				punching.AppendStep( new ComboStep("Punch1", attack) );
+				punching.AppendStep( new ComboStep("Punch2", attack) );
 			ComboManager.AddCombo(punching);
 		}
 		else if(player == Core.zap) //Combos de zap
@@ -81,12 +81,10 @@ public class PlayerComboManager : MonoBehaviour
 		}
 		else if(stepName == "Punch0")
 		{
-			Debug.Log ("PLAY EXPLOSION");
 			anim.Play(PlayerAnimationManager.Explosion);
 		}
 		else if(stepName == "Punch1")
 		{
-			Debug.Log ("PLAY GUARDBEGIN");
 			anim.Play(PlayerAnimationManager.ComboGround);
 		}
 		else if(stepName == "Punch2")
