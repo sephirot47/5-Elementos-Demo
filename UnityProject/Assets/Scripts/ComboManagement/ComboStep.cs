@@ -10,11 +10,12 @@ public class ComboStep
 
 	//Cuanto menor sea este valor, mas tiempo tendra antes de que se acabe la animacion del step para pulsar la tecla
 	//del siguiente, siendo 0 poder pulsarla desde el principio, y 1 poder pulsarla despues del final
-	private readonly float animationDurationThresholdMultiplier = 0.8f; 
+	private readonly float animationDurationThresholdMultiplier = 0.9f; 
 	private PlayerAnimation animation;
 
 	private string name = "No name";
 	private float timeDown = 0.0f; //Para contar el tiempo pasado
+	private float timeSinceStarted = 0.0f; //Para contar el tiempo desde que se inicio
 	private bool startedPressing = false, cancelled = false, firstUpdate = true, lastStep = false, finished = false;
 	
 	//Pulsacion instantanea de un input
@@ -162,6 +163,7 @@ public class ComboStep
 	public void Reset()
 	{
 		timeDown = 0.0f;
+		timeSinceStarted = 0.0f;
 		startedPressing = cancelled = finished = false;
 		firstUpdate = true;
 	}

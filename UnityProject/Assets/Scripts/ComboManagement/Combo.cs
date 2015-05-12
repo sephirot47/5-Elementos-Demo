@@ -105,13 +105,13 @@ public class Combo
 	private bool BeforeCorrectTime()
 	{
 		if(currentStep - 1 < 0) return false;
-		return time < steps[currentStep].GetNextStepInputInterval().first;
+		return time < steps[currentStep - 1].GetNextStepInputInterval().first;
 	}
 
 	private bool AfterCorrectTime()
 	{
 		if(currentStep - 1 < 0) return false;
-		return time > steps[currentStep].GetNextStepInputInterval().second;
+		return time > steps[currentStep - 1].GetNextStepInputInterval().second;
 	}
 
 	public void AppendStep(ComboStep step)

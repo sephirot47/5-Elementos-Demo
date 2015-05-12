@@ -26,12 +26,12 @@ public class PlayerComboManager : MonoBehaviour
 			Combo flamethrower = new Combo("Flamethrower");
 				flamethrower.AppendStep( new ComboStep("Flamethrower", attack, 9999.0f, new IComboInput[]{guard}, 
 										 PlayerAnimationManager.GuardBegin) );
-			ComboManager.AddCombo(flamethrower);
+			//ComboManager.AddCombo(flamethrower);
 
 			Combo punching = new Combo("Punching");
-			punching.AppendStep( new ComboStep("Punch0", attack, PlayerAnimationManager.Explosion) );
-			punching.AppendStep( new ComboStep("Punch1", attack, PlayerAnimationManager.ComboGround) );
-			punching.AppendStep( new ComboStep("Punch2", attack, PlayerAnimationManager.ComboAerial) );
+				punching.AppendStep( new ComboStep("Punch0", attack, PlayerAnimationManager.Explosion) );
+				punching.AppendStep( new ComboStep("Punch1", attack, PlayerAnimationManager.ComboGround) );
+				punching.AppendStep( new ComboStep("Punch2", attack, PlayerAnimationManager.ComboAerial) );
 			ComboManager.AddCombo(punching);
 		}
 		else if(player == Core.zap) //Combos de zap
@@ -53,7 +53,7 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		//Debug.Log("Started " + combo.GetName());
+		Debug.Log("Started " + combo.GetName());
 		attacking = true;
 	}
 	
@@ -62,7 +62,7 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		//Debug.Log("Done " + combo.GetName());
+		Debug.Log("Done " + combo.GetName());
 		if(!ComboManager.AnyComboBeingDone())
 		{
 			attacking = false;
@@ -84,7 +84,7 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		//Debug.Log("Cancelled " + step.GetName());
+		Debug.Log("Cancelled " + step.GetName());
 
 		//Si no hay ningun combo haciendose, vuelve a idle
 		if(!ComboManager.AnyComboBeingDone())
@@ -99,7 +99,7 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		//Debug.Log("Done " + step.GetName());
+		Debug.Log("Done " + step.GetName());
 	}
 
 	public void OnReceiveDamage()
