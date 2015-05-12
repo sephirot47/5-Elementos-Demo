@@ -20,7 +20,7 @@ public class ComboInputClick : IComboInput
 	
 	public bool Pressed()
 	{
-		return Input.GetMouseButton(mouseButton);
+		return Input.GetMouseButtonDown(mouseButton) || Input.GetMouseButton(mouseButton);
 	}
 	
 	public bool Up()

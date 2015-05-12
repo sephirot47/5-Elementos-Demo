@@ -21,6 +21,8 @@ public class Core : MonoBehaviour
 		
 		Player[] players = {Core.kaji, Core.zap, Core.lluvia};
 		playerList.AddRange(players);
+
+		KeyComboManager.Init();
 		
 		CanvasUtils.HideCursor();
 	}

@@ -13,46 +13,49 @@ public class ComboStep
 	private readonly float animationDurationThresholdMultiplier = 0.9f; 
 	private PlayerAnimation animation;
 
+=======
+	private float timeRequired = 0.0f; //Tiempo que se ha de mantener el inputDown con sus inputSimultaneous para que se de por bueno el step
+	
 	private string name = "No name";
 	private float timeDown = 0.0f; //Para contar el tiempo pasado
 	private float timeSinceStarted = 0.0f; //Para contar el tiempo desde que se inicio
 	private bool startedPressing = false, cancelled = false, firstUpdate = true, lastStep = false, finished = false;
 	
 	//Pulsacion instantanea de un input
-	public ComboStep(string name, IComboInput inputDown, PlayerAnimation animation)
+	public ComboStep(string name, bool lastStep, IComboInput inputDown)
 	{
 		this.name = name;
-		this.animation = animation;
+		this.lastStep = lastStep;
 		this.inputDown = inputDown;
 		inputSimultaneous = new List<IComboInput>();
 	}
 
 	//Pulsacion de un input durante x tiempo
-	public ComboStep(string name, IComboInput inputDown, float timeRequired, PlayerAnimation animation)
+	public ComboStep(string name, bool lastStep, IComboInput inputDown, float timeRequired)
 	{
 		this.name = name;
+		this.lastStep = lastStep;
 		this.inputDown = inputDown;
-		this.animation = animation;
 		this.inputSimultaneous = new List<IComboInput>();
 		this.timeRequired = timeRequired;
 	}
 
 	//Pulsacion instantanea de un input, con 1 o mas simultaneos pulsados
-	public ComboStep(string name, IComboInput inputDown, IComboInput[] inputSimultaneous, PlayerAnimation animation)
+	public ComboStep(string name, bool lastStep, IComboInput inputDown, IComboInput[] inputSimultaneous)
 	{
 		this.name = name;
+		this.lastStep = lastStep;
 		this.inputDown = inputDown;
-		this.animation = animation;
 		this.inputSimultaneous = new List<IComboInput>();
 		this.inputSimultaneous.AddRange(inputSimultaneous);
 	}
 	
 	//Pulsacion de un input durante x tiempo, con simultaneos pulsados
-	public ComboStep(string name, IComboInput inputDown, float timeRequired, IComboInput[] inputSimultaneous, PlayerAnimation animation)
+	public ComboStep(string name, bool lastStep, IComboInput inputDown, float timeRequired, IComboInput[] inputSimultaneous)
 	{
 		this.name = name;
+		this.lastStep = lastStep;
 		this.inputDown = inputDown;
-		this.animation = animation;
 		this.inputSimultaneous = new List<IComboInput>();
 		this.inputSimultaneous.AddRange(inputSimultaneous);
 		this.timeRequired = timeRequired;
@@ -61,23 +64,28 @@ public class ComboStep
 	//Must be called by Combo Update, ONLY when its the currentstep!!! :)
 	public void Update()
 	{
+		timeDown += Time.deltaTime;
+
+		if(!startedPressing && inputDown.Down())
+		{
+			ComboManager.OnComboStepStarted(name);
+			startedPressing = true;
+		}
+
 		if(inputDown.Down()) startedPressing = true;
 		else if(inputDown.Up() && startedPressing && timeDown < timeRequired) 
 		{
-			Cancel();
+			//Debug.Log("Step cancelled");
+			cancelled = true; //el step se cancela si levantas despues de haberlo empezado(haberlo tenido pulsado 0.1 secs)
 		}
-
-		if(startedPressing) timeDown += Time.deltaTime;
 
 		if(Done() && !finished)
 		{
 			finished = true;
-			ComboManager.OnComboStepDone(this);
+			ComboManager.OnComboStepDone(name);
 		}
 
 		if( !BeingDone() && timeDown < timeRequired) timeDown = 0.0f;
-		
-		if(BeingDone()) ComboManager.OnComboStepDoing(this, timeDown);
 	}
 
 	public bool Done()
@@ -91,9 +99,11 @@ public class ComboStep
 		}
 		else
 		{
+			//Para evitar quedarse pulsando la misma tecla y hacerte el combo dejandola pulsada
+			//En el ultimo step, si te pasas del tiempo acaba el combo igualmente
+			//En los de antes, has de soltar antes de hacer el siguiente step
 			//bool inputDownOk = (lastStep ? inputDown.Pressed() : inputDown.Up()); 
-			//HE PENSADO QUE ES MEJOR UP para todos. Dejo linea de arriba comentada por si acaso
-			bool inputDownOk = inputDown.Up(); 
+			bool inputDownOk = inputDown.Up(); //HE PENSADO QUE ES MEJOR UP para todos. Dejo linea de arriba comentada por si acaso
 
 			done = inputDownOk &&
 				   AllSimultaneousPressed() &&
@@ -129,13 +139,6 @@ public class ComboStep
 		return true;
 	}
 
-	public void Cancel()
-	{
-		Reset();
-		ComboManager.OnComboStepCancelled(this);
-		cancelled = true; //el step se cancela si levantas despues de haberlo empezado(haberlo tenido pulsado 0.1 secs)
-	}
-
 	public bool Cancelled()
 	{
 		return cancelled;
@@ -146,12 +149,7 @@ public class ComboStep
 	//alguna manera de comprobar esto para que no corte el combo porque no registra ningun done al cabo de un segundo
 	public bool BeingDone()
 	{
-		return startedPressing && EverythingPressed();
-	}
-	
-	public string GetName()
-	{
-		return name;
+		return EverythingPressed();
 	}
 
 	public void SetName(string name)
@@ -167,13 +165,4 @@ public class ComboStep
 		startedPressing = cancelled = finished = false;
 		firstUpdate = true;
 	}
-
-	public Pair<float, float> GetNextStepInputInterval() 
-	{ 
-		float animationDuration = PlayerAnimationManager.GetAnimationDuration(animation, Core.selectedPlayer);
-		float min = animationDuration * animationDurationThresholdMultiplier;
-		float max = animationDuration * 1.0f/animationDurationThresholdMultiplier;
-		return new Pair<float, float>(min, max); 
-	}
-	public PlayerAnimation GetAnimation() { return animation; }
 }

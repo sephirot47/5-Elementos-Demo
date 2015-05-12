@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: a873e239b8f0bfb4caa2b4c0d1e18897
-timeCreated: 1430342267
+guid: 077c5af600582cc4eb12191b407b779b
+timeCreated: 1430342262
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -148,7 +148,7 @@ ModelImporter:
     400138: default
     400140: //RootNode
     4300000: default
-    7400000: IdleDefault
+    7400000: Combo1
     9500000: //RootNode
     11100000: //RootNode
     13700000: default
@@ -169,10 +169,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: IdleDefault
+      name: Combo1
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 100
+      lastFrame: 135
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
