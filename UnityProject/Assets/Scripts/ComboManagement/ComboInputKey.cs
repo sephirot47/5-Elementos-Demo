@@ -17,7 +17,7 @@ public class ComboInputKey : IComboInput
 
 	public bool Pressed()
 	{
-		return Input.GetKey(key);
+		return Input.GetKeyDown(key) || Input.GetKey(key);
 	}
 
 	public bool Up()

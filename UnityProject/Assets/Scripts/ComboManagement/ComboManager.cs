@@ -30,69 +30,42 @@ public class ComboManager : MonoBehaviour
 	}
 
 	//Llamado cuando se ha empezado un combo
-	public static void OnComboStarted(Combo combo)
+	public static void OnComboStarted(string comboName)
 	{
 		foreach(Player p in Core.playerList)
 		{
-			p.GetComponent<PlayerComboManager>().OnComboStarted(combo);
+			p.GetComponent<PlayerComboHandler>().OnComboStarted(comboName);
 		}
 	}
 	
 	//Llamado cuando se ha acabado un combo entero
-	public static void OnComboDone(Combo combo)
+	public static void OnComboDone(string comboName)
 	{
 		foreach(Player p in Core.playerList)
 		{
-			p.GetComponent<PlayerComboManager>().OnComboDone(combo);
+			p.GetComponent<PlayerComboHandler>().OnComboDone(comboName);
 		}
 	}
 	
 	//SOLO llamado si el combo step es de mantener pulsado.
 	//Si no, se llamara a OnComboStepDone
-	public static void OnComboStepDoing(ComboStep step, float time)
+	public static void OnComboStepStarted(string stepName)
 	{
 		foreach(Player p in Core.playerList)
 		{
-			p.GetComponent<PlayerComboManager>().OnComboStepDoing(step, time);
+			p.GetComponent<PlayerComboHandler>().OnComboStepStarted(stepName);
 		}
 	}
 	
-	public static void OnComboStepCancelled(ComboStep step)
-	{
-		foreach(Player p in Core.playerList)
-		{
-			p.GetComponent<PlayerComboManager>().OnComboStepCancelled(step);
-		}
-	}
-
 	//Llamado cuando un step de un combo se ha acabado
-	public static void OnComboStepDone(ComboStep step)
+	public static void OnComboStepDone(string stepName)
 	{
 		foreach(Player p in Core.playerList)
 		{
-			p.GetComponent<PlayerComboManager>().OnComboStepDone(step);
+			p.GetComponent<PlayerComboHandler>().OnComboStepDone(stepName);
 		}
 	}
-
-	//Dice si hay algun combo haciendose
-	public static bool AnyComboBeingDone()
-	{
-		foreach(Combo c in combos)
-		{
-			if( c.BeingDone() ) return true;
-		}
-		return false;
-	}
-
-	private static void ResetCombo(string comboName)
-	{
-		foreach(Combo combo in combos)
-		{
-			if(combo.GetName() == comboName)
-				combo.ResetCombo();
-		}
-	}
-
+	
 	private static void ResetAllCombos()
 	{
 		foreach(Combo combo in combos)
@@ -100,13 +73,4 @@ public class ComboManager : MonoBehaviour
 			combo.ResetCombo();
 		}
 	}
-
-	public static void CancelAllCombos()
-	{
-		foreach(Combo combo in combos)
-		{
-			combo.Cancel();
-		}
-	}
-
 }

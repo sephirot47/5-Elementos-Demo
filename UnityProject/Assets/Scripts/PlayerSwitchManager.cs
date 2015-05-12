@@ -21,8 +21,8 @@ public class PlayerSwitchManager : MonoBehaviour
 			else if (Input.GetKeyDown(KeyCode.Alpha2) && !Core.zap.IsDead()) SelectPlayer(Core.zap);
 			else if (Input.GetKeyDown(KeyCode.Alpha3) && !Core.lluvia.IsDead()) SelectPlayer(Core.lluvia);
 			
-			//else if (Input.GetKeyDown(KeyCode.Q)) SwitchPlayer(true);
-			//else if (Input.GetKeyDown(KeyCode.E)) SwitchPlayer(false);
+			else if (Input.GetKeyDown(KeyCode.Q)) SwitchPlayer(true);
+			else if (Input.GetKeyDown(KeyCode.E)) SwitchPlayer(false);
 		}
 	}
 
