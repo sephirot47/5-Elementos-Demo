@@ -13,14 +13,15 @@ public class PlayerAnimationManager : MonoBehaviour
 			
 		Explosion = new PlayerAnimation("Explosion", PlayerAnimation.Priority.High),
 		GuardBegin = new PlayerAnimation("GuardBegin", PlayerAnimation.Priority.High),
-		ComboGround = new PlayerAnimation("ComboGround", PlayerAnimation.Priority.High), 
-		ComboAerial = new PlayerAnimation("ComboAerial", PlayerAnimation.Priority.High),
+		ComboGround = new PlayerAnimation("ComboGround", PlayerAnimation.Priority.High),
+        ComboAerial = new PlayerAnimation("ComboAerial", PlayerAnimation.Priority.High),
+        Land = new PlayerAnimation("Land", PlayerAnimation.Priority.High),
 
 		ReceiveDamage = new PlayerAnimation("ReceiveDamage", PlayerAnimation.Priority.VeryHigh), 
 		Die = new PlayerAnimation("Die", PlayerAnimation.Priority.VeryHigh);
 						      
 		private static PlayerAnimation[] playerAnimations = 
-		{Idle0, Idle1, Run, Walk, Jump, Explosion, GuardBegin, ComboGround, ComboAerial, ReceiveDamage, Die};
+        { Idle0, Idle1, Run, Walk, Jump, Explosion, GuardBegin, ComboGround, ComboAerial, Land, ReceiveDamage, Die };
 
 	private Player player;
 	private Animation anim;

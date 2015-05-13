@@ -21,17 +21,20 @@ public class PlayerComboManager : MonoBehaviour
 			ComboInputKey jump = new ComboInputKey(KeyCode.Space);
 			ComboInputKey guard = new ComboInputKey(KeyCode.LeftControl);
 			ComboInputKey attack = new ComboInputKey(KeyCode.E);
-			
+
+            Combo guardCombo = new Combo("Guard");
+                guardCombo.AppendStep(new ComboStep("Guard", guard, 9999.0f, PlayerAnimationManager.GuardBegin));
+            ComboManager.AddCombo(guardCombo);
 			
 			Combo flamethrower = new Combo("Flamethrower");
-				flamethrower.AppendStep( new ComboStep("Flamethrower", attack, 9999.0f, new IComboInput[]{guard}, 
-										 PlayerAnimationManager.GuardBegin) );
-			//ComboManager.AddCombo(flamethrower);
+				flamethrower.AppendStep( new ComboStep("Flamethrower", attack, 9999.0f, new IComboInput[]{guard},
+                                         PlayerAnimationManager.Land));
+			ComboManager.AddCombo(flamethrower);
 
 			Combo punching = new Combo("Punching");
-				punching.AppendStep( new ComboStep("Punch0", attack, PlayerAnimationManager.Explosion) );
-				punching.AppendStep( new ComboStep("Punch1", attack, PlayerAnimationManager.ComboGround) );
-				punching.AppendStep( new ComboStep("Punch2", attack, PlayerAnimationManager.ComboAerial) );
+			    punching.AppendStep( new ComboStep("Punch0", attack, PlayerAnimationManager.Explosion) );
+			    punching.AppendStep( new ComboStep("Punch1", attack, PlayerAnimationManager.ComboGround) );
+			    punching.AppendStep( new ComboStep("Punch2", attack, PlayerAnimationManager.ComboAerial) );
 			ComboManager.AddCombo(punching);
 		}
 		else if(player == Core.zap) //Combos de zap
@@ -53,7 +56,7 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		Debug.Log("Started " + combo.GetName());
+	    Debug.Log("Started " + combo.GetName());
 		attacking = true;
 	}
 	
@@ -69,12 +72,30 @@ public class PlayerComboManager : MonoBehaviour
 			anim.Play(PlayerAnimationManager.Idle0);
 		}
 	}
+
+    //Llamado cuando se ha acabado un combo entero
+    public void OnComboCancel(Combo combo)
+    {
+        if (!player.IsSelected()) return;
+
+        Debug.Log("Cancelled " + combo.GetName());
+
+        //Si no hay ningun combo haciendose, vuelve a idle
+        if (!ComboManager.AnyComboBeingDone())
+        {
+            attacking = false;
+            Debug.Log("PLAY IDLE");
+            anim.Play(PlayerAnimationManager.Idle0);
+        }
+    }
 	
 	//SOLO llamado si el combo step es de mantener pulsado.
 	//Si no, se llamara a OnComboStepDone
 	public void OnComboStepDoing(ComboStep step, float time)
 	{
 		if(!player.IsSelected()) return;
+
+        //Debug.Log("Doing " + step.GetName());
 
 		anim.Play(step.GetAnimation());
 	}
@@ -90,6 +111,7 @@ public class PlayerComboManager : MonoBehaviour
 		if(!ComboManager.AnyComboBeingDone())
 		{
 			attacking = false;
+            Debug.Log("PLAY IDLE");
 			anim.Play(PlayerAnimationManager.Idle0);
 		}
 	}
@@ -99,7 +121,7 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		Debug.Log("Done " + step.GetName());
+        Debug.Log("Done " + step.GetName() + ", (" + step.GetNextStepInputInterval().first + ", " + step.GetNextStepInputInterval().second + ")");
 	}
 
 	public void OnReceiveDamage()

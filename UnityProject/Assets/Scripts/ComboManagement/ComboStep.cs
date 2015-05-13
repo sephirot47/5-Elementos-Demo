@@ -15,8 +15,9 @@ public class ComboStep
 
 	private string name = "No name";
 	private float timeDown = 0.0f; //Para contar el tiempo pasado
-	private float timeSinceStarted = 0.0f; //Para contar el tiempo desde que se inicio
+    private float timeSinceStarted = 0.0f;
 	private bool startedPressing = false, cancelled = false, firstUpdate = true, lastStep = false, finished = false;
+    private bool reallyDone = false;
 	
 	//Pulsacion instantanea de un input
 	public ComboStep(string name, IComboInput inputDown, PlayerAnimation animation)
@@ -62,12 +63,13 @@ public class ComboStep
 	public void Update()
 	{
 		if(inputDown.Down()) startedPressing = true;
-		else if(inputDown.Up() && startedPressing && timeDown < timeRequired) 
-		{
-			Cancel();
-		}
+		else if(inputDown.Up() && startedPressing && timeDown < timeRequired)  Cancel();
 
-		if(startedPressing) timeDown += Time.deltaTime;
+        if (startedPressing)
+        {
+            timeDown += Time.deltaTime;
+            timeSinceStarted += Time.deltaTime;
+        }
 
 		if(Done() && !finished)
 		{
@@ -75,38 +77,44 @@ public class ComboStep
 			ComboManager.OnComboStepDone(this);
 		}
 
-		if( !BeingDone() && timeDown < timeRequired) timeDown = 0.0f;
-		
-		if(BeingDone()) ComboManager.OnComboStepDoing(this, timeDown);
+
+        if (BeingDone()) ComboManager.OnComboStepDoing(this, timeDown);
+        //if (!BeingDone() && timeDown < timeRequired) timeDown = 0.0f; //Para pulsaciones largas
+
+        CheckIfDone();
 	}
+
+    private void CheckIfDone()
+    {
+        if (reallyDone || Cancelled()) return;
+
+        if (timeRequired == 0.0f)
+        {
+            reallyDone = inputDown.Down() &&
+                         AllSimultaneousPressed();
+        }
+        else
+        {
+            //bool inputDownOk = (lastStep ? inputDown.Pressed() : inputDown.Up()); 
+            //HE PENSADO QUE ES MEJOR UP para todos. Dejo linea de arriba comentada por si acaso
+            bool inputDownOk = inputDown.Up();
+
+            reallyDone = inputDownOk &&
+                         AllSimultaneousPressed() &&
+                         timeDown >= timeRequired;
+
+            /*
+            Debug.Log(inputDownOk);
+            Debug.Log(AllSimultaneousPressed());
+            Debug.Log(timeDown >= timeRequired);
+            Debug.Log("_________________");*/
+        }
+    }
 
 	public bool Done()
 	{
-		bool done = false;
-
-		if(timeRequired == 0.0f)
-		{
-			done = inputDown.Down() &&
-			   	   AllSimultaneousPressed();
-		}
-		else
-		{
-			//bool inputDownOk = (lastStep ? inputDown.Pressed() : inputDown.Up()); 
-			//HE PENSADO QUE ES MEJOR UP para todos. Dejo linea de arriba comentada por si acaso
-			bool inputDownOk = inputDown.Up(); 
-
-			done = inputDownOk &&
-				   AllSimultaneousPressed() &&
-			       timeDown >= timeRequired;
-
-			/*
-			Debug.Log(inputDownOk);
-			Debug.Log(AllSimultaneousPressed());
-			Debug.Log(timeDown >= timeRequired);
-			Debug.Log("_________________");*/
-		}
-
-		return done && !Cancelled();
+        return reallyDone && 
+               timeSinceStarted >= GetNextStepInputInterval().first;
 	}
 
 	public void SetIsLast(bool last)
@@ -162,8 +170,8 @@ public class ComboStep
 	//Ha de llamarlo Combo para resetearlo
 	public void Reset()
 	{
-		timeDown = 0.0f;
-		timeSinceStarted = 0.0f;
+		timeDown = timeSinceStarted = 0.0f;
+        reallyDone = false;
 		startedPressing = cancelled = finished = false;
 		firstUpdate = true;
 	}

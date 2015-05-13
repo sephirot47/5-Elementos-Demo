@@ -36,45 +36,23 @@ public class Combo
 
 		time += Time.deltaTime;
 
-		//Esto solo se comprueba si el combo no se esta haciendo
-		if(!steps[currentStep].BeingDone())
-		{
-			if( AfterCorrectTime() ) ResetCombo(); //Se ha pasado, reseteamos combo
-			else if( BeforeCorrectTime() ) return; //Esperamos
-		}
-
-		if(steps[currentStep].BeingDone() && !started)
-		{
-			time = 0.0f;
-			started = true;
-			ComboManager.OnComboStarted(this);
-		}
-
 		steps[currentStep].Update();
 
-		//Para evitar que el comboo se corte cuando se tiene que pulsar una tecla
-		//durante un tiempo mayor que el delay del combo :)
-		if(steps[currentStep].BeingDone())
-		{
-			time = 0.0f;
-			if(!started)
-			{
-				started = true;
-				ComboManager.OnComboStarted(this);
-			}
-		}
-
-        if(steps[currentStep].Cancelled())
+        if (steps[currentStep].BeingDone())
         {
-			ResetCombo();
-		}
+            time = 0.0f;
+            if (!started)
+            {
+                started = true;
+                ComboManager.OnComboStarted(this);
+            }
+        }
+
+        if(steps[currentStep].Cancelled()) ResetCombo();
         else
         {
 			//Solo un step por frame
-			if(steps[currentStep].Done())
-			{
-				NextStep();
-			}
+			if(steps[currentStep].Done()) NextStep();
 		}
 	}
 
@@ -96,33 +74,16 @@ public class Combo
 		time = 0.0f;
 		started = false;
 
-		foreach(ComboStep step in steps)
-		{
-			step.Reset();
-		}
+		foreach(ComboStep step in steps) 
+            step.Reset();
 	}
-
-	private bool BeforeCorrectTime()
-	{
-		if(currentStep - 1 < 0) return false;
-		return time < steps[currentStep - 1].GetNextStepInputInterval().first;
-	}
-
-	private bool AfterCorrectTime()
-	{
-		if(currentStep - 1 < 0) return false;
-		return time > steps[currentStep - 1].GetNextStepInputInterval().second;
-	}
-
+    
 	public void AppendStep(ComboStep step)
 	{
 		steps.Add(step);
 
 		int i;
-		for(i = 0; i <  steps.Count - 1; ++i)
-		{
-			steps[i].SetIsLast(false);
-		}
+		for(i = 0; i <  steps.Count - 1; ++i) steps[i].SetIsLast(false);
 		steps[i].SetIsLast(true);
 	}
 
@@ -141,5 +102,6 @@ public class Combo
 		//En este orden
 		steps[currentStep].Cancel();
 		ResetCombo();
+        ComboManager.OnComboCancel(this);
 	}
 }

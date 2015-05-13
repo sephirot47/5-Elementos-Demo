@@ -28,8 +28,6 @@ public class PlayerSwitchManager : MonoBehaviour
 
 	void SwitchPlayer(bool right)
 	{
-		Player lastPlayerSelected = Core.selectedPlayer;
-
 		int step = right ? 1 : -1, 
 		i = (Core.selectedPlayer == null) ? 0 : Core.playerList.IndexOf(Core.selectedPlayer);
 
