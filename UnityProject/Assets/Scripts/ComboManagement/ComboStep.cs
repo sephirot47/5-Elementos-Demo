@@ -82,6 +82,9 @@ public class ComboStep
         //if (!BeingDone() && timeDown < timeRequired) timeDown = 0.0f; //Para pulsaciones largas
 
         CheckIfDone();
+
+       // Debug.Log(timeSinceStarted);
+        if(timeSinceStarted >= GetNextStepInputInterval().second) Cancel();
 	}
 
     private void CheckIfDone()
@@ -106,8 +109,10 @@ public class ComboStep
             /*
             Debug.Log(inputDownOk);
             Debug.Log(AllSimultaneousPressed());
+            Debug.Log(timeSinceStarted);
             Debug.Log(timeDown >= timeRequired);
-            Debug.Log("_________________");*/
+            Debug.Log("_________________");
+            */
         }
     }
 
@@ -183,5 +188,12 @@ public class ComboStep
 		float max = animationDuration * 1.0f/animationDurationThresholdMultiplier;
 		return new Pair<float, float>(min, max); 
 	}
+
+    public float GetInputTimeThreshold()
+    {
+        float animationDuration = PlayerAnimationManager.GetAnimationDuration(animation, Core.selectedPlayer);
+        return animationDuration * animationDurationThresholdMultiplier;
+    }
+
 	public PlayerAnimation GetAnimation() { return animation; }
 }

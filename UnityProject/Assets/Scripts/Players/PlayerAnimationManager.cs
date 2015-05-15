@@ -4,11 +4,11 @@ using System.Collections;
 public class PlayerAnimationManager : MonoBehaviour 
 {
 	public static readonly PlayerAnimation 
-		Idle0 = new PlayerAnimation("IdleDefault", PlayerAnimation.Priority.Low), 
+		Idle0 = new PlayerAnimation("IdleDefault", PlayerAnimation.Priority.Low),
 		Idle1 = new PlayerAnimation("Idle2", PlayerAnimation.Priority.Low),
 		
-		Run = new PlayerAnimation("Run", PlayerAnimation.Priority.Low), 
-		Walk = new PlayerAnimation("Walk", PlayerAnimation.Priority.Low), 
+		Run = new PlayerAnimation("Run", PlayerAnimation.Priority.Low),
+		Walk = new PlayerAnimation("Walk", PlayerAnimation.Priority.Low),
 		Jump = new PlayerAnimation("Jump", PlayerAnimation.Priority.Low),
 			
 		Explosion = new PlayerAnimation("Explosion", PlayerAnimation.Priority.High),
@@ -17,7 +17,7 @@ public class PlayerAnimationManager : MonoBehaviour
         ComboAerial = new PlayerAnimation("ComboAerial", PlayerAnimation.Priority.High),
         Land = new PlayerAnimation("Land", PlayerAnimation.Priority.High),
 
-		ReceiveDamage = new PlayerAnimation("ReceiveDamage", PlayerAnimation.Priority.VeryHigh), 
+		ReceiveDamage = new PlayerAnimation("ReceiveDamage", PlayerAnimation.Priority.VeryHigh),
 		Die = new PlayerAnimation("Die", PlayerAnimation.Priority.VeryHigh);
 						      
 		private static PlayerAnimation[] playerAnimations = 
@@ -94,7 +94,7 @@ public class PlayerAnimationManager : MonoBehaviour
 
 		if(CanBePlayed(animation))
 		{
-			if(!IsPlaying(animation)) 
+			if(!IsPlaying(animation) && anim.GetClip(animation.GetName()) != null) 
 				anim.Play(animation.GetName());
 		}
 	}
@@ -109,7 +109,9 @@ public class PlayerAnimationManager : MonoBehaviour
 
 	public static float GetAnimationDuration(PlayerAnimation animation, Player p)
 	{
-		return p.GetComponent<Animation>().GetClip(animation.GetName()).length;
+        if( p.GetComponent<Animation>().GetClip(animation.GetName()) != null)
+            return p.GetComponent<Animation>().GetClip(animation.GetName()).length;
+        return 0.0f;
 	}
 
 	private bool CanBePlayed(PlayerAnimation animation)

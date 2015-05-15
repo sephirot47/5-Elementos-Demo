@@ -56,7 +56,7 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-	    Debug.Log("Started " + combo.GetName());
+	    //Debug.Log("Started " + combo.GetName());
 		attacking = true;
 	}
 	
@@ -65,7 +65,7 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		Debug.Log("Done " + combo.GetName());
+		//Debug.Log("Done " + combo.GetName());
 		if(!ComboManager.AnyComboBeingDone())
 		{
 			attacking = false;
@@ -78,13 +78,13 @@ public class PlayerComboManager : MonoBehaviour
     {
         if (!player.IsSelected()) return;
 
-        Debug.Log("Cancelled " + combo.GetName());
+       // Debug.Log("Cancelled " + combo.GetName());
 
         //Si no hay ningun combo haciendose, vuelve a idle
         if (!ComboManager.AnyComboBeingDone())
         {
             attacking = false;
-            Debug.Log("PLAY IDLE");
+         //   Debug.Log("PLAY IDLE");
             anim.Play(PlayerAnimationManager.Idle0);
         }
     }
@@ -95,6 +95,7 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
+        attacking = true;
         //Debug.Log("Doing " + step.GetName());
 
 		anim.Play(step.GetAnimation());
@@ -105,13 +106,13 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		Debug.Log("Cancelled " + step.GetName());
+	//	Debug.Log("Cancelled " + step.GetName());
 
 		//Si no hay ningun combo haciendose, vuelve a idle
 		if(!ComboManager.AnyComboBeingDone())
 		{
 			attacking = false;
-            Debug.Log("PLAY IDLE");
+       //     Debug.Log("PLAY IDLE");
 			anim.Play(PlayerAnimationManager.Idle0);
 		}
 	}
@@ -121,7 +122,8 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-        Debug.Log("Done " + step.GetName() + ", (" + step.GetNextStepInputInterval().first + ", " + step.GetNextStepInputInterval().second + ")");
+        attacking = false;
+     //   Debug.Log("Done " + step.GetName() + ", (" + step.GetNextStepInputInterval().first + ", " + step.GetNextStepInputInterval().second + ")");
 	}
 
 	public void OnReceiveDamage()

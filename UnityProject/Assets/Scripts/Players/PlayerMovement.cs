@@ -52,6 +52,13 @@ public class PlayerMovement : MonoBehaviour
 	
 	private void SelectedMove()
 	{
+        if (GetComponent<PlayerComboManager>().IsAttacking())
+        {
+            movement.x = 0.0f;
+            movement.z = 0.0f;
+            return;
+        }
+
 		float axisX = Input.GetAxis ("Horizontal"), axisY = Input.GetAxis ("Vertical");
 		
 		float movementY = movement.y; //Lo reestablecemos al final para que no quede afectado por el movimiento en x, z;

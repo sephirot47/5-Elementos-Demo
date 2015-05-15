@@ -52,7 +52,15 @@ public class Combo
         else
         {
 			//Solo un step por frame
-			if(steps[currentStep].Done()) NextStep();
+            if (steps[currentStep].Done())
+            {
+                time = 0.0f;
+                NextStep();
+            }
+            else if ( time > steps[currentStep].GetNextStepInputInterval().second )
+            {
+                Cancel();
+            }
 		}
 	}
 
@@ -62,6 +70,19 @@ public class Combo
 		++currentStep; 
 		time = 0.0f; //El time se reinicia obviamente
 	}
+
+    public bool BeforeCorrectTime()
+    {
+        if (currentStep - 1 < 0) return false;
+        return time < steps[currentStep-1].GetNextStepInputInterval().first;
+    }
+
+    public bool AfterCorrectTime()
+    {
+        if (currentStep - 1 < 0) return false;
+        //Ya que al hacer done el step, se reinicia el time
+        return time > steps[currentStep - 1].GetInputTimeThreshold();
+    }
 	
 	public bool BeingDone()
 	{
