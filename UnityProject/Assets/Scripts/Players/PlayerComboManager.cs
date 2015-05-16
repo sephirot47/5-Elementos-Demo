@@ -36,7 +36,7 @@ public class PlayerComboManager : MonoBehaviour
 
 
 			Combo punching = new Combo("Punching");
-                punching.AppendStep(new InstantComboStep("Punch0", attack, anim.Explosion));
+                punching.AppendStep(new PersistentComboStep("Punch0", attack, 3.0f, anim.Explosion));
                 punching.AppendStep(new InstantComboStep("Punch1", attack, anim.ComboGround));
                 punching.AppendStep(new InstantComboStep("Punch2", attack, anim.ComboAerial));
 			ComboManager.AddCombo(punching);

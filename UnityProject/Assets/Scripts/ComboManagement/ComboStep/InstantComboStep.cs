@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 class InstantComboStep : ComboStep
 {
-    public InstantComboStep(String name, IComboInput inputDown, PlayerAnimation anim) : base(name, anim)
+    public InstantComboStep(String name, IComboInput inputDown, PlayerAnimation anim) 
+                     : base(name, inputDown, anim)
     {
-        this.inputDown = inputDown; 
     }
 
-    public InstantComboStep(String name, IComboInput inputDown, IComboInput[] inputSimultaneous, PlayerAnimation anim) : this(name, inputDown, anim)
+    public InstantComboStep(String name, IComboInput inputDown, IComboInput[] inputSimultaneous, PlayerAnimation anim)
+                     : base(name, inputDown, inputSimultaneous, anim)
     {
-        this.inputSimultaneous.AddRange(inputSimultaneous);
     }
 
     public override void Update()

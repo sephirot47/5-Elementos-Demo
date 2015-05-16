@@ -6,22 +6,25 @@ public abstract class ComboStep
 {
 	protected IComboInput inputDown; //Boton que se ha de pulsar(DOWN) para que se haga el step (Solo es una tecla)
     protected List<IComboInput> inputSimultaneous; //Botones que hay que mantener pulsados SIMULTANEAMENTE
-    protected Combo parentCombo;
+    protected Combo parentCombo = null;
     protected PlayerAnimation animation;
-    protected float time;
-    protected string name;
-    protected bool started;
+    protected float time = 0.0f;
+    protected string name = "";
+    protected bool started = false;
 
-    public ComboStep(string name, PlayerAnimation anim)
+    public ComboStep(string name, IComboInput inputDown, PlayerAnimation anim)
     {
         this.name = name;
         animation = anim;
 
-        inputDown = null;
+        this.inputDown = inputDown;
         inputSimultaneous = new List<IComboInput>();
-        parentCombo = null;
-        time = 0.0f;
-        started = false;
+    }
+
+    public ComboStep(string name, IComboInput inputDown, IComboInput[] inputSimultaneous, PlayerAnimation anim) 
+               :this(name, inputDown, anim)
+    {
+        this.inputSimultaneous.AddRange(inputSimultaneous);
     }
 
     public abstract void Update();
