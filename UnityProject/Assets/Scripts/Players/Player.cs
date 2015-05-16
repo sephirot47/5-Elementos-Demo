@@ -94,7 +94,6 @@ public class Player : MonoBehaviour
 	public void Die()
 	{
 		currentLife = 0;
-		anim.Play(PlayerAnimationManager.Die);
 	}
 
 	public bool IsDead()
@@ -105,10 +104,5 @@ public class Player : MonoBehaviour
 	public bool IsSelected()
 	{
 		return Core.selectedPlayer == this;
-	}
-	
-	public bool IsJumping()
-	{
-		return GetComponent<PlayerMovement>().IsJumping();
 	}
 }

@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
 	
 	private int jumpsDone = 0;
 
+    public GameObject ground;
+
 	public Vector3 boost = Vector3.zero;
 	public Vector3 movement = Vector3.zero;
 
@@ -21,10 +23,13 @@ public class PlayerMovement : MonoBehaviour
 	{
 		player = GetComponent<Player>();
 		controller = GetComponent<CharacterController>();
+
+        ground = Core.GetSubGameObject(this.gameObject, "Base Human");
 	}
 
-	void Update () 
-	{
+	void Update ()
+    {
+        if (IsGrounded() && player.IsSelected()) { jumpsDone = 0; }
 		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
 		if(player.IsDead()) return;
 
@@ -32,11 +37,12 @@ public class PlayerMovement : MonoBehaviour
 		{
 			SelectedMove();
 			if(Input.GetKeyDown(KeyCode.Space) && jumpsDone < 2) Jump();
+            Debug.ClearDeveloperConsole();
+            Debug.Log(jumpsDone);
 		}
 		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
 		
 		controller.Move((movement + boost * speed) * Time.deltaTime);
-		if (IsGrounded()) jumpsDone = 0;
 		//
 	}
 
@@ -45,8 +51,7 @@ public class PlayerMovement : MonoBehaviour
 		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
 		
 		boost *= boostFading;
-		movement.y += Core.gravity; //gravity
-		movement.y = Mathf.Max(movement.y, -2000.0f * Time.deltaTime); //evitar caida brusca al saltar
+		movement.y += Core.gravity * Time.fixedDeltaTime; //gravity
 	}
 	
 	
@@ -59,14 +64,16 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-		float axisX = Input.GetAxis ("Horizontal"), axisY = Input.GetAxis ("Vertical");
-		
+		float axisX = Input.GetAxis ("Horizontal"), 
+              axisY = Input.GetAxis ("Vertical");
+
 		float movementY = movement.y; //Lo reestablecemos al final para que no quede afectado por el movimiento en x, z;
 		movement = Vector3.zero;
 		
+        bool walking = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
 		Vector3 dir = ((Camera.main.transform.forward * axisY) + (Camera.main.transform.right * axisX)).normalized;
-		movement += dir * speed;
-		
+		movement += dir * speed * (walking ? 0.5f : 1.0f);
+
 		movement.y = 0;
 		if (movement.magnitude > 0.5f) 
 		{
@@ -122,7 +129,7 @@ public class PlayerMovement : MonoBehaviour
 	private void Jump()
 	{
 		++jumpsDone;
-		movement.y = jumpForce;
+        movement.y = jumpForce;
 	}
 	
 	public void Boost(Vector3 dir)
@@ -136,9 +143,18 @@ public class PlayerMovement : MonoBehaviour
 		return jumpsDone > 0;
 	}
 
-	private bool IsGrounded()
+    public bool IsSecondJumping()
+    {
+        return jumpsDone == 2;
+    }
+
+	public bool IsGrounded()
 	{
 		RaycastHit hit;
-		return Physics.Raycast( controller.transform.position, Vector3.down, out hit, 0.3f, ~(1 << LayerMask.NameToLayer ("Player")) );
+        if(ground != null)
+        {
+            Physics.CheckSphere(ground.transform.position, 0.1f, ~(1 << LayerMask.NameToLayer("Player")) );
+        }
+        return Physics.Raycast( controller.transform.position, Vector3.down, out hit, 0.1f, ~(1 << LayerMask.NameToLayer("Player")));
 	}
 }

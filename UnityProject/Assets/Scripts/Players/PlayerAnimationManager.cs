@@ -4,31 +4,33 @@ using System.Collections;
 public class PlayerAnimationManager : MonoBehaviour 
 {
 	public static readonly PlayerAnimation 
-		Idle0 = new PlayerAnimation("IdleDefault", PlayerAnimation.Priority.Low),
-		Idle1 = new PlayerAnimation("Idle2", PlayerAnimation.Priority.Low),
+		Idle0 = new PlayerAnimation("IdleDefault"),
+		Idle1 = new PlayerAnimation("Idle2"),
 		
-		Run = new PlayerAnimation("Run", PlayerAnimation.Priority.Low),
-		Walk = new PlayerAnimation("Walk", PlayerAnimation.Priority.Low),
-		Jump = new PlayerAnimation("Jump", PlayerAnimation.Priority.Low),
-			
-		Explosion = new PlayerAnimation("Explosion", PlayerAnimation.Priority.High),
-		GuardBegin = new PlayerAnimation("GuardBegin", PlayerAnimation.Priority.High),
-		ComboGround = new PlayerAnimation("ComboGround", PlayerAnimation.Priority.High),
-        ComboAerial = new PlayerAnimation("ComboAerial", PlayerAnimation.Priority.High),
-        Land = new PlayerAnimation("Land", PlayerAnimation.Priority.High),
+		Run = new PlayerAnimation("Run"),
+		Walk = new PlayerAnimation("Walk"),
 
-		ReceiveDamage = new PlayerAnimation("ReceiveDamage", PlayerAnimation.Priority.VeryHigh),
-		Die = new PlayerAnimation("Die", PlayerAnimation.Priority.VeryHigh);
+        Jump = new PlayerAnimation("Jump"),
+        Fall = new PlayerAnimation("Fall"),
+        Land = new PlayerAnimation("Land"),
+			
+		Explosion = new PlayerAnimation("Explosion"),
+		GuardBegin = new PlayerAnimation("GuardBegin"),
+		ComboGround = new PlayerAnimation("ComboGround"),
+        ComboAerial = new PlayerAnimation("ComboAerial"),
+
+		ReceiveDamage = new PlayerAnimation("ReceiveDamage"),
+		Die = new PlayerAnimation("Die");
 						      
-		private static PlayerAnimation[] playerAnimations = 
-        { Idle0, Idle1, Run, Walk, Jump, Explosion, GuardBegin, ComboGround, ComboAerial, Land, ReceiveDamage, Die };
 
 	private Player player;
-	private Animation anim;
+    private Animation anim;
+	private PlayerMovement playerMove;
 	private PlayerComboManager playerComboMan;
 
-	public float randomIdleDelay = 5.0f;
-	private float idleTime;
+	public float randomIdleDelay = 15.0f;
+	private float idleTime = 0.0f, timeSinceNoJump = float.PositiveInfinity;
+    private float landTimeThreshold = 0.2f;
 
 
 	//Si una animacion A es de una prioridad mayor que una animacion B, entonces si
@@ -39,15 +41,17 @@ public class PlayerAnimationManager : MonoBehaviour
 	{
 		player = GetComponent<Player>();	
 		anim = GetComponent<Animation>();
+        playerMove = GetComponent<PlayerMovement>();
 		playerComboMan = GetComponent<PlayerComboManager>();
-
-		idleTime = 0.0f;
 	}
 	
 	void Update() 
 	{
-		if(player.IsDead()) return;
+        if (player.IsDead()) { Play(PlayerAnimationManager.Die); return; }
+        if (playerComboMan.IsAttacking()) return;
 		if(anim == null) return;
+
+        timeSinceNoJump += Time.deltaTime;
 
 		if(!GameState.IsPlaying()) 
 		{
@@ -55,32 +59,51 @@ public class PlayerAnimationManager : MonoBehaviour
 			return;
 		}
 
-		if(!player.IsJumping())
+		if ( playerMove.IsGrounded() && !playerComboMan.IsAttacking() )
 		{
-			Vector2 planeMovement = new Vector2(player.GetMovement().x, player.GetMovement().z);
-			if(planeMovement.magnitude > 0.1f)
-			{
-				Play(Run);
-			}
-			else
-			{
-				idleTime += Time.deltaTime;
+            Vector2 planeMovement = new Vector2(player.GetMovement().x, player.GetMovement().z);
 
-				if(idleTime > randomIdleDelay)
-				{
-					idleTime = 0.0f;
-					Play(Idle1);
-				}
-				else if(!IsPlaying(Idle1))
-				{
-					Play(Idle0);
-				}
-				else
-				{
-					idleTime = 0.0f;
-				}
-			}
+            if (timeSinceNoJump < 0.1f)
+            {
+                if (planeMovement.magnitude > 0.05f) ForcePlay(Run);
+                else ForcePlay(Idle0);
+            }
+
+            if (planeMovement.magnitude > 0.05f)
+            {
+                if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt  )) Play(Walk);
+                else Play(Run);
+            }
+            else if (!playerComboMan.IsAttacking())
+            {
+                idleTime += Time.deltaTime;
+
+                if (idleTime > randomIdleDelay)
+                {
+                    idleTime = 0.0f;
+                    Play(Idle1);
+                }
+                else if (!IsPlaying(Idle1))
+                {
+                    Play(Idle0);
+                }
+                else
+                {
+                    idleTime = 0.0f;
+                }
+            }
 		}
+        else
+        {
+            timeSinceNoJump = 0.0f;
+            
+            Vector3 movement = player.GetMovement();
+            if (!playerMove.IsSecondJumping()) Play(Fall);
+            else
+            {
+                Play(Die);
+            }
+        }
 	}
 
 	public bool IsPlaying(PlayerAnimation animation)
@@ -88,23 +111,30 @@ public class PlayerAnimationManager : MonoBehaviour
 		return anim.IsPlaying(animation.GetName());
 	}
 
+    private void ForcePlay(PlayerAnimation animation)
+    {
+        if (player.IsDead()) return;
+
+        if (!IsPlaying(animation) && anim.GetClip(animation.GetName()) != null)
+        {
+            anim.CrossFade(animation.GetName());
+        }
+    }
+
 	public void Play(PlayerAnimation animation)
 	{
 		if( player.IsDead() ) return;
 
-		if(CanBePlayed(animation))
-		{
-			if(!IsPlaying(animation) && anim.GetClip(animation.GetName()) != null) 
-				anim.Play(animation.GetName());
-		}
+        if (!IsPlaying(animation) && anim.GetClip(animation.GetName()) != null) 
+        {
+            anim.CrossFade(animation.GetName());
+        }
 	}
 
-	public void Stop(PlayerAnimation animation)
+	public void Stop()
 	{
 		if( player.IsDead() ) return;
-
-		if(IsPlaying(animation)) 
-			anim.Stop ();
+        anim.Stop();
 	}
 
 	public static float GetAnimationDuration(PlayerAnimation animation, Player p)
@@ -112,28 +142,5 @@ public class PlayerAnimationManager : MonoBehaviour
         if( p.GetComponent<Animation>().GetClip(animation.GetName()) != null)
             return p.GetComponent<Animation>().GetClip(animation.GetName()).length;
         return 0.0f;
-	}
-
-	private bool CanBePlayed(PlayerAnimation animation)
-	{
-		string state = animation.GetName();
-		PlayerAnimation.Priority p = PlayerAnimation.Priority.Low;
-		foreach(PlayerAnimation pa in playerAnimations)
-		{
-			if(pa.GetName() == state)
-			{
-				p = pa.GetPriority();
-			}
-		}
-
-		foreach(PlayerAnimation pa in playerAnimations)
-		{
-			if(pa.GetPriority() > p && IsPlaying(pa))
-			{
-				return false; //Si encuentra una animacion con una prioridad mayor, no puede playearse
-			}
-		}
-
-		return true;
 	}
 }

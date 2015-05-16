@@ -173,7 +173,7 @@ ModelImporter:
       takeName: Take 001
       firstFrame: 0
       lastFrame: 10
-      wrapMode: 8
+      wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0

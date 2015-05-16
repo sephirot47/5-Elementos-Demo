@@ -186,13 +186,16 @@ public class ComboStep
 		float animationDuration = PlayerAnimationManager.GetAnimationDuration(animation, Core.selectedPlayer);
 		float min = animationDuration * animationDurationThresholdMultiplier;
 		float max = animationDuration * 1.0f/animationDurationThresholdMultiplier;
+        if (timeRequired > max) max = timeRequired;
+        if (timeRequired > max) max = timeRequired;
 		return new Pair<float, float>(min, max); 
 	}
 
     public float GetInputTimeThreshold()
     {
         float animationDuration = PlayerAnimationManager.GetAnimationDuration(animation, Core.selectedPlayer);
-        return animationDuration * animationDurationThresholdMultiplier;
+        if (timeRequired > animationDuration) return timeRequired;
+        return animationDuration * (1.0f-animationDurationThresholdMultiplier);
     }
 
 	public PlayerAnimation GetAnimation() { return animation; }

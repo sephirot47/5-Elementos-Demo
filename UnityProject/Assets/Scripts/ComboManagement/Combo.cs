@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 public class Combo
 {
-	[SerializeField]
+    private PlayerMovement playerMov;
+    private bool aerialCombo = false;
+
 	private List<ComboStep> steps;
 	private float time = 0.0f; //Para contar el tiempo pasado
 	private string name = "No name";
@@ -27,9 +29,10 @@ public class Combo
 	//Must be called by the ComboManager :)
 	public void Update()
 	{
+        if (aerialCombo && playerMov.IsGrounded()) { Cancel(); return; }
+
 		if(Done()) 
 		{
-			//Combo done
 			ComboManager.OnComboDone(this);
 			ResetCombo();
 		}
@@ -51,24 +54,15 @@ public class Combo
         if(steps[currentStep].Cancelled()) ResetCombo();
         else
         {
-			//Solo un step por frame
-            if (steps[currentStep].Done())
-            {
-                time = 0.0f;
-                NextStep();
-            }
-            else if ( time > steps[currentStep].GetNextStepInputInterval().second )
-            {
-                Cancel();
-            }
+            if (steps[currentStep].Done())  NextStep();
+            else if ( AfterCorrectTime() ) Cancel();
 		}
 	}
 
 	public void NextStep()
 	{
-		//Yay, step hecho, vamos al siguiente!!!
 		++currentStep; 
-		time = 0.0f; //El time se reinicia obviamente
+		time = 0.0f;
 	}
 
     public bool BeforeCorrectTime()
@@ -80,8 +74,7 @@ public class Combo
     public bool AfterCorrectTime()
     {
         if (currentStep - 1 < 0) return false;
-        //Ya que al hacer done el step, se reinicia el time
-        return time > steps[currentStep - 1].GetInputTimeThreshold();
+        return time > steps[currentStep-1].GetInputTimeThreshold();
     }
 	
 	public bool BeingDone()
@@ -95,8 +88,7 @@ public class Combo
 		time = 0.0f;
 		started = false;
 
-		foreach(ComboStep step in steps) 
-            step.Reset();
+		foreach(ComboStep step in steps) step.Reset();
 	}
     
 	public void AppendStep(ComboStep step)
@@ -120,9 +112,18 @@ public class Combo
 
 	public void Cancel()
 	{
-		//En este orden
 		steps[currentStep].Cancel();
 		ResetCombo();
         ComboManager.OnComboCancel(this);
 	}
+
+    public void SetPlayerMovement(PlayerMovement mov)
+    {
+        playerMov = mov;
+    }
+
+    public void SetIsAerial(bool aerial)
+    {
+        aerialCombo = aerial;
+    }
 }

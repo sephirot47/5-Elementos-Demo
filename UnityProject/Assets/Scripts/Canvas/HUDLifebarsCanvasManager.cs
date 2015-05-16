@@ -40,8 +40,6 @@ public class HUDLifebarsCanvasManager : MonoBehaviour
 			ShowLifebars();
 		}
 
-        Debug.Log(firstPlanePos);
-
         //LERP
         kajiLifebar.GetComponent<RectTransform>().position = Vector3.Lerp(kajiLifebar.GetComponent<RectTransform>().position, kajiLifebarPos, Time.deltaTime * transitionSpeed);
         kajiLifebar.GetComponent<RectTransform>().localScale = Vector3.Lerp(kajiLifebar.GetComponent<RectTransform>().localScale, kajiLifebarScale, Time.deltaTime * transitionSpeed);
