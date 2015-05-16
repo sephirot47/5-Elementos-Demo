@@ -4,11 +4,9 @@ using System.Collections.Generic;
 
 public class Combo
 {
-    private PlayerMovement playerMov;
-    private bool aerialCombo = false;
-
 	private List<ComboStep> steps;
-	private float time = 0.0f; //Para contar el tiempo pasado
+    private readonly float delay = 0.5f;
+	private float timeDelay = 0.0f; //Para contar el tiempo pasado
 	private string name = "No name";
 	private int currentStep = 0;
 	private bool started = false;
@@ -16,91 +14,54 @@ public class Combo
 	public Combo(string name)
 	{
 		this.name = name;
-		steps = new List<ComboStep>();
+        steps = new List<ComboStep>();
 	}
 
-	public Combo(string name, ComboStep[] comboSteps)
+    public Combo(string name, ComboStep[] comboSteps)
 	{
 		this.name = name;
-		steps = new List<ComboStep>();
+        steps = new List<ComboStep>();
 		steps.AddRange(comboSteps);
 	}
 
 	//Must be called by the ComboManager :)
 	public void Update()
-	{
-        if (aerialCombo && playerMov.IsGrounded()) { Cancel(); return; }
-
-		if(Done()) 
-		{
-			ComboManager.OnComboDone(this);
-			ResetCombo();
-		}
-
-		time += Time.deltaTime;
-
-		steps[currentStep].Update();
-
-        if (steps[currentStep].BeingDone())
+    {
+        if (currentStep < steps.Count)
         {
-            time = 0.0f;
-            if (!started)
+            if(!steps[currentStep].Started() && currentStep > 0) //Si estamos entre step y step
             {
-                started = true;
-                ComboManager.OnComboStarted(this);
+                timeDelay += Time.deltaTime;
+                if(timeDelay > delay)
+                {
+                    Cancel(); //Si excede el tiempo de delay entre step y step, cancelamos
+                    return;
+                }
             }
-        }
 
-        if(steps[currentStep].Cancelled()) ResetCombo();
-        else
-        {
-            if (steps[currentStep].Done())  NextStep();
-            else if ( AfterCorrectTime() ) Cancel();
-		}
-	}
+            steps[currentStep].Update();
+        }
+        else timeDelay = 0.0f;
+    }
 
 	public void NextStep()
 	{
 		++currentStep; 
-		time = 0.0f;
+		timeDelay = 0.0f;
 	}
-
-    public bool BeforeCorrectTime()
-    {
-        if (currentStep - 1 < 0) return false;
-        return time < steps[currentStep-1].GetNextStepInputInterval().first;
-    }
-
-    public bool AfterCorrectTime()
-    {
-        if (currentStep - 1 < 0) return false;
-        return time > steps[currentStep-1].GetInputTimeThreshold();
-    }
 	
 	public bool BeingDone()
 	{
 		return started;
 	}
 
-	public void ResetCombo()
-	{
-		currentStep = 0;
-		time = 0.0f;
-		started = false;
-
-		foreach(ComboStep step in steps) step.Reset();
-	}
-    
 	public void AppendStep(ComboStep step)
 	{
 		steps.Add(step);
-
-		int i;
-		for(i = 0; i <  steps.Count - 1; ++i) steps[i].SetIsLast(false);
-		steps[i].SetIsLast(true);
+        step.SetParentCombo(this);
 	}
 
-	public bool Done()
+	public bool Finished()
 	{
 		return currentStep >= steps.Count;
 	}
@@ -110,20 +71,51 @@ public class Combo
 		return name;
 	}
 
-	public void Cancel()
-	{
-		steps[currentStep].Cancel();
-		ResetCombo();
-        ComboManager.OnComboCancel(this);
-	}
-
-    public void SetPlayerMovement(PlayerMovement mov)
+    public void Initialize()
     {
-        playerMov = mov;
+        currentStep = 0;
+        timeDelay = 0.0f;
+        started = false;
+        foreach (ComboStep step in steps) step.Initialize();
     }
 
-    public void SetIsAerial(bool aerial)
+	public void Cancel()
     {
-        aerialCombo = aerial;
+        Initialize();
+        ComboManager.OnComboCancelled(this);
+	}
+
+    public void OnStepStarted(ComboStep step)
+    {
+        if (currentStep == 0)
+        {
+            ComboManager.OnComboStarted(this);
+        }
+        ComboManager.OnComboStepStarted(step);
+        Debug.Log(currentStep);
+    }
+
+    public void OnStepCancelled(ComboStep step)
+    {
+        Cancel();
+        ComboManager.OnComboStepCancelled(step);
+        ComboManager.OnComboCancelled(this);
+    }
+
+    public void OnStepFinished(ComboStep step)
+    {
+        ++currentStep;
+        ComboManager.OnComboStepFinished(step);
+        if(currentStep < steps.Count) 
+        {
+            steps[currentStep].Initialize();
+        }
+        else //Combo finished
+        {
+            Initialize();
+            ComboManager.OnComboFinished(this);
+        }
+
+        Debug.Log(currentStep);
     }
 }

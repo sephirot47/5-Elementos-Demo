@@ -1,54 +1,53 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerAnimationManager : MonoBehaviour 
+public class PlayerAnimationManager : MonoBehaviour
 {
-	public static readonly PlayerAnimation 
-		Idle0 = new PlayerAnimation("IdleDefault"),
-		Idle1 = new PlayerAnimation("Idle2"),
-		
-		Run = new PlayerAnimation("Run"),
-		Walk = new PlayerAnimation("Walk"),
-
-        Jump = new PlayerAnimation("Jump"),
-        Fall = new PlayerAnimation("Fall"),
-        Land = new PlayerAnimation("Land"),
-			
-		Explosion = new PlayerAnimation("Explosion"),
-		GuardBegin = new PlayerAnimation("GuardBegin"),
-		ComboGround = new PlayerAnimation("ComboGround"),
-        ComboAerial = new PlayerAnimation("ComboAerial"),
-
-		ReceiveDamage = new PlayerAnimation("ReceiveDamage"),
-		Die = new PlayerAnimation("Die");
-						      
-
-	private Player player;
+    private Player player;
     private Animation anim;
-	private PlayerMovement playerMove;
-	private PlayerComboManager playerComboMan;
+    private PlayerMovement playerMove;
+    private PlayerComboManager playerComboMan;
 
+	public PlayerAnimation Idle0, Idle1, Run, Walk, Jump, Fall, Land, Explosion, GuardBegin, 
+                           ComboGround, ComboAerial, ReceiveDamage, Die;
+						      
 	public float randomIdleDelay = 15.0f;
 	private float idleTime = 0.0f, timeSinceNoJump = float.PositiveInfinity;
-    private float landTimeThreshold = 0.2f;
 
-
-	//Si una animacion A es de una prioridad mayor que una animacion B, entonces si
-	//B se esta reproduciendo, A puede interrumpirla, si no, no. Si son de igual prioridad, entonces
-	//A se esperara a que B acabe.
-
-	void Start () 
-	{
+    void Awake()
+    {
 		player = GetComponent<Player>();	
 		anim = GetComponent<Animation>();
         playerMove = GetComponent<PlayerMovement>();
 		playerComboMan = GetComponent<PlayerComboManager>();
+
+        Idle0 = new PlayerAnimation("IdleDefault", anim);
+        Idle1 = new PlayerAnimation("Idle2", anim);
+
+        Run = new PlayerAnimation("Run", anim);
+        Walk = new PlayerAnimation("Walk", anim);
+
+        Jump = new PlayerAnimation("Jump", anim);
+        Fall = new PlayerAnimation("Fall", anim);
+        Land = new PlayerAnimation("Land", anim);
+
+        Explosion = new PlayerAnimation("Explosion", anim);
+        GuardBegin = new PlayerAnimation("GuardBegin", anim);
+        ComboGround = new PlayerAnimation("ComboGround", anim);
+        ComboAerial = new PlayerAnimation("ComboAerial", anim);
+
+        ReceiveDamage = new PlayerAnimation("ReceiveDamage", anim);
+        Die = new PlayerAnimation("Die", anim);
+    }
+
+	void Start() 
+	{
 	}
 	
 	void Update() 
 	{
-        if (player.IsDead()) { Play(PlayerAnimationManager.Die); return; }
-        if (playerComboMan.IsAttacking()) return;
+        if (player.IsDead()) { Play(Die); return; }
+        if (playerComboMan.IsComboing()) return;
 		if(anim == null) return;
 
         timeSinceNoJump += Time.deltaTime;
@@ -59,7 +58,7 @@ public class PlayerAnimationManager : MonoBehaviour
 			return;
 		}
 
-		if ( playerMove.IsGrounded() && !playerComboMan.IsAttacking() )
+		if ( playerMove.IsGrounded() )
 		{
             Vector2 planeMovement = new Vector2(player.GetMovement().x, player.GetMovement().z);
 
@@ -74,7 +73,7 @@ public class PlayerAnimationManager : MonoBehaviour
                 if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt  )) Play(Walk);
                 else Play(Run);
             }
-            else if (!playerComboMan.IsAttacking())
+            else
             {
                 idleTime += Time.deltaTime;
 
@@ -83,14 +82,8 @@ public class PlayerAnimationManager : MonoBehaviour
                     idleTime = 0.0f;
                     Play(Idle1);
                 }
-                else if (!IsPlaying(Idle1))
-                {
-                    Play(Idle0);
-                }
-                else
-                {
-                    idleTime = 0.0f;
-                }
+                else if ( !Idle1.IsPlaying() ) Play(Idle0);
+                else idleTime = 0.0f;
             }
 		}
         else
@@ -99,36 +92,22 @@ public class PlayerAnimationManager : MonoBehaviour
             
             Vector3 movement = player.GetMovement();
             if (!playerMove.IsSecondJumping()) Play(Fall);
-            else
-            {
-                Play(Die);
-            }
+            else Play(Die);
         }
-	}
-
-	public bool IsPlaying(PlayerAnimation animation)
-	{
-		return anim.IsPlaying(animation.GetName());
 	}
 
     private void ForcePlay(PlayerAnimation animation)
     {
         if (player.IsDead()) return;
-
-        if (!IsPlaying(animation) && anim.GetClip(animation.GetName()) != null)
-        {
-            anim.CrossFade(animation.GetName());
-        }
+        animation.Stop();
+        animation.Play();
     }
 
 	public void Play(PlayerAnimation animation)
 	{
+       // Debug.Log("PLAY " + animation.GetName());
 		if( player.IsDead() ) return;
-
-        if (!IsPlaying(animation) && anim.GetClip(animation.GetName()) != null) 
-        {
-            anim.CrossFade(animation.GetName());
-        }
+        animation.Play();
 	}
 
 	public void Stop()

@@ -23,7 +23,7 @@ public class ComboManager : MonoBehaviour
 	//Llamado por PlayerSwitchManager
 	public static void OnPlayerSelectedChange()
 	{
-		ResetAllCombos();
+		CancelAllCombos();
 	}
 
 	//Llamado cuando se ha empezado un combo
@@ -34,17 +34,17 @@ public class ComboManager : MonoBehaviour
 	}
 
     //Llamado cuando se ha cancelado un combo entero
-    public static void OnComboCancel(Combo combo)
+    public static void OnComboCancelled(Combo combo)
     {
         foreach (Player p in Core.playerList)
-            p.GetComponent<PlayerComboManager>().OnComboCancel(combo);
+            p.GetComponent<PlayerComboManager>().OnComboCancelled(combo);
     }
 	
 	//Llamado cuando se ha acabado un combo entero
-	public static void OnComboDone(Combo combo)
+	public static void OnComboFinished(Combo combo)
 	{
 		foreach(Player p in Core.playerList)
-            p.GetComponent<PlayerComboManager>().OnComboDone(combo);
+            p.GetComponent<PlayerComboManager>().OnComboFinished(combo);
 	}
 	
 	//SOLO llamado si el combo step es de mantener pulsado.
@@ -61,11 +61,17 @@ public class ComboManager : MonoBehaviour
             p.GetComponent<PlayerComboManager>().OnComboStepCancelled(step);
 	}
 
-	//Llamado cuando un step de un combo se ha acabado
-	public static void OnComboStepDone(ComboStep step)
+    //Llamado cuando un step de un combo se ha acabado
+    public static void OnComboStepStarted(ComboStep step)
+    {
+        foreach (Player p in Core.playerList)
+            p.GetComponent<PlayerComboManager>().OnComboStepStarted(step);
+    }
+
+	public static void OnComboStepFinished(ComboStep step)
 	{
 		foreach(Player p in Core.playerList)
-            p.GetComponent<PlayerComboManager>().OnComboStepDone(step);
+            p.GetComponent<PlayerComboManager>().OnComboStepFinished(step);
 	}
 
 	//Dice si hay algun combo haciendose
@@ -76,23 +82,16 @@ public class ComboManager : MonoBehaviour
 		return false;
 	}
 
-	private static void ResetCombo(string comboName)
+	private static void CancelCombo(string comboName)
 	{
 		foreach(Combo combo in combos)
 			if(combo.GetName() == comboName)
-				combo.ResetCombo();
-	}
-
-	private static void ResetAllCombos()
-	{
-		foreach(Combo combo in combos)
-			combo.ResetCombo();
+				combo.Cancel();
 	}
 
 	public static void CancelAllCombos()
 	{
 		foreach(Combo combo in combos)
-			combo.Cancel();
+            combo.Cancel();
 	}
-
 }

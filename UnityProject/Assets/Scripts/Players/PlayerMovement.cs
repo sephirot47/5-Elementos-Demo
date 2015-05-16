@@ -37,8 +37,6 @@ public class PlayerMovement : MonoBehaviour
 		{
 			SelectedMove();
 			if(Input.GetKeyDown(KeyCode.Space) && jumpsDone < 2) Jump();
-            Debug.ClearDeveloperConsole();
-            Debug.Log(jumpsDone);
 		}
 		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
 		
@@ -57,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
 	
 	private void SelectedMove()
 	{
-        if (GetComponent<PlayerComboManager>().IsAttacking())
+        if (GetComponent<PlayerComboManager>().IsComboing())
         {
             movement.x = 0.0f;
             movement.z = 0.0f;

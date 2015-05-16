@@ -78,7 +78,7 @@ public class Player : MonoBehaviour
 			Die();
 		}
 
-		else if (anim != null) anim.Play(PlayerAnimationManager.ReceiveDamage);
+        else if (anim != null) anim.Play(anim.ReceiveDamage);
 	}
 	
 	public void SetTarget(GameObject t)

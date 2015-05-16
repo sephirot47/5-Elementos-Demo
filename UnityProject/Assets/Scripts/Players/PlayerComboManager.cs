@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlayerComboManager : MonoBehaviour 
 {
-	private bool attacking = false;
+	private bool comboing = false;
 
     private Player player;
     private PlayerMovement playerMov;
@@ -21,26 +21,24 @@ public class PlayerComboManager : MonoBehaviour
 			ComboInputKey guard = new ComboInputKey(KeyCode.LeftShift);
 			ComboInputKey attack = new ComboInputKey(KeyCode.E);
 
-            Combo guardCombo = new Combo("Guard");
-                guardCombo.AppendStep(new ComboStep("Guard", guard, 9999.0f, PlayerAnimationManager.GuardBegin));
+            //Combo guardCombo = new Combo("Guard");
+              //  guardCombo.AppendStep(new InstantComboStep("Guard", guard, 9999.0f, PlayerAnimationManager.GuardBegin));
             //ComboManager.AddCombo(guardCombo);
 			
-			Combo flamethrower = new Combo("Flamethrower");
-				flamethrower.AppendStep( new ComboStep("Flamethrower", attack, 9999.0f, new IComboInput[]{guard},
-                                         PlayerAnimationManager.Fall));
-			ComboManager.AddCombo(flamethrower);
+			//Combo flamethrower = new Combo("Flamethrower");
+			//	flamethrower.AppendStep( new ComboStep("Flamethrower", attack, 9999.0f, new IComboInput[]{guard},
+           //                              PlayerAnimationManager.Fall));
+			//ComboManager.AddCombo(flamethrower);
 
-            Combo aerial = new Combo("AerialCombo");
-                aerial.AppendStep(new ComboStep("Hit0", attack, PlayerAnimationManager.ComboAerial));
-            ComboManager.AddCombo(aerial);
-            aerial.SetIsAerial(true);
-            aerial.SetPlayerMovement(playerMov);
-                
+         //   Combo aerial = new Combo("AerialCombo");
+          //      aerial.AppendStep(new ComboStep("Hit0", attack, PlayerAnimationManager.ComboAerial));
+          //  ComboManager.AddCombo(aerial);
+
 
 			Combo punching = new Combo("Punching");
-			    punching.AppendStep( new ComboStep("Punch0", attack, PlayerAnimationManager.Explosion) );
-			    punching.AppendStep( new ComboStep("Punch1", attack, PlayerAnimationManager.ComboGround) );
-			    punching.AppendStep( new ComboStep("Punch2", attack, PlayerAnimationManager.ComboAerial) );
+                punching.AppendStep(new InstantComboStep("Punch0", attack, anim.Explosion));
+                punching.AppendStep(new InstantComboStep("Punch1", attack, anim.ComboGround));
+                punching.AppendStep(new InstantComboStep("Punch2", attack, anim.ComboAerial));
 			ComboManager.AddCombo(punching);
 		}
 		else if(player == Core.zap) //Combos de zap
@@ -53,7 +51,8 @@ public class PlayerComboManager : MonoBehaviour
 	
 	void Update() 
 	{
-		if(!player.IsSelected()) attacking = false;
+        if (!player.IsSelected()) comboing = false;
+        Debug.Log(comboing);
 		if(player.IsDead()) return;
 	}
 	
@@ -62,35 +61,34 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-	    //Debug.Log("Started " + combo.GetName());
+	    Debug.Log("Started " + combo.GetName());
 
-		attacking = true;
+		comboing = true;
 	}
 	
 	//Llamado cuando se ha acabado un combo entero
-	public void OnComboDone(Combo combo)
+	public void OnComboFinished(Combo combo)
 	{
 		if(!player.IsSelected()) return;
 
-		//Debug.Log("Done " + combo.GetName());
+		Debug.Log("Finished " + combo.GetName());
 		if(!ComboManager.AnyComboBeingDone())
 		{
-			attacking = false;
+			comboing = false;
 		}
 	}
 
     //Llamado cuando se ha acabado un combo entero
-    public void OnComboCancel(Combo combo)
+    public void OnComboCancelled(Combo combo)
     {
         if (!player.IsSelected()) return;
 
-        //Debug.Log("Cancelled " + combo.GetName());
+        Debug.Log("Cancelled " + combo.GetName());
 
         //Si no hay ningun combo haciendose, vuelve a idle
         if (!ComboManager.AnyComboBeingDone())
         {
-            attacking = false;
-         //   //Debug.Log("PLAY IDLE");
+            comboing = false;
         }
     }
 	
@@ -100,34 +98,30 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-        attacking = true;
-        //Debug.Log("Doing " + step.GetName());
-
-		anim.Play(step.GetAnimation());
+        comboing = true;
+        Debug.Log("Doing step " + step.GetName());
 	}
 
-	//Llamado cuando un step de un combo se ha acabado
-	public void OnComboStepCancelled(ComboStep step)
+
+    public void OnComboStepCancelled(ComboStep step)
 	{
 		if(!player.IsSelected()) return;
 
-		//Debug.Log("Cancelled " + step.GetName());
-
-		//Si no hay ningun combo haciendose, vuelve a idle
-		if(!ComboManager.AnyComboBeingDone())
-		{
-			attacking = false;
-            //Debug.Log("PLAY IDLE");
-		}
+		Debug.Log("Cancelled step " + step.GetName());
 	}
 
-	//Llamado cuando un step de un combo se ha acabado
-	public void OnComboStepDone(ComboStep step)
+    public void OnComboStepStarted(ComboStep step)
+    {
+        if (!player.IsSelected()) return;
+
+        Debug.Log("Started step " + step.GetName());
+    }
+
+	public void OnComboStepFinished(ComboStep step)
 	{
 		if(!player.IsSelected()) return;
 
-        attacking = false;
-        //Debug.Log("Done " + step.GetName() + ", (" + step.GetNextStepInputInterval().first + ", " + step.GetNextStepInputInterval().second + ")");
+        Debug.Log("Finished step " + step.GetName());
 	}
 
 	public void OnReceiveDamage()
@@ -135,5 +129,5 @@ public class PlayerComboManager : MonoBehaviour
 		ComboManager.CancelAllCombos();
 	}
 
-	public bool IsAttacking() { return attacking; }
+	public bool IsComboing() { return comboing; }
 }
