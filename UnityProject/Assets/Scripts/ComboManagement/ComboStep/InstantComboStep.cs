@@ -29,7 +29,7 @@ class InstantComboStep : ComboStep
         {
             time += Time.deltaTime;
 
-            if( time > animation.GetDuration() )
+            if( time > animation.GetDuration() - ComboStep.blend)
             {
                 parentCombo.OnStepFinished(this);
             }

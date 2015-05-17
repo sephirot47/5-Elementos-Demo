@@ -8,8 +8,9 @@ public class PlayerAnimationManager : MonoBehaviour
     private PlayerMovement playerMove;
     private PlayerComboManager playerComboMan;
 
-	public PlayerAnimation Idle0, Idle1, Run, Walk, Jump, Fall, Land, Explosion, GuardBegin, 
-                           ComboGround, ComboAerial, ReceiveDamage, Die;
+	public PlayerAnimation Idle0, Idle1, Run, Walk, Jump, Fall, Land, Explosion, GuardBegin,
+                           ComboGround, ComboGround1, ComboGround2, ComboGround3, ComboGround4,
+                           ComboAerial, ReceiveDamage, Die;
 						      
 	public float randomIdleDelay = 15.0f;
 	private float idleTime = 0.0f, timeSinceNoJump = float.PositiveInfinity;
@@ -33,7 +34,13 @@ public class PlayerAnimationManager : MonoBehaviour
 
         Explosion = new PlayerAnimation("Explosion", anim);
         GuardBegin = new PlayerAnimation("GuardBegin", anim);
+
         ComboGround = new PlayerAnimation("ComboGround", anim);
+        ComboGround1 = new PlayerAnimation("ComboGround1", anim);
+        ComboGround2 = new PlayerAnimation("ComboGround2", anim);
+        ComboGround3 = new PlayerAnimation("ComboGround3", anim);
+        ComboGround4 = new PlayerAnimation("ComboGround4", anim);
+
         ComboAerial = new PlayerAnimation("ComboAerial", anim);
 
         ReceiveDamage = new PlayerAnimation("ReceiveDamage", anim);
@@ -54,7 +61,7 @@ public class PlayerAnimationManager : MonoBehaviour
 
 		if(!GameState.IsPlaying()) 
 		{
-			anim.Stop();
+			Stop();
 			return;
 		}
 
@@ -82,8 +89,7 @@ public class PlayerAnimationManager : MonoBehaviour
                     idleTime = 0.0f;
                     Play(Idle1);
                 }
-                else if ( !Idle1.IsPlaying() ) Play(Idle0);
-                else idleTime = 0.0f;
+                else Play(Idle0);
             }
 		}
         else
@@ -99,21 +105,25 @@ public class PlayerAnimationManager : MonoBehaviour
     private void ForcePlay(PlayerAnimation animation)
     {
         if (player.IsDead()) return;
-        animation.Stop();
-        animation.Play();
+        animation.ForcePlay();
     }
 
 	public void Play(PlayerAnimation animation)
 	{
-       // Debug.Log("PLAY " + animation.GetName());
-		if( player.IsDead() ) return;
+        if (player.IsDead()) return;
         animation.Play();
 	}
+
+    public void Play(PlayerAnimation animation, float fadeTime)
+    {
+        if (player.IsDead()) return;
+        animation.Play();
+    }
 
 	public void Stop()
 	{
 		if( player.IsDead() ) return;
-        anim.Stop();
+        ForcePlay(Idle0);
 	}
 
 	public static float GetAnimationDuration(PlayerAnimation animation, Player p)

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Combo
 {
 	private List<ComboStep> steps;
-    private readonly float delay = 0.5f;
+    private readonly float delay = ComboStep.blend;
 	private float timeDelay = 0.0f; //Para contar el tiempo pasado
 	private string name = "No name";
 	private int currentStep = 0;
@@ -92,7 +92,6 @@ public class Combo
             ComboManager.OnComboStarted(this);
         }
         ComboManager.OnComboStepStarted(step);
-        Debug.Log(currentStep);
     }
 
     public void OnStepCancelled(ComboStep step)
@@ -115,7 +114,5 @@ public class Combo
             Initialize();
             ComboManager.OnComboFinished(this);
         }
-
-        Debug.Log(currentStep);
     }
 }

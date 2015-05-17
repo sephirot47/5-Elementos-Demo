@@ -39,7 +39,14 @@ public class PlayerComboManager : MonoBehaviour
                 punching.AppendStep(new PersistentComboStep("Punch0", attack, 3.0f, anim.Explosion));
                 punching.AppendStep(new InstantComboStep("Punch1", attack, anim.ComboGround));
                 punching.AppendStep(new InstantComboStep("Punch2", attack, anim.ComboAerial));
-			ComboManager.AddCombo(punching);
+            //ComboManager.AddCombo(punching);
+
+            Combo ground = new Combo("ground");
+                ground.AppendStep(new InstantComboStep("ground1", attack, anim.ComboGround1));
+                ground.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2));
+                ground.AppendStep(new InstantComboStep("ground3", attack, anim.ComboGround3));
+                ground.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4));
+            ComboManager.AddCombo(ground);
 		}
 		else if(player == Core.zap) //Combos de zap
 		{
@@ -52,7 +59,7 @@ public class PlayerComboManager : MonoBehaviour
 	void Update() 
 	{
         if (!player.IsSelected()) comboing = false;
-        Debug.Log(comboing);
+        //Debug.Log(comboing);
 		if(player.IsDead()) return;
 	}
 	
@@ -61,7 +68,7 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-	    Debug.Log("Started " + combo.GetName());
+	    //Debug.Log("Started " + combo.GetName());
 
 		comboing = true;
 	}
@@ -71,7 +78,7 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		Debug.Log("Finished " + combo.GetName());
+		//Debug.Log("Finished " + combo.GetName());
 		if(!ComboManager.AnyComboBeingDone())
 		{
 			comboing = false;
@@ -83,7 +90,7 @@ public class PlayerComboManager : MonoBehaviour
     {
         if (!player.IsSelected()) return;
 
-        Debug.Log("Cancelled " + combo.GetName());
+        //Debug.Log("Cancelled " + combo.GetName());
 
         //Si no hay ningun combo haciendose, vuelve a idle
         if (!ComboManager.AnyComboBeingDone())
@@ -99,7 +106,7 @@ public class PlayerComboManager : MonoBehaviour
 		if(!player.IsSelected()) return;
 
         comboing = true;
-        Debug.Log("Doing step " + step.GetName());
+        //Debug.Log("Doing step " + step.GetName());
 	}
 
 
@@ -107,21 +114,21 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		Debug.Log("Cancelled step " + step.GetName());
+		//Debug.Log("Cancelled step " + step.GetName());
 	}
 
     public void OnComboStepStarted(ComboStep step)
     {
         if (!player.IsSelected()) return;
 
-        Debug.Log("Started step " + step.GetName());
+        //Debug.Log("Started step " + step.GetName());
     }
 
 	public void OnComboStepFinished(ComboStep step)
 	{
 		if(!player.IsSelected()) return;
 
-        Debug.Log("Finished step " + step.GetName());
+        //Debug.Log("Finished step " + step.GetName());
 	}
 
 	public void OnReceiveDamage()

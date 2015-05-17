@@ -16,7 +16,27 @@ public class PlayerAnimation
 
     public void Play()
     {
-        if(anim != null && anim.GetClip(name) != null && !IsPlaying()) 
+        if (anim != null && anim.GetClip(name) != null && !IsPlaying())
+        {
+            anim.CrossFade(name);
+        }
+    }
+
+    public void Play(float fadeTime)
+    {
+        if (anim != null && anim.GetClip(name) != null && !IsPlaying())
+            anim.CrossFade(name, fadeTime);
+    }
+
+    public void ForcePlay(float fadeTime)
+    {
+        if (anim != null && anim.GetClip(name) != null)
+            anim.CrossFade(name, fadeTime);
+    }
+
+    public void ForcePlay()
+    {
+        if (anim != null && anim.GetClip(name) != null)
             anim.CrossFade(name);
     }
 
@@ -30,11 +50,5 @@ public class PlayerAnimation
         if (anim != null && anim.GetClip(name) != null)
             return anim.GetClip(name).length;
         return 0.0f;
-    }
-
-    public void Stop()
-    {
-        if ( IsPlaying() )
-            anim.Stop();
     }
 }

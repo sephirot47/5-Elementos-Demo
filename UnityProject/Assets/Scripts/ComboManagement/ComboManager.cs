@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public class ComboManager : MonoBehaviour 
 {
 	private static List<Combo> combos = new List<Combo>();
+    private static float time = float.PositiveInfinity, 
+                         comboDelay = 1.0f; //Delay entre combo y combo 
 
 	void Start () 
 	{
@@ -12,7 +14,11 @@ public class ComboManager : MonoBehaviour
 	
 	void Update()
 	{
-		foreach(Combo combo in combos) combo.Update();
+        time += Time.deltaTime;
+        if (time > comboDelay)
+        {
+            foreach (Combo combo in combos) combo.Update();
+        }
 	}
 
 	public static void AddCombo(Combo combo)
@@ -38,6 +44,8 @@ public class ComboManager : MonoBehaviour
     {
         foreach (Player p in Core.playerList)
             p.GetComponent<PlayerComboManager>().OnComboCancelled(combo);
+
+        time = 0.0f;
     }
 	
 	//Llamado cuando se ha acabado un combo entero
@@ -45,6 +53,8 @@ public class ComboManager : MonoBehaviour
 	{
 		foreach(Player p in Core.playerList)
             p.GetComponent<PlayerComboManager>().OnComboFinished(combo);
+
+        time = 0.0f;
 	}
 	
 	//SOLO llamado si el combo step es de mantener pulsado.

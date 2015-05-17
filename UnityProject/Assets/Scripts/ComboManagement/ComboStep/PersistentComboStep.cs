@@ -34,9 +34,9 @@ class PersistentComboStep : ComboStep
             if (AllSimultaneousPressed())
             {
                 if (inputDown.Pressed()) time += Time.deltaTime;
-                else if (time < animation.GetDuration()) Cancel();
+                else if (time < animation.GetDuration() - ComboStep.blend) Cancel();
 
-                if (time >= animation.GetDuration() && inputDown.Up())
+                if (time >= animation.GetDuration() - ComboStep.blend && inputDown.Up())
                 {
                     parentCombo.OnStepFinished(this);
                 }
