@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerComboManager : MonoBehaviour 
 {
@@ -9,66 +10,95 @@ public class PlayerComboManager : MonoBehaviour
     private PlayerMovement playerMov;
 	private PlayerAnimationManager anim;
 
+    private Combo groundCombo, aerialCombo, guardCombo, explosionCombo, chargedJumpCombo;
+    private List<Combo> groundCombos;
+    private List<Combo> aerialCombos;
+
 	void Start() 
 	{
 		player = GetComponent<Player>();
         playerMov = GetComponent<PlayerMovement>();
 		anim = GetComponent<PlayerAnimationManager>();
 
-		if(player == Core.kaji) //Combos de kaji
-		{
-			ComboInputKey jump = new ComboInputKey(KeyCode.Space);
-			ComboInputKey guard = new ComboInputKey(KeyCode.LeftShift);
-			ComboInputKey attack = new ComboInputKey(KeyCode.E);
+        groundCombos = new List<Combo>();
+        aerialCombos = new List<Combo>();
 
-            //Combo guardCombo = new Combo("Guard");
-              //  guardCombo.AppendStep(new InstantComboStep("Guard", guard, 9999.0f, PlayerAnimationManager.GuardBegin));
-            //ComboManager.AddCombo(guardCombo);
-			
-			//Combo flamethrower = new Combo("Flamethrower");
-			//	flamethrower.AppendStep( new ComboStep("Flamethrower", attack, 9999.0f, new IComboInput[]{guard},
-           //                              PlayerAnimationManager.Fall));
-			//ComboManager.AddCombo(flamethrower);
+        ComboInputKey jump = new ComboInputKey(KeyCode.Space);
+        ComboInputKey shift = new ComboInputKey(KeyCode.LeftShift);
+        ComboInputKey attack = new ComboInputKey(KeyCode.E);
 
-         //   Combo aerial = new Combo("AerialCombo");
-          //      aerial.AppendStep(new ComboStep("Hit0", attack, PlayerAnimationManager.ComboAerial));
-          //  ComboManager.AddCombo(aerial);
+        groundCombo = new Combo("ground");
+        groundCombo.AppendStep(new InstantComboStep("ground1", attack, anim.ComboGround1));
+        groundCombo.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2));
+        groundCombo.AppendStep(new InstantComboStep("ground3", attack, anim.ComboGround3));
+        groundCombo.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4));
+        ComboManager.AddCombo(groundCombo);
+
+        explosionCombo = new Combo("explosion");
+        explosionCombo.AppendStep(new PersistentComboStep("explosion0", attack, 3.0f, new IComboInput[]{ shift }, anim.Explosion));
+        ComboManager.AddCombo(explosionCombo);
+
+        guardCombo = new Combo("guard");
+        guardCombo.AppendStep(new InfiniteComboStep("guard0", shift, anim.GuardBegin));
+        ComboManager.AddCombo(guardCombo);
 
 
-			Combo punching = new Combo("Punching");
-                punching.AppendStep(new PersistentComboStep("Punch0", attack, 3.0f, anim.Explosion));
-                punching.AppendStep(new InstantComboStep("Punch1", attack, anim.ComboGround));
-                punching.AppendStep(new InstantComboStep("Punch2", attack, anim.ComboAerial));
-            //ComboManager.AddCombo(punching);
+        aerialCombo = new Combo("aerial");
+        aerialCombo.AppendStep(new InstantComboStep("aerial1", attack, anim.ComboAerial));
+        ComboManager.AddCombo(aerialCombo);
 
-            Combo ground = new Combo("ground");
-                ground.AppendStep(new InstantComboStep("ground1", attack, anim.ComboGround1));
-                ground.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2));
-                ground.AppendStep(new InstantComboStep("ground3", attack, anim.ComboGround3));
-                ground.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4));
-            ComboManager.AddCombo(ground);
-		}
-		else if(player == Core.zap) //Combos de zap
-		{
-		}
-		else if(player == Core.lluvia) //Combos de lluvia
-		{
-		}
+        chargedJumpCombo = new Combo("chargedJump");
+        chargedJumpCombo.AppendStep(new PersistentComboStep("chargedJump0", jump, 3.0f, new IComboInput[] { shift }, anim.Die));
+        //ComboManager.AddCombo(chargedJumpCombo);
+
+        groundCombos.Add(groundCombo);
+        groundCombos.Add(explosionCombo);
+        groundCombos.Add(guardCombo);
+
+        aerialCombos.Add(aerialCombo);
+        aerialCombos.Add(chargedJumpCombo);
+
+        DisableAllCombos();
 	}
 	
 	void Update() 
 	{
-        if (!player.IsSelected()) comboing = false;
-        //Debug.Log(comboing);
+        if (!player.IsSelected())
+        {
+            DisableAllCombos();
+            comboing = false; 
+            return;
+        }
+        Debug.Log(guardCombo.BeingDone());
 		if(player.IsDead()) return;
+
+        if(playerMov.IsGrounded())
+        {
+            DisableAllCombos();
+            EnableGroundCombos();
+        }
+        else
+        {
+            DisableAllCombos();
+            EnableAerialCombos();
+        }
 	}
 	
 	//Llamado cuando se ha empezado un combo
 	public void OnComboStarted(Combo combo)
 	{
 		if(!player.IsSelected()) return;
+        if(player.GetTarget() != null)
+        {
+            playerMov.LookToTarget();
+        }
 
-	    //Debug.Log("Started " + combo.GetName());
+	    Debug.Log("Started " + combo.GetName());
+
+        if (combo.GetName() == "chargedJump0" || combo.GetName() == "aerial1")
+        {
+            playerMov.SetSuspendedInAir(true);
+        }
 
 		comboing = true;
 	}
@@ -78,7 +108,12 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		//Debug.Log("Finished " + combo.GetName());
+        if (combo.GetName() == "chargedJump0" || combo.GetName() == "aerial1")
+        {
+            playerMov.SetSuspendedInAir(false);
+        }
+
+		Debug.Log("Finished " + combo.GetName());
 		if(!ComboManager.AnyComboBeingDone())
 		{
 			comboing = false;
@@ -90,7 +125,7 @@ public class PlayerComboManager : MonoBehaviour
     {
         if (!player.IsSelected()) return;
 
-        //Debug.Log("Cancelled " + combo.GetName());
+        Debug.Log("Cancelled " + combo.GetName());
 
         //Si no hay ningun combo haciendose, vuelve a idle
         if (!ComboManager.AnyComboBeingDone())
@@ -106,7 +141,7 @@ public class PlayerComboManager : MonoBehaviour
 		if(!player.IsSelected()) return;
 
         comboing = true;
-        //Debug.Log("Doing step " + step.GetName());
+        Debug.Log("Doing step " + step.GetName());
 	}
 
 
@@ -114,27 +149,68 @@ public class PlayerComboManager : MonoBehaviour
 	{
 		if(!player.IsSelected()) return;
 
-		//Debug.Log("Cancelled step " + step.GetName());
+		Debug.Log("Cancelled step " + step.GetName());
 	}
 
     public void OnComboStepStarted(ComboStep step)
     {
         if (!player.IsSelected()) return;
 
-        //Debug.Log("Started step " + step.GetName());
+        Debug.Log("Started step " + step.GetName());
     }
 
 	public void OnComboStepFinished(ComboStep step)
 	{
 		if(!player.IsSelected()) return;
 
-        //Debug.Log("Finished step " + step.GetName());
+        Debug.Log("Finished step " + step.GetName());
 	}
+
+    public void DisableAllCombos()
+    {
+        foreach (Combo c in groundCombos) c.SetEnabled(false);
+        foreach (Combo c in aerialCombos) c.SetEnabled(false);
+    }
+
+    public void EnableGroundCombos()
+    {
+        foreach (Combo c in groundCombos) c.SetEnabled(true);
+    }
+
+    public void EnableAerialCombos()
+    {
+        foreach (Combo c in aerialCombos) c.SetEnabled(true);
+    }
+
 
 	public void OnReceiveDamage()
 	{
-		ComboManager.CancelAllCombos();
 	}
+
+
+    public bool IsComboingStep(string stepName)
+    {
+        foreach (Combo c in groundCombos)
+            foreach(ComboStep s in c.GetSteps())
+                if (s.Started() && s.GetName() == stepName) return true;
+
+        foreach (Combo c in aerialCombos)
+            foreach (ComboStep s in c.GetSteps())
+                if (s.Started() && s.GetName() == stepName) return true;
+
+        return false;
+    }
+
+    public bool IsComboingCombo(string comboName) 
+    { 
+        foreach (Combo c in groundCombos)
+            if(c.BeingDone() && c.GetName() == comboName) return true;
+
+        foreach (Combo c in aerialCombos)
+            if (c.BeingDone() && c.GetName() == comboName) return true;
+
+        return false;
+    }
 
 	public bool IsComboing() { return comboing; }
 }

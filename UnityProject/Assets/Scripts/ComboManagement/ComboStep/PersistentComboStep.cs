@@ -22,7 +22,7 @@ class PersistentComboStep : ComboStep
     {
         if (!started)
         {
-            if (inputDown.Pressed() && AllSimultaneousPressed())
+            if (inputDown.Down() && AllSimultaneousPressed() && NoWrongControlKeysPressed())
             {
                 started = true;
                 animation.Play();
@@ -31,8 +31,13 @@ class PersistentComboStep : ComboStep
         }
         else
         {
-            if (AllSimultaneousPressed())
+            if (AllSimultaneousPressed() && NoWrongControlKeysPressed())
             {
+                if (time < animation.GetDuration() - ComboStep.blend && inputDown.Pressed())
+                {
+                    parentCombo.OnStepDoing(this, timePressed);
+                }
+
                 if (inputDown.Pressed()) time += Time.deltaTime;
                 else if (time < animation.GetDuration() - ComboStep.blend) Cancel();
 

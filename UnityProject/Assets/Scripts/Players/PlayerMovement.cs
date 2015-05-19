@@ -19,6 +19,8 @@ public class PlayerMovement : MonoBehaviour
 
 	private CharacterController controller;
 
+    private bool suspendedInAir = false;
+
 	void Start ()
 	{
 		player = GetComponent<Player>();
@@ -49,9 +51,11 @@ public class PlayerMovement : MonoBehaviour
 		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
 		
 		boost *= boostFading;
-		movement.y += Core.gravity * Time.fixedDeltaTime; //gravity
+        if (!suspendedInAir)
+        {
+            movement.y += Core.gravity * Time.fixedDeltaTime; //gravity
+        }
 	}
-	
 	
 	private void SelectedMove()
 	{
@@ -69,7 +73,9 @@ public class PlayerMovement : MonoBehaviour
 		movement = Vector3.zero;
 		
         bool walking = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
-		Vector3 dir = ((Camera.main.transform.forward * axisY) + (Camera.main.transform.right * axisX)).normalized;
+        Vector3 forward = Camera.main.transform.forward, right = Camera.main.transform.right; 
+        forward.y = right.y = 0.0f;
+        Vector3 dir = ((forward.normalized * axisY) + (right.normalized * axisX)).normalized;
 		movement += dir * speed * (walking ? 0.5f : 1.0f);
 
 		movement.y = 0;
@@ -146,6 +152,16 @@ public class PlayerMovement : MonoBehaviour
         return jumpsDone == 2;
     }
 
+    public void SetSuspendedInAir(bool suspended)
+    {
+        suspendedInAir = suspended;
+        if(suspended)
+        { 
+            jumpsDone = 2;
+            movement.y = 0.0f;
+        }
+    }
+
 	public bool IsGrounded()
 	{
 		RaycastHit hit;
@@ -155,4 +171,9 @@ public class PlayerMovement : MonoBehaviour
         }
         return Physics.Raycast( controller.transform.position, Vector3.down, out hit, 0.1f, ~(1 << LayerMask.NameToLayer("Player")));
 	}
+
+    public void LookToTarget()
+    {
+        transform.forward = Core.PlaneVector(player.GetTarget().transform.position - transform.position);
+    }
 }

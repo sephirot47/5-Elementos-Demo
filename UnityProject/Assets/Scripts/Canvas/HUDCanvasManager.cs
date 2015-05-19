@@ -3,7 +3,6 @@ using System.Collections;
 
 public class HUDCanvasManager : MonoBehaviour 
 {
-
 	void Start()
 	{
 	}

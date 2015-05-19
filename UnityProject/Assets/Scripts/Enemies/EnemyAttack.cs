@@ -53,7 +53,7 @@ public class EnemyAttack : MonoBehaviour {
 
 	public void Attack(Player p)
 	{
-		p.ReceiveAttack(GetComponent<Enemy>());
+		p.GetComponent<PlayerCombat>().ReceiveAttack(GetComponent<Enemy>());
 		time = 0.0f;
 	}
 }

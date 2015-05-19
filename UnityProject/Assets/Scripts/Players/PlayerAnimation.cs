@@ -28,18 +28,6 @@ public class PlayerAnimation
             anim.CrossFade(name, fadeTime);
     }
 
-    public void ForcePlay(float fadeTime)
-    {
-        if (anim != null && anim.GetClip(name) != null)
-            anim.CrossFade(name, fadeTime);
-    }
-
-    public void ForcePlay()
-    {
-        if (anim != null && anim.GetClip(name) != null)
-            anim.CrossFade(name);
-    }
-
     public bool IsPlaying()
     {
         return anim != null && anim.GetClip(name) != null && anim.IsPlaying(name);

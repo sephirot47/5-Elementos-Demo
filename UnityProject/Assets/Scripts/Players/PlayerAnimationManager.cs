@@ -71,8 +71,8 @@ public class PlayerAnimationManager : MonoBehaviour
 
             if (timeSinceNoJump < 0.1f)
             {
-                if (planeMovement.magnitude > 0.05f) ForcePlay(Run);
-                else ForcePlay(Idle0);
+                if (planeMovement.magnitude > 0.05f) Play(Run);
+                else Play(Idle0);
             }
 
             if (planeMovement.magnitude > 0.05f)
@@ -102,12 +102,6 @@ public class PlayerAnimationManager : MonoBehaviour
         }
 	}
 
-    private void ForcePlay(PlayerAnimation animation)
-    {
-        if (player.IsDead()) return;
-        animation.ForcePlay();
-    }
-
 	public void Play(PlayerAnimation animation)
 	{
         if (player.IsDead()) return;
@@ -123,7 +117,7 @@ public class PlayerAnimationManager : MonoBehaviour
 	public void Stop()
 	{
 		if( player.IsDead() ) return;
-        ForcePlay(Idle0);
+        Play(Idle0);
 	}
 
 	public static float GetAnimationDuration(PlayerAnimation animation, Player p)

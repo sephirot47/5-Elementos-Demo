@@ -58,20 +58,20 @@ public class PauseCanvasManager : MonoBehaviour
 
 	void OnGUI()
 	{
-		if(!!GameState.IsPlaying())
+		if(GameState.IsPlaying())
 		{
-			DrawTargetCrossfire();
+			//DrawTargetCrosshair();
 		}
 	}
 
-	void DrawCrossfire()
+	void DrawCrosshair()
 	{
 		Vector2 v = CameraControl.GetLookScreenPoint();
 		DrawBox(new Rect(v.x - 1, v.y/2 - 5, 3, 10), Color.red);
 		DrawBox(new Rect(v.x - 5, v.y/2 - 1, 10, 3), Color.red);
 	}
 
-	void DrawTargetCrossfire()
+	void DrawTargetCrosshair()
 	{
 		Player player = Core.selectedPlayer;
 		if(player != null)
@@ -82,10 +82,10 @@ public class PauseCanvasManager : MonoBehaviour
 				Vector3 targetPos = target.transform.position;
 				Vector2 targetScreenPos = Camera.main.WorldToScreenPoint(targetPos);
 
-				float crossfireSize = Mathf.Ceil(160.0f / Vector3.Distance(Camera.main.transform.position, targetPos));
-				DrawBox(new Rect(targetScreenPos.x - crossfireSize/2, 
-				                 Screen.height - targetScreenPos.y - crossfireSize/2, 
-				                 crossfireSize, crossfireSize), 
+				float crosshairSize = Mathf.Ceil(160.0f / Vector3.Distance(Camera.main.transform.position, targetPos));
+				DrawBox(new Rect(targetScreenPos.x - crosshairSize/2, 
+				                 Screen.height - targetScreenPos.y - crosshairSize/2, 
+				                 crosshairSize, crosshairSize), 
 				      	  		 GetTargetColor(target));
 			}
 		}

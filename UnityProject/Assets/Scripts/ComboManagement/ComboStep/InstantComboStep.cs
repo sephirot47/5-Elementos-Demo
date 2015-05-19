@@ -18,7 +18,7 @@ class InstantComboStep : ComboStep
     {
         if (!started)
         {
-            if (inputDown.Down() && AllSimultaneousPressed())
+            if (inputDown.Down() && AllSimultaneousPressed() && NoWrongControlKeysPressed())
             {
                 started = true;
                 animation.Play();

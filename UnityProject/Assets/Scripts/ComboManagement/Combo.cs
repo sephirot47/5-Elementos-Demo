@@ -5,11 +5,11 @@ using System.Collections.Generic;
 public class Combo
 {
 	private List<ComboStep> steps;
-    private readonly float delay = ComboStep.blend;
+    private readonly float delay = ComboStep.blend * 2.0f;
 	private float timeDelay = 0.0f; //Para contar el tiempo pasado
 	private string name = "No name";
 	private int currentStep = 0;
-	private bool started = false;
+    private bool started = false, enabled = true;
 
 	public Combo(string name)
 	{
@@ -27,6 +27,8 @@ public class Combo
 	//Must be called by the ComboManager :)
 	public void Update()
     {
+        if (!enabled) return;
+
         if (currentStep < steps.Count)
         {
             if(!steps[currentStep].Started() && currentStep > 0) //Si estamos entre step y step
@@ -89,6 +91,7 @@ public class Combo
     {
         if (currentStep == 0)
         {
+            started = true;
             ComboManager.OnComboStarted(this);
         }
         ComboManager.OnComboStepStarted(step);
@@ -99,6 +102,11 @@ public class Combo
         Cancel();
         ComboManager.OnComboStepCancelled(step);
         ComboManager.OnComboCancelled(this);
+    }
+
+    public void OnStepDoing(ComboStep comboStep, float timePressed)
+    {
+        ComboManager.OnComboStepFinished(comboStep, timePressed);
     }
 
     public void OnStepFinished(ComboStep step)
@@ -115,4 +123,15 @@ public class Combo
             ComboManager.OnComboFinished(this);
         }
     }
+
+    public void SetEnabled(bool enabled)
+    {
+        this.enabled = enabled;
+    }
+
+    public List<ComboStep> GetSteps()
+    {
+        return steps;
+    }
+
 }

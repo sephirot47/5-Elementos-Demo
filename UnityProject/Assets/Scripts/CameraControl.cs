@@ -79,6 +79,11 @@ public class CameraControl : MonoBehaviour
 		}
 	}
 
+    void OnPreRender()
+    {
+        CrosshairCanvas.Refresh();
+    }
+
 	public void SelectTarget(Transform go)
 	{
 		target = go;

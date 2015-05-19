@@ -3,27 +3,22 @@ using System.Collections;
 
 public class Player : MonoBehaviour 
 {
-	PlayerAnimationManager anim;
-
-	public float attack = 5.0f;
-
-	public float maxLife = 100.0f;
-	private float currentLife;
+	private PlayerAnimationManager anim;
+    private PlayerCombat playerCombat;
 
 	private float aggro = 0.0f;
-
-	private GameObject target;
 
 	void Start()
 	{
 		anim = GetComponent<PlayerAnimationManager>();
-		currentLife = maxLife;
+        playerCombat = GetComponent<PlayerCombat>();
 	}
 
 	void Update()
 	{
 		if(!IsSelected()) return;
 
+        GameObject target = GetTarget();
 		if(GameState.IsPlaying() && !GameState.AllPlayersDead())
 		{
 			if(Input.GetButtonDown("Speak"))
@@ -40,69 +35,25 @@ public class Player : MonoBehaviour
 	{
 		npc.OnSpeakWithMe();
 	}
-	
-	private void Shoot()
-	{
-		if(IsDead ()) return;
 
-		Vector3 origin = transform.position + Vector3.up * 1.0f;
-
-		GameObject proj = Instantiate(Resources.Load("Projectile"), 
-		                              origin, Quaternion.identity) as GameObject;
-
-		Vector3 shootDir = (CameraControl.GetLookPoint() - origin).normalized;
-		if(target != null) 
-		{
-			shootDir = (target.transform.position - origin).normalized;
-		}
-		
-		proj.GetComponent<Projectile>().dir = shootDir;
-		proj.transform.forward = shootDir; 
-		proj.GetComponent<Projectile>().shooterPlayer = this;
-	}
-
-	public float GetAggro() { return aggro; }
-	public void OnApplyDamage() { aggro += attack; }
-	public float GetCurrentLife() { return currentLife; }
-	public float GetMaxLife() { return maxLife; }
-
-	public Vector3 GetMovement() { return GetComponent<PlayerMovement>().movement; }
-
-	public void ReceiveAttack(Enemy e)
-	{
-		currentLife -= e.GetAttack();
-		GetComponent<PlayerComboManager>().OnReceiveDamage();
-
-		if(IsDead() && anim != null)
-		{
-			Die();
-		}
-
-        else if (anim != null) anim.Play(anim.ReceiveDamage);
-	}
-	
+    
 	public void SetTarget(GameObject t)
 	{
-		target = t;
+        GetComponent<PlayerTarget>().SetTarget(t);
 	}
 
 	public GameObject GetTarget()
 	{
-		return target;
+		return GetComponent<PlayerTarget>().GetTarget();
 	}
 
-	public void Die()
-	{
-		currentLife = 0;
-	}
+	public void Die() { playerCombat.Die(); }
+	public bool IsDead() {  return playerCombat.IsDead(); }
+    public bool IsSelected() { return Core.selectedPlayer == this; }
 
-	public bool IsDead()
-	{
-		return currentLife <= 0;
-	}
-
-	public bool IsSelected()
-	{
-		return Core.selectedPlayer == this;
-	}
+    public float GetAggro() { return aggro; }
+    public void OnApplyDamage() { aggro += playerCombat.GetAttack(); }
+    public float GetCurrentLife() { return playerCombat.GetCurrentLife(); }
+    public float GetMaxLife() { return playerCombat.GetMaxLife(); }
+    public Vector3 GetMovement() { return GetComponent<PlayerMovement>().movement; }
 }

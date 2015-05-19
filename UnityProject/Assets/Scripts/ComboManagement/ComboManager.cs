@@ -6,7 +6,7 @@ public class ComboManager : MonoBehaviour
 {
 	private static List<Combo> combos = new List<Combo>();
     private static float time = float.PositiveInfinity, 
-                         comboDelay = 1.0f; //Delay entre combo y combo 
+                         comboDelay = 0.0f; //Delay entre combo y combo 
 
 	void Start () 
 	{
@@ -104,4 +104,10 @@ public class ComboManager : MonoBehaviour
 		foreach(Combo combo in combos)
             combo.Cancel();
 	}
+
+    public static void OnComboStepFinished(ComboStep comboStep, float timePressed)
+    {
+        foreach (Player p in Core.playerList)
+            p.GetComponent<PlayerComboManager>().OnComboStepDoing(comboStep, timePressed);
+    }
 }

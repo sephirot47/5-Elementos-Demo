@@ -3,8 +3,9 @@ using System.Collections;
 
 public class CanvasUtils
 {
-	public static void Show(GameObject go) 
-	{
+	public static void Show(GameObject go)
+    {
+        if (go == null) return;
 		if(go.GetComponent<CanvasGroup>() != null)
 		{
 			go.GetComponent<CanvasGroup>().alpha = 1; 
@@ -15,8 +16,9 @@ public class CanvasUtils
 		}
 	}
 
-	public static void Show(GameObject go, float alpha) 
-	{
+	public static void Show(GameObject go, float alpha)
+    {
+        if (go == null) return;
 		if(go.GetComponent<CanvasGroup>() != null)
 		{
 			go.GetComponent<CanvasGroup>().alpha = alpha; 
@@ -29,6 +31,7 @@ public class CanvasUtils
 
 	public static void Hide(GameObject go) 
 	{
+        if (go == null) return;
 		if(go.GetComponent<CanvasGroup>() != null)
 		{
 			go.GetComponent<CanvasGroup>().alpha = 0; 
