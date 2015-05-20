@@ -8,16 +8,12 @@ public class Enemy : MonoBehaviour
 
 	[HideInInspector] public Vector3 movement;
 
-	[SerializeField] protected float maxLife; //vida maxima
-	private float currentLife; //vida actual
-
 	public float speed = 7.0f; //velocidad
 
 	void Start() 
 	{
 		controller = GetComponent<CharacterController>();
 		target = null;
-		currentLife = maxLife; //Empieza con 100% vida
 	}
 	
 	void Update() 
@@ -27,8 +23,6 @@ public class Enemy : MonoBehaviour
 		movement = Vector3.zero;
 		movement += Vector3.up * Core.gravity; //gravity
 
-		if(currentLife <= 0) Die();
-
 		controller.Move(movement * Time.deltaTime);
 	}
 	
@@ -37,22 +31,22 @@ public class Enemy : MonoBehaviour
 		if(col.gameObject.CompareTag("Projectile")) 
 		{
 			Projectile p = col.gameObject.GetComponent<Projectile>();
-			ReceiveAttack(10.0f, p.shooterPlayer);
+			ReceiveAttack(10.0f);
 			p.shooterPlayer.OnApplyDamage();
 		}
 	}
 
-	public void ReceiveAttack(float damage, Player player)
+	public void ReceiveAttack(float damage)
 	{
-		currentLife -= damage;
+        GetComponent<EnemyCombat>().ReceiveAttack(damage);
 	}
 	
 	public Player GetTarget()  { return target; }
-	public float GetCurrentLife()  { return currentLife; }
-	public float GetMaxLife()  { return maxLife; }
-	public float GetAttack() { return GetComponent<EnemyAttack>().attack; }
-	public float GetAttackRange() { return GetComponent<EnemyAttack>().attackRange; }
-	public float GetAttackRate() { return GetComponent<EnemyAttack>().attackRate; }
+	public float GetCurrentLife()  { return GetComponent<EnemyCombat>().GetCurrentLife(); }
+    public float GetMaxLife() { return GetComponent<EnemyCombat>().GetMaxLife(); }
+    public float GetAttack() { return GetComponent<EnemyCombat>().GetAttack(); }
+    public float GetAttackRange() { return GetComponent<EnemyCombat>().GetAttackRange(); }
+    public float GetAttackRate() { return GetComponent<EnemyCombat>().GetAttackRate(); }
 
 	public void Die()
 	{

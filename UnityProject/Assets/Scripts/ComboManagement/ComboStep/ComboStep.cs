@@ -88,6 +88,11 @@ public abstract class ComboStep
         return started;
     }
 
+    public Combo GetParentCombo()
+    {
+        return parentCombo;
+    }
+
     public string GetName()
     {
         return name;
