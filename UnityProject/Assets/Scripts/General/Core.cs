@@ -11,8 +11,8 @@ public class Core : MonoBehaviour
 
 	public static List<Player> playerList = new List<Player>();
 
-	void Start() 
-	{
+	void Start()
+    {
 		Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Projectiles")); 
 
 		kaji = GameObject.Find("Kaji").GetComponent<Player>();

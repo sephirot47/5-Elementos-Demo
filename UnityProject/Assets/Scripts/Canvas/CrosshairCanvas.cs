@@ -10,7 +10,7 @@ public class CrosshairCanvas : MonoBehaviour
 
     private static readonly float cursorAlpha = 0.8f;
 
-	void Start () 
+	void Start ()
     {
         kajiCrosshair = Core.GetSubGameObject(gameObject, "KajiCrosshair");
         zapCrosshair = Core.GetSubGameObject(gameObject, "ZapCrosshair");

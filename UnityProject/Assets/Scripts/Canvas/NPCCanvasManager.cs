@@ -8,8 +8,8 @@ public class NPCCanvasManager : MonoBehaviour
 	private static Text speakingTitle, speakingText;
 	private static NPC speakingNPC = null;
 
-	void Start() 
-	{
+	void Start()
+    {
 		speakingPanel = Core.GetSubGameObject(gameObject, "SpeakingPanel");
 		speakingTitle = Core.GetSubGameObject(speakingPanel, "Title").GetComponent<Text>();
 		speakingText = Core.GetSubGameObject(speakingPanel, "Content").GetComponent<Text>();

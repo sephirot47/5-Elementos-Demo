@@ -8,7 +8,7 @@ public class PauseCanvasManager : MonoBehaviour
 	private static Button resumeButton, exitButton;
 
 	void Start()
-	{
+    {
 		pauseCanvas = gameObject;
 		resumeButton = Core.GetSubGameObject(pauseCanvas, "ResumeButton").GetComponent<Button>();
 		exitButton = Core.GetSubGameObject(pauseCanvas, "ExitButton").GetComponent<Button>();

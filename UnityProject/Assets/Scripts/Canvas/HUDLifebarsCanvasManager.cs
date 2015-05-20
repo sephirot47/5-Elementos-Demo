@@ -15,7 +15,7 @@ public class HUDLifebarsCanvasManager : MonoBehaviour
     public float transitionSpeed = 5.0f;
 
 	void Start()
-	{
+    {
 		kajiLifebar = Core.GetSubGameObject(gameObject, "KajiLifebar");
 		zapLifebar = Core.GetSubGameObject(gameObject, "ZapLifebar");
 		lluviaLifebar = Core.GetSubGameObject(gameObject, "LluviaLifebar");

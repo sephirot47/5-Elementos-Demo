@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
 	private float aggro = 0.0f;
 
 	void Start()
-	{
+    {
 		anim = GetComponent<PlayerAnimationManager>();
         playerCombat = GetComponent<PlayerCombat>();
 	}
