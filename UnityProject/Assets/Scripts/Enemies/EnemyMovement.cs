@@ -1,34 +1,45 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyWander : MonoBehaviour
+public class EnemyMovement : MonoBehaviour
 {
-	Enemy enemy;
+	private Enemy enemy;
+    private CharacterController controller;
 
 	private float time; //Cada este tiempo, cambia de direccion
 	private Vector3 randomDir; //Direccion random que cambia cada cierto tiempo
 
+	[SerializeField] private float rotSpeed = 5.0f; //Velocidad de rotacion hacia el objetivo
+
 	private Vector3 originalPosition; //Posicion en la que spawnea, para tema de moverse a lo random cuando estan solos
-	
+
+    public float speed = 0.7f;	
 	public float stopProbabilities = 0.7f;	
 	public float wanderRange = 10.0f; //rango en el que 'vaga', cuando no tiene a nadie alrededor y tal
 	public float wanderTime = 5.0f;
 
+    private Vector3 movement;
+
 	void Start () 
 	{
-		enemy = GetComponentInParent<Enemy> ();
-		originalPosition = enemy.transform.position;
+		enemy = GetComponent<Enemy> ();
+		controller = GetComponent<CharacterController> ();
+        originalPosition = enemy.transform.position;
+        randomDir = Vector3.zero;
+        movement = Vector3.zero;
 		time = 0.0f;
-		randomDir = Vector3.zero;
 	}
 
 	void Update () 
 	{	
 		if(!GameState.IsPlaying()) return;
 
-		Vector3 movement = Vector3.zero;
+        Player targetP = GetComponent<EnemyTarget>().GetTarget();
+        if (targetP == null) return;
+        GameObject target = targetP.gameObject;
+
 		Vector3 dirToOriginal = (originalPosition - transform.position);
-		if(enemy.target == null)
+		if(target == null)
 		{
 			if(dirToOriginal.magnitude < wanderRange)
 			{
@@ -51,7 +62,7 @@ public class EnemyWander : MonoBehaviour
 				{
 					//Mira hacia donde caminas, suavemente xd
 					transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(randomDir), Time.deltaTime);
-					movement += transform.forward * enemy.speed * 0.35f;
+					movement = transform.forward * speed * 0.35f;
 				}
 				//
 				
@@ -60,10 +71,31 @@ public class EnemyWander : MonoBehaviour
 			else //Esta fuera de su zona, ha de volver echando leches hihi
 			{
 				transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dirToOriginal), Time.deltaTime);
-				movement += transform.forward * enemy.speed * 0.5f;
+				movement = transform.forward * speed * 0.5f;
 			}
 		}
-		enemy.controller.Move(movement * Time.deltaTime);
+        else //HAY TARGET
+		{
+            if (!GetComponent<EnemyCombat>().InRange()) //Aun esta lejos del player, a perseguirlo!
+            {
+                //A perseguir al player que mas aggro tieneeee!		
+                Vector3 dir = target.gameObject.transform.position - transform.position;
+                dir = new Vector3(dir.x, 0, dir.z);
+
+                movement = dir.normalized * speed;
+            }
+            else movement.x = movement.z = 0.0f;
+
+			//Miramos hacia el jugador
+			Quaternion newRot =  Quaternion.LookRotation(Core.PlaneVector(target.transform.position - transform.position));
+			transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * GetComponent<EnemyMovement>().rotSpeed);
+
+			controller.Move(movement * Time.deltaTime);
+		}
+
+        movement += Vector3.up * Core.gravity; //gravity
+        Debug.Log(movement + "~~~~~");
+        controller.Move(movement * Time.deltaTime);
 	}
 
 	Vector3 GetRandomDeviation()
@@ -71,6 +103,9 @@ public class EnemyWander : MonoBehaviour
 		float lower = 0.0f, upper = 0.3f;
 		return new Vector3(Random.Range(lower, upper), 0.0f, Random.Range(lower, upper));
 	}
+
+    public Vector3 GetMovement() { return movement; }
+
 
 	bool IsWalking()
 	{

@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyAggro : MonoBehaviour 
+public class EnemyTarget : MonoBehaviour
 {
-	Enemy enemy;
+    private Player target; //Personaje al que esta siguiendo, lo modifica EnemyAggro.cs
+    private Enemy enemy;
 	public float visionField = 15.0f;
 
 	void Start() 
@@ -21,7 +22,7 @@ public class EnemyAggro : MonoBehaviour
 		}
 		else
 		{
-			enemy.target = null;
+			target = null;
 		}
 	}
 
@@ -39,24 +40,26 @@ public class EnemyAggro : MonoBehaviour
 	void ChooseTarget()
 	{
 		float aggro = -1.0f;
-		enemy.target = null;
+		target = null;
 
 		if(!Core.kaji.IsDead() && aggro < Core.kaji.GetAggro()) 
 		{
 			aggro = Core.kaji.GetAggro();
-			enemy.target = Core.kaji;
+			target = Core.kaji;
 		}
 
 		if(!Core.zap.IsDead() && aggro < Core.zap.GetAggro()) 
 		{
 			aggro = Core.zap.GetAggro();
-			enemy.target = Core.zap;
+			target = Core.zap;
 		}
 
 		if(!Core.lluvia.IsDead() && aggro < Core.lluvia.GetAggro())
 		{
 			aggro = Core.lluvia.GetAggro();
-			enemy.target = Core.lluvia;
+			target = Core.lluvia;
 		}
 	}
+
+    public Player GetTarget() { return target;  }
 }

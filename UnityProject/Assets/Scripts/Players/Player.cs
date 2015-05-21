@@ -33,13 +33,7 @@ public class Player : MonoBehaviour
 
 	private void SpeakTo(NPC npc)
 	{
-		npc.OnSpeakWithMe();
-	}
-
-    
-	public void SetTarget(GameObject t)
-	{
-        GetComponent<PlayerTarget>().SetTarget(t);
+		if(npc != null) npc.OnSpeakWithMe(this);
 	}
 
 	public GameObject GetTarget()

@@ -57,7 +57,10 @@ public class PlayerSwitchManager : MonoBehaviour
 		if(lastPlayerSelected != Core.selectedPlayer) //Si realmente ha habido cambio de player
 		{
 			HUDLifebarsCanvasManager.OnPlayerSelected(p);
-			ComboManager.OnPlayerSelectedChange();
+			foreach(Player player in Core.playerList)
+            {
+                player.GetComponent<PlayerComboManager>().CancelAllCombos();
+            }
 		}
 	}
 }

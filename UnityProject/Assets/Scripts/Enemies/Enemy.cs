@@ -3,37 +3,21 @@ using System.Collections;
 
 public class Enemy : MonoBehaviour 
 {
-	[HideInInspector] public CharacterController controller;
-	public Player target; //Personaje al que esta siguiendo, lo modifica EnemyAggro.cs
-
-	[HideInInspector] public Vector3 movement;
-
-	public float speed = 7.0f; //velocidad
-
 	void Start() 
 	{
-		controller = GetComponent<CharacterController>();
-		target = null;
 	}
 	
 	void Update() 
 	{
 		if(!GameState.IsPlaying()) return;
-
-		movement = Vector3.zero;
-		movement += Vector3.up * Core.gravity; //gravity
-
-		controller.Move(movement * Time.deltaTime);
 	}
-	
+
+	void LateUpdate()
+    {
+    }
+
 	void OnTriggerEnter(Collider col)
 	{
-		if(col.gameObject.CompareTag("Projectile")) 
-		{
-			Projectile p = col.gameObject.GetComponent<Projectile>();
-			ReceiveAttack(10.0f);
-			p.shooterPlayer.OnApplyDamage();
-		}
 	}
 
 	public void ReceiveAttack(float damage)
@@ -41,12 +25,13 @@ public class Enemy : MonoBehaviour
         GetComponent<EnemyCombat>().ReceiveAttack(damage);
 	}
 	
-	public Player GetTarget()  { return target; }
+	public Player GetTarget()  { return GetComponent<EnemyTarget>().GetTarget(); }
 	public float GetCurrentLife()  { return GetComponent<EnemyCombat>().GetCurrentLife(); }
     public float GetMaxLife() { return GetComponent<EnemyCombat>().GetMaxLife(); }
     public float GetAttack() { return GetComponent<EnemyCombat>().GetAttack(); }
     public float GetAttackRange() { return GetComponent<EnemyCombat>().GetAttackRange(); }
     public float GetAttackRate() { return GetComponent<EnemyCombat>().GetAttackRate(); }
+    public Vector3 GetMovement() { return GetComponent<EnemyMovement>().GetMovement(); }
 
 	public void Die()
 	{

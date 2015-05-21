@@ -7,7 +7,7 @@ class PlayerComboAttack : Combo
 {
     Dictionary<ComboStep, PlayerAttack> stepAttack;
 
-    public PlayerComboAttack(String name) : base(name)
+    public PlayerComboAttack(String name, ComboManager cb) : base(name, cb)
     {
         stepAttack = new Dictionary<ComboStep, PlayerAttack>();
     }

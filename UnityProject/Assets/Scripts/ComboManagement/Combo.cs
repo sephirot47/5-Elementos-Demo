@@ -10,17 +10,18 @@ public class Combo
 	private string name = "No name";
 	private int currentStep = 0;
     private bool started = false, enabled = true;
+    private ComboManager comboManager;
 
-	public Combo(string name)
+	public Combo(string name, ComboManager cb)
 	{
 		this.name = name;
         steps = new List<ComboStep>();
+        comboManager = cb;
 	}
 
-    public Combo(string name, ComboStep[] comboSteps)
+    public Combo(string name, ComboStep[] comboSteps, ComboManager cb)
+        : this(name, cb)
 	{
-		this.name = name;
-        steps = new List<ComboStep>();
 		steps.AddRange(comboSteps);
 	}
 
@@ -84,7 +85,7 @@ public class Combo
 	public void Cancel()
     {
         Initialize();
-        ComboManager.OnComboCancelled(this);
+        comboManager.OnComboCancelled(this);
 	}
 
     public void OnStepStarted(ComboStep step)
@@ -92,27 +93,27 @@ public class Combo
         if (currentStep == 0)
         {
             started = true;
-            ComboManager.OnComboStarted(this);
+            comboManager.OnComboStarted(this);
         }
-        ComboManager.OnComboStepStarted(step);
+        comboManager.OnComboStepStarted(step);
     }
 
     public void OnStepCancelled(ComboStep step)
     {
         Cancel();
-        ComboManager.OnComboStepCancelled(step);
-        ComboManager.OnComboCancelled(this);
+        comboManager.OnComboStepCancelled(step);
+        comboManager.OnComboCancelled(this);
     }
 
     public void OnStepDoing(ComboStep comboStep, float timePressed)
     {
-        ComboManager.OnComboStepFinished(comboStep, timePressed);
+        comboManager.OnComboStepFinished(comboStep, timePressed);
     }
 
     public void OnStepFinished(ComboStep step)
     {
         ++currentStep;
-        ComboManager.OnComboStepFinished(step);
+        comboManager.OnComboStepFinished(step);
         if(currentStep < steps.Count) 
         {
             steps[currentStep].Initialize();
@@ -120,7 +121,7 @@ public class Combo
         else //Combo finished
         {
             Initialize();
-            ComboManager.OnComboFinished(this);
+            comboManager.OnComboFinished(this);
         }
     }
 

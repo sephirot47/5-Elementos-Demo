@@ -5,13 +5,13 @@ using System.Collections.Generic;
 class PlayerAttack
 {
     private float attackMultiplier = 1.0f; //Mutiplicador de la fuerza de ataque normal del player
-    private float attackRange = 2.0f;      //Lo lejos que llega el ataque
-    private float attackAngle = 90.0f;     //Lo amplio que llega el ataque (radio del cono)
+    private float attackRange = 3.0f;      //Lo lejos que llega el ataque
+    private float attackAngle = 150.0f;     //Lo amplio que llega el ataque (radio del cono)
 
     //Indica si el ataque en si(el dano) se efectua al empezar la animacion(true) o al acabarla(false)
     private bool attackOnAnimationStart = true;    
 
-    public PlayerAttack(float attackRange = 2.0f, float attackAngle = 90.0f, float attackMultiplier = 1.0f, 
+    public PlayerAttack(float attackRange = 3.0f, float attackAngle = 150.0f, float attackMultiplier = 1.0f, 
                       bool attackOnAnimationStart = true)
     {
         this.attackRange = attackRange;

@@ -8,6 +8,7 @@ public class CrosshairCanvas : MonoBehaviour
 
     private static GameObject kajiCrosshair, zapCrosshair, lluviaCrosshair, defaultCrosshair;
 
+    private static readonly float cursorScale = 12.0f;
     private static readonly float cursorAlpha = 0.8f;
 
 	void Start ()
@@ -48,13 +49,9 @@ public class CrosshairCanvas : MonoBehaviour
         {
             Vector2 targetScreenPos = Camera.main.WorldToScreenPoint(target.transform.position);
 
-            if (target.CompareTag("Enemy"))
-            {
-                if (p == Core.kaji) CanvasUtils.Show(kajiCrosshair, cursorAlpha);
-                else if (p == Core.zap) CanvasUtils.Show(zapCrosshair, cursorAlpha);
-                else CanvasUtils.Show(lluviaCrosshair, cursorAlpha);
-            }
-            else CanvasUtils.Show(defaultCrosshair, cursorAlpha);
+            if (p == Core.kaji) CanvasUtils.Show(kajiCrosshair, cursorAlpha);
+            else if (p == Core.zap) CanvasUtils.Show(zapCrosshair, cursorAlpha);
+            else CanvasUtils.Show(lluviaCrosshair, cursorAlpha);
         }
         else CanvasUtils.Show(defaultCrosshair, cursorAlpha);
     }
@@ -68,9 +65,10 @@ public class CrosshairCanvas : MonoBehaviour
             HideAll();
             return;
         }
-        
-        Vector2 pos = Camera.main.WorldToScreenPoint(target.transform.position);
-        float scale = 15.0f / Vector3.Distance(Camera.main.transform.position, target.transform.position);
+
+        Vector3 crosshairPos = target.GetComponent<Targetable>().GetCrosshairPos();
+        Vector2 pos = Camera.main.WorldToScreenPoint(crosshairPos);
+        float scale = cursorScale / Vector3.Distance(Camera.main.transform.position, crosshairPos);
 
         kajiCrosshair.GetComponent<RectTransform>().transform.position = new Vector3(pos.x, pos.y, 0.0f);
         kajiCrosshair.GetComponent<RectTransform>().transform.localScale = new Vector3(scale, scale, scale);

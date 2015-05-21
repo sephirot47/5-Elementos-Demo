@@ -30,11 +30,11 @@ public class PlayerTarget : MonoBehaviour
         if(Core.selectedPlayer == null) return;
 
         target = null;
-		List<GameObject> targetables = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
-		targetables.AddRange(GameObject.FindGameObjectsWithTag("NPC"));
+        List<GameObject> targetables = new List<GameObject>();
+        Targetable[] t = GameObject.FindObjectsOfType<Targetable>();
+        foreach(Targetable targetable in t) targetables.Add(targetable.gameObject);
 
 		Vector3 lookDir =  Core.PlaneVector(Core.selectedPlayer.transform.forward).normalized;
-
         if (targetables.Count > 0 && lookDir != Vector3.zero)
         {
 			//Debug.DrawLine(player.gameObject.transform.position, lookPoint, Color.green, 9999.9f, false);

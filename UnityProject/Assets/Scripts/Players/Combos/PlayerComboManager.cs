@@ -18,6 +18,8 @@ public class PlayerComboManager : MonoBehaviour
     private List<Combo> groundCombos;
     private List<Combo> aerialCombos;
 
+    private ComboManager comboManager;
+
 	void Start() 
 	{
 		player = GetComponent<Player>();
@@ -29,36 +31,39 @@ public class PlayerComboManager : MonoBehaviour
         groundCombos = new List<Combo>();
         aerialCombos = new List<Combo>();
 
+
+        comboManager = new ComboManager(this);
+
         ComboInputKey jump = new ComboInputKey(KeyCode.Space);
         ComboInputKey shift = new ComboInputKey(KeyCode.LeftShift);
         ComboInputKey attack = new ComboInputKey(KeyCode.E);
 
         //GROUND COMBO //////////////////////
-        groundCombo = new PlayerComboAttack("ground");
+        groundCombo = new PlayerComboAttack("ground", comboManager);
         groundCombo.AppendStep(new InstantComboStep("ground1", attack, anim.ComboGround1), new PlayerAttack() );
         groundCombo.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2), new PlayerAttack());
         groundCombo.AppendStep(new InstantComboStep("ground3", attack, anim.ComboGround3), new PlayerAttack());
         groundCombo.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4), new PlayerAttack());
-        ComboManager.AddCombo(groundCombo);
+        comboManager.AddCombo(groundCombo);
         //////////////////////////////////////
 
-        aerialCombo = new PlayerComboAttack("aerial");
+        aerialCombo = new PlayerComboAttack("aerial", comboManager);
         aerialCombo.AppendStep(new InstantComboStep("aerial1", attack, anim.ComboAerial), new PlayerAttack());
-        ComboManager.AddCombo(aerialCombo);
+        comboManager.AddCombo(aerialCombo);
 
         //Afecta la mitad, pero ataca a todos los de alrededor, y en un rango mayor
-        explosionCombo = new PlayerComboAttack("explosion");
+        explosionCombo = new PlayerComboAttack("explosion", comboManager);
         explosionCombo.AppendStep(
             new PersistentComboStep("explosion0", attack, 3.0f, new IComboInput[]{ shift }, anim.Explosion),
             new PlayerAttack(10.0f, 360.0f, 0.5f, false) );
-        ComboManager.AddCombo(explosionCombo);
+        comboManager.AddCombo(explosionCombo);
 
 
-        guardCombo = new Combo("guard");
+        guardCombo = new Combo("guard", comboManager);
         guardCombo.AppendStep(new InfiniteComboStep("guard0", shift, anim.GuardBegin));
-        ComboManager.AddCombo(guardCombo);
+        comboManager.AddCombo(guardCombo);
 
-        chargedJumpCombo = new Combo("chargedJump");
+        chargedJumpCombo = new Combo("chargedJump", comboManager);
         chargedJumpCombo.AppendStep(new PersistentComboStep("chargedJump0", jump, 3.0f, new IComboInput[] { shift }, anim.Die));
         //ComboManager.AddCombo(chargedJumpCombo);
 
@@ -74,6 +79,8 @@ public class PlayerComboManager : MonoBehaviour
 	
 	void Update() 
 	{
+        comboManager.Update();
+
         if (!player.IsSelected())
         {
             DisableAllCombos();
@@ -122,7 +129,7 @@ public class PlayerComboManager : MonoBehaviour
         }
 
 		//Debug.Log("Finished " + combo.GetName());
-		if(!ComboManager.AnyComboBeingDone())
+        if (!comboManager.AnyComboBeingDone())
 		{
 			comboing = false;
 		}
@@ -136,7 +143,7 @@ public class PlayerComboManager : MonoBehaviour
         //Debug.Log("Cancelled " + combo.GetName());
 
         //Si no hay ningun combo haciendose, vuelve a idle
-        if (!ComboManager.AnyComboBeingDone())
+        if (!comboManager.AnyComboBeingDone())
         {
             comboing = false;
         }
@@ -219,6 +226,12 @@ public class PlayerComboManager : MonoBehaviour
             if (c.BeingDone() && c.GetName() == comboName) return true;
 
         return false;
+    }
+
+    public void CancelAllCombos()
+    {
+        if (comboManager != null) 
+            comboManager.CancelAllCombos();
     }
 
 	public bool IsComboing() { return comboing; }

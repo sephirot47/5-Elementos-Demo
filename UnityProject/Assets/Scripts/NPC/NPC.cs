@@ -24,10 +24,14 @@ public class NPC : MonoBehaviour
 
 	}
 
-	public void OnSpeakWithMe()
+	public void OnSpeakWithMe(Player p)
 	{
-		NPCCanvasManager.SetSpeakingNPC(this);
-		GameState.ChangeState(GameState.Speaking);
+        float d = Vector3.Distance(transform.position, p.transform.position);
+        if (d <= GetComponent<NPCMovement>().visionRange)
+        {
+            NPCCanvasManager.SetSpeakingNPC(this);
+            GameState.ChangeState(GameState.Speaking);
+        }
 	}
 
 	public string GetName()
