@@ -20,13 +20,13 @@ public class HUDLifebarsCanvasManager : MonoBehaviour
 		zapLifebar = Core.GetSubGameObject(gameObject, "ZapLifebar");
 		lluviaLifebar = Core.GetSubGameObject(gameObject, "LluviaLifebar");
 
-        firstPlanePos = kajiLifebar.GetComponent<RectTransform>().position;
-        secondPlanePos = zapLifebar.GetComponent<RectTransform>().position;
-        thirdPlanePos = lluviaLifebar.GetComponent<RectTransform>().position;
+        kajiLifebarPos = firstPlanePos = kajiLifebar.GetComponent<RectTransform>().position;
+        zapLifebarPos = secondPlanePos = zapLifebar.GetComponent<RectTransform>().position;
+        lluviaLifebarPos = thirdPlanePos = lluviaLifebar.GetComponent<RectTransform>().position;
 
-        firstPlaneScale = kajiLifebar.GetComponent<RectTransform>().localScale;
-        secondPlaneScale = zapLifebar.GetComponent<RectTransform>().localScale;
-        thirdPlaneScale = lluviaLifebar.GetComponent<RectTransform>().localScale;
+        kajiLifebarScale = firstPlaneScale = kajiLifebar.GetComponent<RectTransform>().localScale;
+        zapLifebarScale = secondPlaneScale = zapLifebar.GetComponent<RectTransform>().localScale;
+        lluviaLifebarScale = thirdPlaneScale = lluviaLifebar.GetComponent<RectTransform>().localScale;
 	}
 
 	void Update() 

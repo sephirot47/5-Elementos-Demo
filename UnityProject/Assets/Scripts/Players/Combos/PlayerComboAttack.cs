@@ -3,22 +3,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-class PlayerComboAttack : Combo
+class PlayerComboAttack : ControlledCombo
 {
-    Dictionary<ComboStep, PlayerAttack> stepAttack;
+    Dictionary<ControlledComboStep, PlayerAttack> stepAttack;
 
     public PlayerComboAttack(String name, ComboManager cb) : base(name, cb)
     {
-        stepAttack = new Dictionary<ComboStep, PlayerAttack>();
+        stepAttack = new Dictionary<ControlledComboStep, PlayerAttack>();
     }
 
-    public void AppendStep(ComboStep step, PlayerAttack attack)
+    public void AppendStep(ControlledComboStep step, PlayerAttack attack)
     {
         base.AppendStep(step);
         stepAttack.Add(step, attack);
     }
 
-    public PlayerAttack GetPlayerAttack(ComboStep step)
+    public PlayerAttack GetPlayerAttack(ControlledComboStep step)
     {
         if (stepAttack.ContainsKey(step)) return stepAttack[step];
         else return null;

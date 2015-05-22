@@ -63,17 +63,17 @@ public class PlayerCombat : MonoBehaviour
         return Mathf.Acos(Vector3.Dot(axis.normalized, dirGoToTarget)) * 180.0f / Mathf.PI < angle * 0.5f;
     }
 
-    public void OnComboStepStarted(ComboStep step)
+    public void OnComboStepStarted(ControlledComboStep step)
     {
         TryAttack(step, true);
     }
 
-    public void OnComboStepFinished(ComboStep step)
+    public void OnComboStepFinished(ControlledComboStep step)
     {
         TryAttack(step, false);
     }
 
-    public void TryAttack(ComboStep step, bool onStepStarted)
+    public void TryAttack(ControlledComboStep step, bool onStepStarted)
     {
         if (!player.IsSelected()) return;
 

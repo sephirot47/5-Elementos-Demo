@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerComboManager : MonoBehaviour 
+public class PlayerComboManager : MonoBehaviour, IComboListener
 {
 	private bool comboing = false;
 
@@ -10,13 +11,11 @@ public class PlayerComboManager : MonoBehaviour
     private PlayerMovement playerMov;
 	private PlayerAnimationManager anim;
 
-    private Dictionary<ComboStep, PlayerAttack> stepAttack; //Para cada combo step, contiene el ataque al que esta asociado
-
     private PlayerComboAttack groundCombo, aerialCombo, explosionCombo;
-    private Combo guardCombo, chargedJumpCombo;
+    private ControlledCombo guardCombo, chargedJumpCombo;
 
-    private List<Combo> groundCombos;
-    private List<Combo> aerialCombos;
+    private List<ControlledCombo> groundCombos;
+    private List<ControlledCombo> aerialCombos;
 
     private ComboManager comboManager;
 
@@ -26,10 +25,8 @@ public class PlayerComboManager : MonoBehaviour
         playerMov = GetComponent<PlayerMovement>();
 		anim = GetComponent<PlayerAnimationManager>();
 
-        stepAttack = new Dictionary<ComboStep, PlayerAttack>();
-
-        groundCombos = new List<Combo>();
-        aerialCombos = new List<Combo>();
+        groundCombos = new List<ControlledCombo>();
+        aerialCombos = new List<ControlledCombo>();
 
 
         comboManager = new ComboManager(this);
@@ -58,12 +55,11 @@ public class PlayerComboManager : MonoBehaviour
             new PlayerAttack(10.0f, 360.0f, 0.5f, false) );
         comboManager.AddCombo(explosionCombo);
 
-
-        guardCombo = new Combo("guard", comboManager);
+        guardCombo = new ControlledCombo("guard", comboManager);
         guardCombo.AppendStep(new InfiniteComboStep("guard0", shift, anim.GuardBegin));
         comboManager.AddCombo(guardCombo);
 
-        chargedJumpCombo = new Combo("chargedJump", comboManager);
+        chargedJumpCombo = new ControlledCombo("chargedJump", comboManager);
         chargedJumpCombo.AppendStep(new PersistentComboStep("chargedJump0", jump, 3.0f, new IComboInput[] { shift }, anim.Die));
         //ComboManager.AddCombo(chargedJumpCombo);
 
@@ -170,33 +166,41 @@ public class PlayerComboManager : MonoBehaviour
     public void OnComboStepStarted(ComboStep step)
     {
         if (!player.IsSelected()) return;
+        ControlledComboStep ccs = null;
 
-        GetComponent<PlayerCombat>().OnComboStepStarted(step);
+        try { ccs = (ControlledComboStep) step;  }
+        catch (InvalidCastException e) { return; }
+
+        GetComponent<PlayerCombat>().OnComboStepStarted(ccs);
         //Debug.Log("Started step " + step.GetName());
     }
 
 	public void OnComboStepFinished(ComboStep step)
 	{
-		if(!player.IsSelected()) return;
+        if (!player.IsSelected()) return;
+        ControlledComboStep ccs = null;
 
-        GetComponent<PlayerCombat>().OnComboStepFinished(step);
+        try { ccs = (ControlledComboStep)step; }
+        catch (InvalidCastException e) { return; }
+
+        GetComponent<PlayerCombat>().OnComboStepFinished(ccs);
         //Debug.Log("Finished step " + step.GetName());
 	}
 
     public void DisableAllCombos()
     {
-        foreach (Combo c in groundCombos) c.SetEnabled(false);
-        foreach (Combo c in aerialCombos) c.SetEnabled(false);
+        foreach (ControlledCombo c in groundCombos) c.SetEnabled(false);
+        foreach (ControlledCombo c in aerialCombos) c.SetEnabled(false);
     }
 
     public void EnableGroundCombos()
     {
-        foreach (Combo c in groundCombos) c.SetEnabled(true);
+        foreach (ControlledCombo c in groundCombos) c.SetEnabled(true);
     }
 
     public void EnableAerialCombos()
     {
-        foreach (Combo c in aerialCombos) c.SetEnabled(true);
+        foreach (ControlledCombo c in aerialCombos) c.SetEnabled(true);
     }
 
 
@@ -206,12 +210,12 @@ public class PlayerComboManager : MonoBehaviour
 
     public bool IsComboingStep(string stepName)
     {
-        foreach (Combo c in groundCombos)
-            foreach(ComboStep s in c.GetSteps())
+        foreach (ControlledCombo c in groundCombos)
+            foreach(ControlledComboStep s in c.GetSteps())
                 if (s.Started() && s.GetName() == stepName) return true;
 
-        foreach (Combo c in aerialCombos)
-            foreach (ComboStep s in c.GetSteps())
+        foreach (ControlledCombo c in aerialCombos)
+            foreach (ControlledComboStep s in c.GetSteps())
                 if (s.Started() && s.GetName() == stepName) return true;
 
         return false;
@@ -219,10 +223,10 @@ public class PlayerComboManager : MonoBehaviour
 
     public bool IsComboingCombo(string comboName) 
     { 
-        foreach (Combo c in groundCombos)
+        foreach (ControlledCombo c in groundCombos)
             if(c.BeingDone() && c.GetName() == comboName) return true;
 
-        foreach (Combo c in aerialCombos)
+        foreach (ControlledCombo c in aerialCombos)
             if (c.BeingDone() && c.GetName() == comboName) return true;
 
         return false;

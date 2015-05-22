@@ -2,14 +2,14 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-class InstantComboStep : ComboStep
+class InstantComboStep : ControlledComboStep
 {
-    public InstantComboStep(String name, IComboInput inputDown, PlayerAnimation anim) 
+    public InstantComboStep(String name, IComboInput inputDown, CustomAnimation anim) 
                      : base(name, inputDown, anim)
     {
     }
 
-    public InstantComboStep(String name, IComboInput inputDown, IComboInput[] inputSimultaneous, PlayerAnimation anim)
+    public InstantComboStep(String name, IComboInput inputDown, IComboInput[] inputSimultaneous, CustomAnimation anim)
                      : base(name, inputDown, inputSimultaneous, anim)
     {
     }
@@ -29,7 +29,7 @@ class InstantComboStep : ComboStep
         {
             time += Time.deltaTime;
 
-            if( time > animation.GetDuration() - ComboStep.blend)
+            if( time > animation.GetDuration() - ControlledComboStep.blend)
             {
                 parentCombo.OnStepFinished(this);
             }

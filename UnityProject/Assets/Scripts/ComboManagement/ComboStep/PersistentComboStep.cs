@@ -2,17 +2,17 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-class PersistentComboStep : ComboStep
+class PersistentComboStep : ControlledComboStep
 {
     private float timePressed = 0.0f;
 
-    public PersistentComboStep(String name, IComboInput inputDown, float timePressed, PlayerAnimation anim)
+    public PersistentComboStep(String name, IComboInput inputDown, float timePressed, CustomAnimation anim)
                         : base(name, inputDown, anim)
     {
         this.timePressed = timePressed;
     }
 
-    public PersistentComboStep(String name, IComboInput inputDown, float timePressed, IComboInput[] inputSimultaneous, PlayerAnimation anim)
+    public PersistentComboStep(String name, IComboInput inputDown, float timePressed, IComboInput[] inputSimultaneous, CustomAnimation anim)
                         : base(name, inputDown, inputSimultaneous, anim)
     {
         this.timePressed = timePressed;
@@ -33,15 +33,15 @@ class PersistentComboStep : ComboStep
         {
             if (AllSimultaneousPressed() && NoWrongControlKeysPressed())
             {
-                if (time < animation.GetDuration() - ComboStep.blend && inputDown.Pressed())
+                if (time < animation.GetDuration() - ControlledComboStep.blend && inputDown.Pressed())
                 {
                     parentCombo.OnStepDoing(this, timePressed);
                 }
 
                 if (inputDown.Pressed()) time += Time.deltaTime;
-                else if (time < animation.GetDuration() - ComboStep.blend) Cancel();
+                else if (time < animation.GetDuration() - ControlledComboStep.blend) Cancel();
 
-                if (time >= animation.GetDuration() - ComboStep.blend && inputDown.Up())
+                if (time >= animation.GetDuration() - ControlledComboStep.blend && inputDown.Up())
                 {
                     parentCombo.OnStepFinished(this);
                 }

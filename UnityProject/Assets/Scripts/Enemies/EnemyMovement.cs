@@ -94,7 +94,6 @@ public class EnemyMovement : MonoBehaviour
 		}
 
         movement += Vector3.up * Core.gravity; //gravity
-        Debug.Log(movement + "~~~~~");
         controller.Move(movement * Time.deltaTime);
 	}
 
@@ -106,10 +105,8 @@ public class EnemyMovement : MonoBehaviour
 
     public Vector3 GetMovement() { return movement; }
 
-
 	bool IsWalking()
 	{
 		return randomDir.magnitude > 0.0f;
 	}
-
 }

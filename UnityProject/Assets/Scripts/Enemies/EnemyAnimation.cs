@@ -1,31 +1,99 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyAnimation : MonoBehaviour 
+public class EnemyAnimation : MonoBehaviour, IComboListener
 {
     private Enemy e;
     private EnemyCombat ecombat;
     private Animation anim;
 
-	void Start () 
+    public CustomAnimation Idle, Run, Attack, Die;
+
+    private ComboManager comboManager;
+    private SimulatedCombo comboAttack;
+
+	void Start() 
     {
         e = GetComponent<Enemy>();
         ecombat = GetComponent<EnemyCombat>();
         anim = GetComponent<Animation>();
+
+        Idle = new CustomAnimation("Idle", anim);
+        Run = new CustomAnimation("Run", anim);
+
+        Attack = new CustomAnimation("Attack", anim);
+        Die = new CustomAnimation("Die", anim);
+
+        comboManager = new ComboManager(this);
+        
+        comboAttack = new SimulatedCombo("Attack", comboManager);
+        comboAttack.AppendStep(new SimulatedComboStep("stepAttack", Attack));
+        comboManager.AddCombo(comboAttack);
 	}
 	
-	void Update () 
+    public void PlayAttack()
     {
-        Vector3 movement = e.GetMovement();
-        Debug.Log(movement);
+        comboAttack.Simulate();
+    }
 
-	    if(Core.PlaneVector(movement).magnitude > 0.05f)
+	void Update() 
+    {
+        comboManager.Update();
+
+        Vector3 movement = e.GetMovement();
+        if(!comboManager.AnyComboBeingDone())
         {
-            if (!anim.IsPlaying("Run")) anim.CrossFade("Run");
-        }
-        else
-        {
-            if (!anim.IsPlaying("Idle")) anim.CrossFade("Idle");
+	        if(Core.PlaneVector(movement).magnitude > 0.05f)
+            {
+                if (!Run.IsPlaying()) Run.Play();
+            }
+            else
+            {
+                if (!Idle.IsPlaying()) Idle.Play();
+            }
         }
 	}
+
+    //Llamado mientras un combo step largo se esta haciendo
+    public void OnComboStepDoing(ComboStep step, float time)
+    {
+    }
+
+    //Llamado cuando se cancela un combostep
+    public void OnComboStepCancelled(ComboStep step)
+    {
+        Debug.Log("Cancelled " + step.GetName());
+    }
+
+    //Llamado al iniciarse un step
+    public void OnComboStepStarted(ComboStep step)
+    {
+        Debug.Log("Started " + step.GetName());
+    }
+
+    //Llamado al finalizar un step
+    public void OnComboStepFinished(ComboStep step)
+    {
+        Debug.Log("Finished " + step.GetName());
+    }
+
+
+
+    //Llamado cuando se ha empezado un combo
+    public void OnComboStarted(Combo combo)
+    {
+        Debug.Log("Started " + combo.GetName());
+    }
+
+    //Llamado cuando se ha acabado un combo entero
+    public void OnComboFinished(Combo combo)
+    {
+        Debug.Log("Finished " + combo.GetName());
+    }
+
+    //Llamado cuando se ha acabado un combo entero
+    public void OnComboCancelled(Combo combo)
+    {
+        Debug.Log("Cancelled " + combo.GetName());
+    }
 }

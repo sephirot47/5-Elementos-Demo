@@ -1,41 +1,43 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 
-public class Combo
+public abstract class Combo
 {
-	private List<ComboStep> steps;
-    private readonly float delay = ComboStep.blend * 2.0f;
-	private float timeDelay = 0.0f; //Para contar el tiempo pasado
-	private string name = "No name";
-	private int currentStep = 0;
-    private bool started = false, enabled = true;
-    private ComboManager comboManager;
+    protected ComboManager comboManager;
+    protected List<ComboStep> steps;
 
-	public Combo(string name, ComboManager cb)
-	{
-		this.name = name;
+    protected float delay = 0.6f, timeDelay = 0.0f;
+    protected bool started = false, enabled = true;
+    protected int currentStep = 0;
+    protected string name;
+
+    public Combo(string name, ComboManager cb, float delay = 0.6f)
+    {
+        this.name = name;
         steps = new List<ComboStep>();
         comboManager = cb;
-	}
+        this.delay = delay;
+    }
 
-    public Combo(string name, ComboStep[] comboSteps, ComboManager cb)
-        : this(name, cb)
-	{
-		steps.AddRange(comboSteps);
-	}
+    public void Initialize()
+    {
+        started = false;
+        timeDelay = 0.0f;
+        currentStep = 0;
+        foreach (ComboStep step in steps) step.Initialize();
+    }
 
-	//Must be called by the ComboManager :)
-	public void Update()
+    public virtual void Update()
     {
         if (!enabled) return;
 
         if (currentStep < steps.Count)
         {
-            if(!steps[currentStep].Started() && currentStep > 0) //Si estamos entre step y step
+            if (!steps[currentStep].Started() && currentStep > 0) //Si estamos entre step y step
             {
                 timeDelay += Time.deltaTime;
-                if(timeDelay > delay)
+                if (timeDelay > delay)
                 {
                     Cancel(); //Si excede el tiempo de delay entre step y step, cancelamos
                     return;
@@ -47,46 +49,21 @@ public class Combo
         else timeDelay = 0.0f;
     }
 
-	public void NextStep()
-	{
-		++currentStep; 
-		timeDelay = 0.0f;
-	}
-	
-	public bool BeingDone()
-	{
-		return started;
-	}
-
-	public void AppendStep(ComboStep step)
-	{
-		steps.Add(step);
-        step.SetParentCombo(this);
-	}
-
-	public bool Finished()
-	{
-		return currentStep >= steps.Count;
-	}
-
-	public string GetName()
-	{
-		return name;
-	}
-
-    public void Initialize()
+    public void AppendStep(ComboStep step)
     {
-        currentStep = 0;
-        timeDelay = 0.0f;
-        started = false;
-        foreach (ComboStep step in steps) step.Initialize();
+        steps.Add(step);
+        step.SetParentCombo(this);
     }
 
-	public void Cancel()
+    public bool BeingDone() { return enabled && started; }
+    public bool Finished() { return currentStep >= steps.Count; }
+    public string GetName() { return name; }
+
+    public void Cancel()
     {
         Initialize();
         comboManager.OnComboCancelled(this);
-	}
+    }
 
     public void OnStepStarted(ComboStep step)
     {
@@ -114,7 +91,7 @@ public class Combo
     {
         ++currentStep;
         comboManager.OnComboStepFinished(step);
-        if(currentStep < steps.Count) 
+        if (currentStep < steps.Count)
         {
             steps[currentStep].Initialize();
         }
@@ -125,14 +102,12 @@ public class Combo
         }
     }
 
-    public void SetEnabled(bool enabled)
+    protected void NextStep()
     {
-        this.enabled = enabled;
+        ++currentStep;
+        timeDelay = 0.0f;
     }
 
-    public List<ComboStep> GetSteps()
-    {
-        return steps;
-    }
-
+    public List<ComboStep> GetSteps() { return steps; }
+    public void SetEnabled(bool enabled) { this.enabled = enabled; }
 }

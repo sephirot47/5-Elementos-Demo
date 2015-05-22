@@ -62,6 +62,7 @@ public class EnemyCombat : MonoBehaviour {
 	public void Attack(Player p)
 	{
 		p.GetComponent<PlayerCombat>().ReceiveAttack(GetComponent<Enemy>());
+        GetComponent<EnemyAnimation>().PlayAttack();
 		attackRateTime = 0.0f;
 	}
 

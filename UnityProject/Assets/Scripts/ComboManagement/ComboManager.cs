@@ -7,9 +7,9 @@ public class ComboManager
 	private List<Combo> combos = new List<Combo>();
     private float time = float.PositiveInfinity, 
                   comboDelay = 0.0f; //Delay entre combo y combo 
-    private MonoBehaviour listener;
+    private IComboListener listener;
 
-    public ComboManager(MonoBehaviour listener)
+    public ComboManager(IComboListener listener)
     {
         this.listener = listener;
     }
@@ -37,44 +37,44 @@ public class ComboManager
 	//Llamado cuando se ha empezado un combo
 	public void OnComboStarted(Combo combo)
 	{
-        listener.GetComponent<PlayerComboManager>().OnComboStarted(combo);
+        listener.OnComboStarted(combo);
 	}
 
     //Llamado cuando se ha cancelado un combo entero
     public void OnComboCancelled(Combo combo)
     {
-        listener.GetComponent<PlayerComboManager>().OnComboCancelled(combo);
+        listener.OnComboCancelled(combo);
         time = 0.0f;
     }
 	
 	//Llamado cuando se ha acabado un combo entero
 	public void OnComboFinished(Combo combo)
 	{
-		listener.GetComponent<PlayerComboManager>().OnComboFinished(combo);
+		listener.OnComboFinished(combo);
         time = 0.0f;
 	}
 	
 	//SOLO llamado si el combo step es de mantener pulsado.
 	//Si no, se llamara a OnComboStepDone
-	public void OnComboStepDoing(ComboStep step, float time)
+    public void OnComboStepDoing(ComboStep step, float time)
 	{
-		listener.GetComponent<PlayerComboManager>().OnComboStepDoing(step, time);
+		listener.OnComboStepDoing(step, time);
 	}
-	
-	public void OnComboStepCancelled(ComboStep step)
+
+    public void OnComboStepCancelled(ComboStep step)
 	{
-        listener.GetComponent<PlayerComboManager>().OnComboStepCancelled(step);
+        listener.OnComboStepCancelled(step);
 	}
 
     //Llamado cuando un step de un combo se ha acabado
     public void OnComboStepStarted(ComboStep step)
     {
-        listener.GetComponent<PlayerComboManager>().OnComboStepStarted(step);
+        listener.OnComboStepStarted(step);
     }
 
-	public void OnComboStepFinished(ComboStep step)
+    public void OnComboStepFinished(ComboStep step)
 	{
-        listener.GetComponent<PlayerComboManager>().OnComboStepFinished(step);
+        listener.OnComboStepFinished(step);
 	}
 
 	//Dice si hay algun combo haciendose
@@ -100,6 +100,6 @@ public class ComboManager
 
     public void OnComboStepFinished(ComboStep comboStep, float timePressed)
     {
-        listener.GetComponent<PlayerComboManager>().OnComboStepDoing(comboStep, timePressed);
+        listener.OnComboStepDoing(comboStep, timePressed);
     }
 }

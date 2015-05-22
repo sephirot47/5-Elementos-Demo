@@ -35,6 +35,5 @@ public class Teleporter : MonoBehaviour
             if(p.IsSelected())
                 TeleportManager.TeleportTo(sceneDestiny, teleporterDestiny);
         }
-        
     }
 }

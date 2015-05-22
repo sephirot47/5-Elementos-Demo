@@ -8,7 +8,7 @@ public class PlayerAnimationManager : MonoBehaviour
     private PlayerMovement playerMove;
     private PlayerComboManager playerComboMan;
 
-	public PlayerAnimation Idle0, Idle1, Run, Walk, Jump, Fall, Land, Explosion, GuardBegin,
+	public CustomAnimation Idle0, Idle1, Run, Walk, Jump, Fall, Land, Explosion, GuardBegin,
                            ComboGround, ComboGround1, ComboGround2, ComboGround3, ComboGround4,
                            ComboAerial, ReceiveDamage, Die;
 						      
@@ -22,29 +22,29 @@ public class PlayerAnimationManager : MonoBehaviour
         playerMove = GetComponent<PlayerMovement>();
 		playerComboMan = GetComponent<PlayerComboManager>();
 
-        Idle0 = new PlayerAnimation("IdleDefault", anim);
-        Idle1 = new PlayerAnimation("Idle2", anim);
+        Idle0 = new CustomAnimation("IdleDefault", anim);
+        Idle1 = new CustomAnimation("Idle2", anim);
 
-        Run = new PlayerAnimation("Run", anim);
-        Walk = new PlayerAnimation("Walk", anim);
+        Run = new CustomAnimation("Run", anim);
+        Walk = new CustomAnimation("Walk", anim);
 
-        Jump = new PlayerAnimation("Jump", anim);
-        Fall = new PlayerAnimation("Fall", anim);
-        Land = new PlayerAnimation("Land", anim);
+        Jump = new CustomAnimation("Jump", anim);
+        Fall = new CustomAnimation("Fall", anim);
+        Land = new CustomAnimation("Land", anim);
 
-        Explosion = new PlayerAnimation("Explosion", anim);
-        GuardBegin = new PlayerAnimation("GuardBegin", anim);
+        Explosion = new CustomAnimation("Explosion", anim);
+        GuardBegin = new CustomAnimation("GuardBegin", anim);
 
-        ComboGround = new PlayerAnimation("ComboGround", anim);
-        ComboGround1 = new PlayerAnimation("ComboGround1", anim);
-        ComboGround2 = new PlayerAnimation("ComboGround2", anim);
-        ComboGround3 = new PlayerAnimation("ComboGround3", anim);
-        ComboGround4 = new PlayerAnimation("ComboGround4", anim);
+        ComboGround = new CustomAnimation("ComboGround", anim);
+        ComboGround1 = new CustomAnimation("ComboGround1", anim);
+        ComboGround2 = new CustomAnimation("ComboGround2", anim);
+        ComboGround3 = new CustomAnimation("ComboGround3", anim);
+        ComboGround4 = new CustomAnimation("ComboGround4", anim);
 
-        ComboAerial = new PlayerAnimation("ComboAerial", anim);
+        ComboAerial = new CustomAnimation("ComboAerial", anim);
 
-        ReceiveDamage = new PlayerAnimation("ReceiveDamage", anim);
-        Die = new PlayerAnimation("Die", anim);
+        ReceiveDamage = new CustomAnimation("ReceiveDamage", anim);
+        Die = new CustomAnimation("Die", anim);
     }
 
 	void Start() 
@@ -102,13 +102,13 @@ public class PlayerAnimationManager : MonoBehaviour
         }
 	}
 
-	public void Play(PlayerAnimation animation)
+	public void Play(CustomAnimation animation)
 	{
         if (player.IsDead()) return;
         animation.Play();
 	}
 
-    public void Play(PlayerAnimation animation, float fadeTime)
+    public void Play(CustomAnimation animation, float fadeTime)
     {
         if (player.IsDead()) return;
         animation.Play();
@@ -120,7 +120,7 @@ public class PlayerAnimationManager : MonoBehaviour
         Play(Idle0);
 	}
 
-	public static float GetAnimationDuration(PlayerAnimation animation, Player p)
+	public static float GetAnimationDuration(CustomAnimation animation, Player p)
 	{
         if( p.GetComponent<Animation>().GetClip(animation.GetName()) != null)
             return p.GetComponent<Animation>().GetClip(animation.GetName()).length;

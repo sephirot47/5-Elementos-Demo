@@ -2,11 +2,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-class InfiniteComboStep : ComboStep
+class InfiniteComboStep : ControlledComboStep
 {
     private float timePressed = 0.0f;
 
-    public InfiniteComboStep(String name, IComboInput inputDown, PlayerAnimation anim) : base(name, inputDown, anim)
+    public InfiniteComboStep(String name, IComboInput inputDown, CustomAnimation anim) : base(name, inputDown, anim)
     {
     }
 
@@ -31,5 +31,4 @@ class InfiniteComboStep : ComboStep
             }
         }
     }
-
 }

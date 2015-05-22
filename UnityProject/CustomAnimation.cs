@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerAnimation
+public class CustomAnimation
 {
     private Animation anim;
 	private string name;
 
-	public PlayerAnimation(string animationName, Animation anim)
+	public CustomAnimation(string animationName, Animation anim)
 	{
         this.anim = anim;
 		this.name = animationName;
