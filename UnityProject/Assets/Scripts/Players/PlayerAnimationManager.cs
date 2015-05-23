@@ -54,7 +54,7 @@ public class PlayerAnimationManager : MonoBehaviour
 	void Update() 
 	{
         if (player.IsDead()) { Play(Die); return; }
-        if (playerComboMan.IsComboing()) return;
+        if (playerComboMan.AnyComboBeingDone()) return;
 		if(anim == null) return;
 
         timeSinceNoJump += Time.deltaTime;

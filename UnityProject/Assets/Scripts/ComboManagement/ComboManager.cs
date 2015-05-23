@@ -52,6 +52,7 @@ public class ComboManager
 	{
 		listener.OnComboFinished(combo);
         time = 0.0f;
+        CancelAllCombos();
 	}
 	
 	//SOLO llamado si el combo step es de mantener pulsado.

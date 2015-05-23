@@ -1,12 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
 public class PlayerComboManager : MonoBehaviour, IComboListener
 {
-	private bool comboing = false;
-
     private Player player;
     private PlayerMovement playerMov;
 	private PlayerAnimationManager anim;
@@ -14,8 +12,8 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
     private PlayerComboAttack groundCombo, aerialCombo, explosionCombo;
     private ControlledCombo guardCombo, chargedJumpCombo;
 
-    private List<ControlledCombo> groundCombos;
-    private List<ControlledCombo> aerialCombos;
+    private List<Combo> groundCombos;
+    private List<Combo> aerialCombos;
 
     private ComboManager comboManager;
 
@@ -25,9 +23,8 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         playerMov = GetComponent<PlayerMovement>();
 		anim = GetComponent<PlayerAnimationManager>();
 
-        groundCombos = new List<ControlledCombo>();
-        aerialCombos = new List<ControlledCombo>();
-
+        groundCombos = new List<Combo>();
+        aerialCombos = new List<Combo>();
 
         comboManager = new ComboManager(this);
 
@@ -38,21 +35,21 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         //GROUND COMBO //////////////////////
         groundCombo = new PlayerComboAttack("ground", comboManager);
         groundCombo.AppendStep(new InstantComboStep("ground1", attack, anim.ComboGround1), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.05f));
-        groundCombo.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2), new PlayerAttack(6.0f, 360.0f, 1.0f, 0.6f));
+        groundCombo.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2), new PlayerAttack(8.0f, 360.0f, 1.0f, 0.5f));
         groundCombo.AppendStep(new InstantComboStep("ground3", attack, anim.ComboGround3), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.8f));
-        groundCombo.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.3f));
+        groundCombo.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.6f));
         comboManager.AddCombo(groundCombo);
         //////////////////////////////////////
 
         aerialCombo = new PlayerComboAttack("aerial", comboManager);
-        aerialCombo.AppendStep(new InstantComboStep("aerial1", attack, anim.ComboAerial), new PlayerAttack());
+        aerialCombo.AppendStep(new InstantComboStep("aerial1", attack, anim.ComboAerial), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.75f));
         comboManager.AddCombo(aerialCombo);
 
         //Afecta la mitad, pero ataca a todos los de alrededor, y en un rango mayor
         explosionCombo = new PlayerComboAttack("explosion", comboManager);
         explosionCombo.AppendStep(
-            new InstantComboStep("explosion0", attack, new IComboInput[] { shift }, anim.ComboGround2),
-            new PlayerAttack(15.0f, 360.0f, 1.0f, 0.6f));
+            new InstantComboStep("explosion0", attack, new IComboInput[]{ shift }, anim.ComboGround2),
+            new PlayerAttack(8.0f, 360.0f, 0.5f, 0.5f) );
         comboManager.AddCombo(explosionCombo);
 
         guardCombo = new ControlledCombo("guard", comboManager);
@@ -60,8 +57,9 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         comboManager.AddCombo(guardCombo);
 
         chargedJumpCombo = new ControlledCombo("chargedJump", comboManager);
-        chargedJumpCombo.AppendStep(new PersistentComboStep("chargedJump0", jump, 3.0f, new IComboInput[] { shift }, anim.Die));
-        //ComboManager.AddCombo(chargedJumpCombo);
+        chargedJumpCombo.AppendStep(new DurableComboStep("chargedJump0", shift, new IComboInput[] { shift }, anim.GuardBegin));
+        chargedJumpCombo.AppendStep(new InstantComboStep("chargedJump1", jump, new IComboInput[] { shift }, anim.Fall));
+        comboManager.AddCombo(chargedJumpCombo);
 
         groundCombos.Add(groundCombo);
         groundCombos.Add(explosionCombo);
@@ -80,7 +78,6 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         if (!player.IsSelected())
         {
             DisableAllCombos();
-            comboing = false; 
             return;
         }
 
@@ -106,12 +103,15 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 
 	    //Debug.Log("Started " + combo.GetName());
 
-        if (combo.GetName() == "chargedJump0" || combo.GetName() == "aerial1")
+        if (combo.GetName().Contains("chargedJump") || combo.GetName().Contains("aerial"))
         {
             playerMov.SetSuspendedInAir(true);
         }
 
-		comboing = true;
+        if(combo.GetName() == "chargedJump1")
+        {
+            playerMov.Boost(transform.forward);
+        }
 	}
 	
 	//Llamado cuando se ha acabado un combo entero
@@ -119,18 +119,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 	{
 		if(!player.IsSelected()) return;
 
-        if (combo.GetName() == "chargedJump0" || combo.GetName() == "aerial1")
-        {
-            playerMov.SetSuspendedInAir(false);
-        }
-
-        CancelAllCombos();
-
-		//Debug.Log("Finished " + combo.GetName());
-        if (!comboManager.AnyComboBeingDone())
-		{
-			comboing = false;
-		}
+        playerMov.SetSuspendedInAir(false);
 	}
 
     //Llamado cuando se ha acabado un combo entero
@@ -139,12 +128,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         if (!player.IsSelected()) return;
 
         //Debug.Log("Cancelled " + combo.GetName());
-
-        //Si no hay ningun combo haciendose, vuelve a idle
-        if (!comboManager.AnyComboBeingDone())
-        {
-            comboing = false;
-        }
+        playerMov.SetSuspendedInAir(false);
     }
 	
 	//SOLO llamado si el combo step es de mantener pulsado.
@@ -153,8 +137,6 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 	{
 		if(!player.IsSelected()) return;
 
-        comboing = true;
-        GetComponent<PlayerCombat>().OnComboStepDoing(step, time);
         //Debug.Log("Doing step " + step.GetName());
 	}
 
@@ -163,7 +145,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 	{
 		if(!player.IsSelected()) return;
 
-		//Debug.Log("Cancelled step " + step.GetName());
+		Debug.Log("Cancelled step " + step.GetName());
 	}
 
     public void OnComboStepStarted(ComboStep step)
@@ -171,7 +153,10 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         if (!player.IsSelected()) return;
         ControlledComboStep ccs = null;
 
-        GetComponent<PlayerCombat>().OnComboStepStarted(step);
+        try { ccs = (ControlledComboStep) step;  }
+        catch (InvalidCastException e) { return; }
+
+        GetComponent<PlayerCombat>().OnComboStepStarted(ccs);
         //Debug.Log("Started step " + step.GetName());
     }
 
@@ -180,7 +165,10 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         if (!player.IsSelected()) return;
         ControlledComboStep ccs = null;
 
-        GetComponent<PlayerCombat>().OnComboStepFinished(step);
+        try { ccs = (ControlledComboStep)step; }
+        catch (InvalidCastException e) { return; }
+
+        GetComponent<PlayerCombat>().OnComboStepFinished(ccs);
         //Debug.Log("Finished step " + step.GetName());
 	}
 
@@ -203,7 +191,6 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 
 	public void OnReceiveDamage()
 	{
-        CancelAllCombos();
 	}
 
     public bool IsComboingStep(string stepName)
@@ -236,5 +223,6 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
             comboManager.CancelAllCombos();
     }
 
-	public bool IsComboing() { return comboing; }
+    public bool AnyComboBeingDone() { return comboManager.AnyComboBeingDone(); }
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   

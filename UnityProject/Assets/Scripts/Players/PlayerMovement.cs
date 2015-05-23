@@ -41,7 +41,8 @@ public class PlayerMovement : MonoBehaviour
 			if(Input.GetKeyDown(KeyCode.Space) && jumpsDone < 2) Jump();
 		}
 		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
-		
+
+        Debug.Log((movement + boost * speed) * Time.deltaTime);
 		controller.Move((movement + boost * speed) * Time.deltaTime);
 		//
 	}
@@ -59,7 +60,7 @@ public class PlayerMovement : MonoBehaviour
 	
 	private void SelectedMove()
 	{
-        if (GetComponent<PlayerComboManager>().IsComboing())
+        if (GetComponent<PlayerComboManager>().AnyComboBeingDone())
         {
             movement.x = 0.0f;
             movement.z = 0.0f;
@@ -156,7 +157,7 @@ public class PlayerMovement : MonoBehaviour
     {
         suspendedInAir = suspended;
         if(suspended)
-        { 
+        {
             jumpsDone = 2;
             movement.y = 0.0f;
         }

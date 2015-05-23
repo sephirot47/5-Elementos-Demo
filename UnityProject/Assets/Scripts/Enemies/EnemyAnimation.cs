@@ -77,12 +77,12 @@ public class EnemyAnimation : MonoBehaviour, IComboListener, ICustomAnimationLis
 
     public void OnAnimationStarted(CustomAnimation anim)
     {
-        Debug.Log("Animation Started " + anim.GetName());
+        //Debug.Log("Animation Started " + anim.GetName());
     }
 
     public void OnAnimationFinished(CustomAnimation anim)
     {
-        Debug.Log("Animation Finished " + anim.GetName());
+        //Debug.Log("Animation Finished " + anim.GetName());
         if(anim == Die)
         {
             Destroy(gameObject, 3.0f);
