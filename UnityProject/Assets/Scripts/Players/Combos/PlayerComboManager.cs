@@ -11,6 +11,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 
     private PlayerComboAttack groundCombo, aerialCombo, explosionCombo;
     private ControlledCombo guardCombo, chargedJumpCombo;
+    private ControlledCombo dodgeRight, dodgeLeft, dodgeBack, dodgeForward;
 
     private List<Combo> groundCombos;
     private List<Combo> aerialCombos;
@@ -35,7 +36,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         //GROUND COMBO //////////////////////
         groundCombo = new PlayerComboAttack("ground", comboManager);
         groundCombo.AppendStep(new InstantComboStep("ground1", attack, anim.ComboGround1), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.05f));
-        groundCombo.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2), new PlayerAttack(8.0f, 360.0f, 1.0f, 0.5f));
+        groundCombo.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2), new PlayerAttack(8.0f, 360.0f, 1.0f, 0.4f));
         groundCombo.AppendStep(new InstantComboStep("ground3", attack, anim.ComboGround3), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.8f));
         groundCombo.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.6f));
         comboManager.AddCombo(groundCombo);
@@ -49,7 +50,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         explosionCombo = new PlayerComboAttack("explosion", comboManager);
         explosionCombo.AppendStep(
             new InstantComboStep("explosion0", attack, new IComboInput[]{ shift }, anim.ComboGround2),
-            new PlayerAttack(8.0f, 360.0f, 0.5f, 0.5f) );
+            new PlayerAttack(8.0f, 360.0f, 0.5f, 0.4f) );
         comboManager.AddCombo(explosionCombo);
 
         guardCombo = new ControlledCombo("guard", comboManager);
@@ -57,13 +58,39 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         comboManager.AddCombo(guardCombo);
 
         chargedJumpCombo = new ControlledCombo("chargedJump", comboManager);
-        chargedJumpCombo.AppendStep(new DurableComboStep("chargedJump0", shift, new IComboInput[] { shift }, anim.GuardBegin));
+        chargedJumpCombo.AppendStep(new DurableComboStep("chargedJump0", shift, 1.0f, new IComboInput[] { shift }, anim.Explosion));
         chargedJumpCombo.AppendStep(new InstantComboStep("chargedJump1", jump, new IComboInput[] { shift }, anim.Fall));
         comboManager.AddCombo(chargedJumpCombo);
+
+        /////// DODGES //////////////////////////////////////////////
+        dodgeRight = new ControlledCombo("dodgeRight", comboManager);
+        dodgeRight.AppendStep(
+            new InstantComboStep("dodgeRight0", new ComboInputKey(KeyCode.D), new IComboInput[] { shift }, anim.Fall));
+        comboManager.AddCombo(dodgeRight);
+
+        dodgeLeft = new ControlledCombo("dodgeLeft", comboManager);
+        dodgeLeft.AppendStep(
+            new InstantComboStep("dodgeLeft0", new ComboInputKey(KeyCode.A), new IComboInput[] { shift }, anim.Fall));
+        comboManager.AddCombo(dodgeLeft);
+
+        dodgeBack = new ControlledCombo("dodgeBack", comboManager);
+        dodgeBack.AppendStep(
+            new InstantComboStep("dodgeBack0", new ComboInputKey(KeyCode.S), new IComboInput[] { shift }, anim.Fall));
+        comboManager.AddCombo(dodgeBack);
+
+        dodgeForward = new ControlledCombo("dodgeForward", comboManager);
+        dodgeForward.AppendStep(
+            new InstantComboStep("dodgeForward0", new ComboInputKey(KeyCode.W), new IComboInput[] { shift }, anim.Fall));
+        comboManager.AddCombo(dodgeForward);
+        /////////////////////////////////////////////////////////////////////
 
         groundCombos.Add(groundCombo);
         groundCombos.Add(explosionCombo);
         groundCombos.Add(guardCombo);
+        groundCombos.Add(dodgeRight);
+        groundCombos.Add(dodgeLeft);
+        groundCombos.Add(dodgeBack);
+        groundCombos.Add(dodgeForward);
 
         aerialCombos.Add(aerialCombo);
         aerialCombos.Add(chargedJumpCombo);
@@ -107,11 +134,6 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         {
             playerMov.SetSuspendedInAir(true);
         }
-
-        if(combo.GetName() == "chargedJump1")
-        {
-            playerMov.Boost(transform.forward);
-        }
 	}
 	
 	//Llamado cuando se ha acabado un combo entero
@@ -137,6 +159,8 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 	{
 		if(!player.IsSelected()) return;
 
+        GetComponent<PlayerCombat>().OnComboStepDoing(step, time);
+        player.transform.forward = player.GetTarget().transform.position - player.transform.position;
         //Debug.Log("Doing step " + step.GetName());
 	}
 
@@ -157,6 +181,29 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         catch (InvalidCastException e) { return; }
 
         GetComponent<PlayerCombat>().OnComboStepStarted(ccs);
+
+        if (step.GetName() == "chargedJump1")
+        {
+            playerMov.SetSuspendedInAir(false);
+            playerMov.Boost(transform.forward);
+        }
+        else if(step.GetName() == "dodgeRight0")
+        {
+            playerMov.Boost(transform.right);
+        }
+        else if (step.GetName() == "dodgeLeft0")
+        {
+            playerMov.Boost(-transform.right);
+        }
+        else if (step.GetName() == "dodgeForward0")
+        {
+            playerMov.Boost(transform.forward);
+        }
+        else if (step.GetName() == "dodgeBack0")
+        {
+            playerMov.Boost(-transform.forward);
+        }
+
         //Debug.Log("Started step " + step.GetName());
     }
 

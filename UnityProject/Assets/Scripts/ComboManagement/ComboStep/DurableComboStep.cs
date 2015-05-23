@@ -6,14 +6,18 @@ using System.Collections.Generic;
 //Si en algun momento antes de que acabe la animacion se suelta, el combo se cancela
 class DurableComboStep : ControlledComboStep
 {
-    public DurableComboStep(String name, IComboInput inputDown, CustomAnimation anim)
+    float timePressed = 0.0f;
+
+    public DurableComboStep(String name, IComboInput inputDown, float timePressed, CustomAnimation anim)
         : base(name, inputDown, anim)
     {
+        this.timePressed = timePressed;
     }
 
-    public DurableComboStep(String name, IComboInput inputDown, IComboInput[] inputSimultaneous, CustomAnimation anim)
+    public DurableComboStep(String name, IComboInput inputDown, float timePressed, IComboInput[] inputSimultaneous, CustomAnimation anim)
         : base(name, inputDown, inputSimultaneous, anim)
     {
+        this.timePressed = timePressed;
     }
 
     public override void Update()
@@ -33,7 +37,7 @@ class DurableComboStep : ControlledComboStep
             {
                 time += Time.deltaTime;
 
-                if (time >= animation.GetDuration() - ControlledComboStep.blend)
+                if (time >= timePressed /*animation.GetDuration() - ControlledComboStep.blend*/)
                 {
                     parentCombo.OnStepFinished(this);
                 }

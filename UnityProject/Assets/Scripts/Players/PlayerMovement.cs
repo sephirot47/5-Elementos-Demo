@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
 	public float speed = 16.0f, boostFading = 0.95f,
 				 rotSpeed = 5.0f,
 				 jumpForce = 25.0f,
-				 boostForce = 2.0f;
+				 boostForce = 100.0f;
 	
 	private int jumpsDone = 0;
 
@@ -42,7 +42,6 @@ public class PlayerMovement : MonoBehaviour
 		}
 		else FollowSelected(); //SIGUEN AL PERSONAJE SELECCIONADO
 
-        Debug.Log((movement + boost * speed) * Time.deltaTime);
 		controller.Move((movement + boost * speed) * Time.deltaTime);
 		//
 	}
