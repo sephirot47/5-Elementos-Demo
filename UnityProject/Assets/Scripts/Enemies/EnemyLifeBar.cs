@@ -5,7 +5,7 @@ public class EnemyLifeBar : MonoBehaviour
 {
 	public Enemy enemy;
 
-	public float disappearTime = 5.0f;
+	public float disappearTime = 3.0f;
 	private float time = float.PositiveInfinity;
 
 	private Vector3 originalLifeBarFillScale;
@@ -32,6 +32,7 @@ public class EnemyLifeBar : MonoBehaviour
 	void LateUpdate()
 	{
 		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
+        if (enemy.GetComponent<EnemyCombat>().Dead()) { SetVisible(false); return; }
 
 		time += Time.deltaTime;
 
@@ -41,6 +42,11 @@ public class EnemyLifeBar : MonoBehaviour
 		if(time >= disappearTime) SetVisible(false);
 		else SetVisible(true);
 	}
+
+    public void OnDie()
+    {
+        SetVisible(false);
+    }
 
 	private void ScaleLifeBar()
 	{

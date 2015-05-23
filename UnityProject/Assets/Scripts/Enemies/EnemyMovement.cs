@@ -14,7 +14,7 @@ public class EnemyMovement : MonoBehaviour
 	private Vector3 originalPosition; //Posicion en la que spawnea, para tema de moverse a lo random cuando estan solos
 
     public float speed = 0.7f;	
-	public float stopProbabilities = 0.7f;	
+	public float stopProbabilities = 0.4f;	
 	public float wanderRange = 10.0f; //rango en el que 'vaga', cuando no tiene a nadie alrededor y tal
 	public float wanderTime = 5.0f;
 
@@ -27,20 +27,25 @@ public class EnemyMovement : MonoBehaviour
         originalPosition = enemy.transform.position;
         randomDir = Vector3.zero;
         movement = Vector3.zero;
-		time = 0.0f;
+        time = 0.0f;
+
+        speed = speed * Random.Range(0.9f, 1.2f);
+        stopProbabilities = wanderRange * Random.Range(0.5f, 1.0f);
+        wanderRange = wanderRange * Random.Range(0.75f, 1.0f);
+        wanderTime = wanderTime * Random.Range(0.75f, 1.25f);
+        time = wanderTime * Random.Range(0.0f, 1.0f); //Unos empezaran en seguida, otros mas tarde
 	}
 
-	void Update () 
+	void Update ()
 	{	
-		if(!GameState.IsPlaying()) return;
+		if(!GameState.IsPlaying() || GetComponent<EnemyCombat>().Dead()) return;
 
         Player targetP = GetComponent<EnemyTarget>().GetTarget();
-        if (targetP == null) return;
-        GameObject target = targetP.gameObject;
 
-		Vector3 dirToOriginal = (originalPosition - transform.position);
-		if(target == null)
-		{
+        Vector3 dirToOriginal = (originalPosition - transform.position);
+        time += Time.deltaTime;
+        if (targetP == null)
+        {
 			if(dirToOriginal.magnitude < wanderRange)
 			{
 				//Hacemos que se mueva random cerca de por donde respawnea
@@ -54,28 +59,28 @@ public class EnemyMovement : MonoBehaviour
 						randomDir.Normalize();
 					}
 					else
-					{
-						randomDir = Vector3.zero; 
+                    {
+						movement = randomDir = Vector3.zero; 
 					}
 				}
-				if( IsWalking() )
+
+				if( IsWalking() && randomDir != Vector3.zero)
 				{
 					//Mira hacia donde caminas, suavemente xd
 					transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(randomDir), Time.deltaTime);
-					movement = transform.forward * speed * 0.35f;
+					movement = transform.forward * speed * 0.65f;
 				}
 				//
-				
-				time += Time.deltaTime;
 			}
 			else //Esta fuera de su zona, ha de volver echando leches hihi
 			{
 				transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dirToOriginal), Time.deltaTime);
-				movement = transform.forward * speed * 0.5f;
+				movement = transform.forward * speed;
 			}
 		}
         else //HAY TARGET
-		{
+        {
+            GameObject target = targetP.gameObject;
             if (!GetComponent<EnemyCombat>().InRange()) //Aun esta lejos del player, a perseguirlo!
             {
                 //A perseguir al player que mas aggro tieneeee!		
@@ -107,6 +112,6 @@ public class EnemyMovement : MonoBehaviour
 
 	bool IsWalking()
 	{
-		return randomDir.magnitude > 0.0f;
+        return randomDir != Vector3.zero;
 	}
 }

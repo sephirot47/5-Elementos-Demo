@@ -102,7 +102,7 @@ public abstract class Combo
         }
     }
 
-    protected void NextStep()
+    protected virtual void NextStep()
     {
         ++currentStep;
         timeDelay = 0.0f;

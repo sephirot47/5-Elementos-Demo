@@ -23,6 +23,12 @@ public class CrosshairCanvas : MonoBehaviour
 	
 	void Update () 
     {
+        if(!GameState.IsPlaying())
+        {
+            HideAll();
+            return;
+        }
+
         Refresh();
 	}
 
@@ -36,6 +42,8 @@ public class CrosshairCanvas : MonoBehaviour
     public static void ChangeCursor(Player p)
     {
         HideAll();
+        if (!GameState.IsPlaying()) return;
+
         UpdateCursorPos();
         GameObject target = p.GetTarget();
         if(target != null &&

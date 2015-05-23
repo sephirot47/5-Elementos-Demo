@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyAnimation : MonoBehaviour, IComboListener
+public class EnemyAnimation : MonoBehaviour, IComboListener, ICustomAnimationListener
 {
     private Enemy e;
     private EnemyCombat ecombat;
     private Animation anim;
 
-    public CustomAnimation Idle, Run, Attack, Die;
+    public CustomAnimation Idle, Run, Attack, ReceiveDamage, Die;
 
     private ComboManager comboManager;
     private SimulatedCombo comboAttack;
 
-	void Start() 
+	void Start()
     {
         e = GetComponent<Enemy>();
         ecombat = GetComponent<EnemyCombat>();
@@ -22,7 +22,8 @@ public class EnemyAnimation : MonoBehaviour, IComboListener
         Run = new CustomAnimation("Run", anim);
 
         Attack = new CustomAnimation("Attack", anim);
-        Die = new CustomAnimation("Die", anim);
+        ReceiveDamage = new CustomAnimation("ReceiveDamage", anim, 1.0f, this);
+        Die = new CustomAnimation("Die", anim, 1.0f, this);
 
         comboManager = new ComboManager(this);
         
@@ -33,15 +34,20 @@ public class EnemyAnimation : MonoBehaviour, IComboListener
 	
     public void PlayAttack()
     {
-        comboAttack.Simulate();
+        if(!comboManager.AnyComboBeingDone())
+            comboAttack.Simulate();
     }
 
-	void Update() 
+	void Update()
     {
+        Die.Update();
+        ReceiveDamage.Update();
+        if (!GameState.IsPlaying() || GetComponent<EnemyCombat>().Dead()) return;
+
         comboManager.Update();
 
         Vector3 movement = e.GetMovement();
-        if(!comboManager.AnyComboBeingDone())
+        if (!comboManager.AnyComboBeingDone() && !ReceiveDamage.IsPlaying())
         {
 	        if(Core.PlaneVector(movement).magnitude > 0.05f)
             {
@@ -53,6 +59,37 @@ public class EnemyAnimation : MonoBehaviour, IComboListener
             }
         }
 	}
+
+    public void OnDie()
+    {
+        comboManager.CancelAllCombos();
+        Die.Play();
+    }
+
+    public void OnReceiveAttack()
+    {
+        if (ecombat.Dead() && !Die.IsPlaying()) { Die.Play(); return; }
+        comboManager.CancelAllCombos();
+        ReceiveDamage.Play();
+    }
+
+    public void OnAnimationStarted(CustomAnimation anim)
+    {
+        Debug.Log("Animation Started " + anim.GetName());
+    }
+
+    public void OnAnimationFinished(CustomAnimation anim)
+    {
+        Debug.Log("Animation Finished " + anim.GetName());
+        if(anim == Die)
+        {
+            Destroy(gameObject, 3.0f);
+        }
+        else if(anim == ReceiveDamage)
+        {
+            Idle.Play();
+        }
+    }
 
     //Llamado mientras un combo step largo se esta haciendo
     public void OnComboStepDoing(ComboStep step, float time)
@@ -75,6 +112,7 @@ public class EnemyAnimation : MonoBehaviour, IComboListener
     public void OnComboStepFinished(ComboStep step)
     {
         Debug.Log("Finished " + step.GetName());
+        GetComponent<EnemyCombat>().OnAttackFinished();
     }
 
 

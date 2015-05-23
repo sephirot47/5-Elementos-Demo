@@ -12,9 +12,9 @@ public class EnemyTarget : MonoBehaviour
 		enemy = GetComponentInParent<Enemy>();
 	}
 	
-	void Update() 
-	{
-		if(!GameState.IsPlaying()) return;
+	void Update()
+    {
+        if (!GameState.IsPlaying() || GetComponent<EnemyCombat>().Dead()) return;
 
 		if(IsViewingSomebody())
 		{

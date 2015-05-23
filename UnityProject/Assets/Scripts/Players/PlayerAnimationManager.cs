@@ -36,9 +36,9 @@ public class PlayerAnimationManager : MonoBehaviour
         GuardBegin = new CustomAnimation("GuardBegin", anim);
 
         ComboGround = new CustomAnimation("ComboGround", anim);
-        ComboGround1 = new CustomAnimation("ComboGround1", anim);
-        ComboGround2 = new CustomAnimation("ComboGround2", anim);
-        ComboGround3 = new CustomAnimation("ComboGround3", anim);
+        ComboGround1 = new CustomAnimation("ComboGround1", anim, 1.4f);
+        ComboGround2 = new CustomAnimation("ComboGround2", anim, 1.4f);
+        ComboGround3 = new CustomAnimation("ComboGround3", anim, 1.4f);
         ComboGround4 = new CustomAnimation("ComboGround4", anim);
 
         ComboAerial = new CustomAnimation("ComboAerial", anim);

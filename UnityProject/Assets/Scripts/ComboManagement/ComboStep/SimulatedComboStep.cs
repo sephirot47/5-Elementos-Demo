@@ -12,6 +12,7 @@ public class SimulatedComboStep : ComboStep
     {
         Initialize();
         started = true;
+        animation.Play();
         parentCombo.OnStepStarted(this);
     }
 

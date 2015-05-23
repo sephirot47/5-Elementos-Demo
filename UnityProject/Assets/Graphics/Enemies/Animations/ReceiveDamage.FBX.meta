@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 5ff7cae1bf37c6a4088944484e314c64
-timeCreated: 1432241661
+guid: 78a6d41f7e4f8344e822b6ea76dcc9f5
+timeCreated: 1432365507
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -62,7 +62,7 @@ ModelImporter:
     400052: default
     400054: //RootNode
     4300000: default
-    7400000: Idle
+    7400000: ReceiveDamage
     9500000: //RootNode
     11100000: //RootNode
     13700000: default
@@ -83,11 +83,11 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Idle
+      name: ReceiveDamage
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 80
-      wrapMode: 0
+      lastFrame: 7
+      wrapMode: 8
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0

@@ -21,15 +21,10 @@ public class EnemyCombat : MonoBehaviour {
         currentLife = maxLife; //Empieza con 100% vida
 	}
 
-	void Update () 
-	{
-		if(!GameState.IsPlaying()) return;
-
-        if (currentLife <= 0)
-        {
-            Die();
-            return;
-        }
+	void Update ()
+    {
+        if (!GameState.IsPlaying() || GetComponent<EnemyCombat>().Dead()) return;
+        if (Dead()) return;
 
 		attackRateTime += Time.deltaTime;
         recoverTime += Time.deltaTime;
@@ -40,7 +35,7 @@ public class EnemyCombat : MonoBehaviour {
         {
             if (attackRateTime >= attackRate)
             {
-                Attack(target);
+                GetComponent<EnemyAnimation>().PlayAttack();
             }
         }
 	}
@@ -55,20 +50,41 @@ public class EnemyCombat : MonoBehaviour {
 
     public void ReceiveAttack(float damage)
     {
+        if (Dead()) return;
+
         currentLife -= damage;
         attackRateTime = recoverTime = 0.0f;
+        GetComponent<EnemyAnimation>().OnReceiveAttack();
+
+        if(Dead())
+        {
+            GetComponent<EnemyAnimation>().OnDie();
+            GetComponent<CharacterController>().enabled = false;
+        }
     }
 
-	public void Attack(Player p)
-	{
-		p.GetComponent<PlayerCombat>().ReceiveAttack(GetComponent<Enemy>());
-        GetComponent<EnemyAnimation>().PlayAttack();
-		attackRateTime = 0.0f;
-	}
-
-    public void Die()
+    public void OnAttackFinished()
     {
-        Destroy(gameObject);
+        if (Dead()) return;
+
+        Player target = enemy.GetTarget();
+        if (target != null)
+        {
+            if (InRange()) //Ya esta cerca del player, attaaack!
+            {
+                if (attackRateTime >= attackRate)
+                {
+                    target.GetComponent<PlayerCombat>().ReceiveAttack(GetComponent<Enemy>());
+                }
+            }
+
+            attackRateTime = 0.0f;
+        }
+    }
+
+    public bool Dead()
+    {
+        return currentLife <= 0;
     }
 
     public float GetCurrentLife() { return currentLife; }

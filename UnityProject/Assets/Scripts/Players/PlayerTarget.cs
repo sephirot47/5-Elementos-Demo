@@ -37,9 +37,7 @@ public class PlayerTarget : MonoBehaviour
 		Vector3 lookDir =  Core.PlaneVector(Core.selectedPlayer.transform.forward).normalized;
         if (targetables.Count > 0 && lookDir != Vector3.zero)
         {
-			//Debug.DrawLine(player.gameObject.transform.position, lookPoint, Color.green, 9999.9f, false);
-
-			//Obtenemos el enemigo mas cerca de donde esta mirando el personaje
+			//Obtenemos el target mas cerca de donde esta mirando el personaje
 			GameObject closestTargetable = targetables[0];
 			float minDistance = float.PositiveInfinity;
             
@@ -47,6 +45,8 @@ public class PlayerTarget : MonoBehaviour
             {
                 float dot = Vector3.Dot(lookDir, (e.transform.position - Core.selectedPlayer.transform.position).normalized);
                 if (dot < -0.1f) continue;
+
+                if (e.CompareTag("Enemy") && e.GetComponent<EnemyCombat>().Dead()) continue; 
 
                 float distanceToPlayer = Vector3.Distance(Core.selectedPlayer.transform.position, e.transform.position);
                 float finalD = distanceToPlayer - dot * distanceToPlayer * 0.7f;

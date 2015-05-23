@@ -13,17 +13,34 @@ public class SimulatedCombo : Combo
     {
         Initialize();
         started = true;
+
+        SimulatedComboStep scs = null;
+        try { scs = (SimulatedComboStep) steps[currentStep]; }
+        catch (InvalidCastException e) { Debug.LogError("Un simulatedCombo no puede tener comboSteps no simulated");  }
+        
+        scs.Simulate();
     }
 
     public override void Update()
     {
         if (!enabled) return;
 
-        Debug.Log("GOaaaES");
         if (started && currentStep < steps.Count)
         {
             steps[currentStep].Update();
         }
         else timeDelay = 0.0f;
+    }
+    
+    protected override void NextStep()
+    {
+        ++currentStep;
+        timeDelay = 0.0f;
+
+        SimulatedComboStep scs = null;
+        try { scs = (SimulatedComboStep)steps[currentStep]; }
+        catch (InvalidCastException e) { Debug.LogError("Un simulatedCombo no puede tener comboSteps no simulated"); }
+
+        scs.Simulate();
     }
 }
