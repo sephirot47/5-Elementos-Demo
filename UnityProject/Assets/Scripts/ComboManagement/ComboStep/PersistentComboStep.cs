@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+//Espera a que se pulse el UP para finalizarlo
 class PersistentComboStep : ControlledComboStep
 {
     private float timePressed = 0.0f;

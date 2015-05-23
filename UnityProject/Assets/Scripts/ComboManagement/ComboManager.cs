@@ -6,7 +6,7 @@ public class ComboManager
 {
 	private List<Combo> combos = new List<Combo>();
     private float time = float.PositiveInfinity, 
-                  comboDelay = 0.8f; //Delay entre combo y combo 
+                  comboDelay = 0.3f; //Delay entre combo y combo 
     private IComboListener listener;
 
     public ComboManager(IComboListener listener)

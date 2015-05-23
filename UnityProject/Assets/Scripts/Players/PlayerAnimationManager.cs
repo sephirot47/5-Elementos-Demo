@@ -32,7 +32,7 @@ public class PlayerAnimationManager : MonoBehaviour
         Fall = new CustomAnimation("Fall", anim);
         Land = new CustomAnimation("Land", anim);
 
-        Explosion = new CustomAnimation("Explosion", anim);
+        Explosion = new CustomAnimation("Explosion", anim, 2.0f);
         GuardBegin = new CustomAnimation("GuardBegin", anim);
 
         ComboGround = new CustomAnimation("ComboGround", anim);

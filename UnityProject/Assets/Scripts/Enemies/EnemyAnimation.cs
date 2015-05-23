@@ -42,6 +42,7 @@ public class EnemyAnimation : MonoBehaviour, IComboListener, ICustomAnimationLis
     {
         Die.Update();
         ReceiveDamage.Update();
+
         if (!GameState.IsPlaying() || GetComponent<EnemyCombat>().Dead()) return;
 
         comboManager.Update();
@@ -63,14 +64,15 @@ public class EnemyAnimation : MonoBehaviour, IComboListener, ICustomAnimationLis
     public void OnDie()
     {
         comboManager.CancelAllCombos();
-        Die.Play();
+        if(!ReceiveDamage.IsPlaying()) Die.Play();
     }
 
     public void OnReceiveAttack()
     {
         if (ecombat.Dead() && !Die.IsPlaying()) { Die.Play(); return; }
+        
         comboManager.CancelAllCombos();
-        ReceiveDamage.Play();
+        ReceiveDamage.ForcePlay();
     }
 
     public void OnAnimationStarted(CustomAnimation anim)
@@ -87,7 +89,9 @@ public class EnemyAnimation : MonoBehaviour, IComboListener, ICustomAnimationLis
         }
         else if(anim == ReceiveDamage)
         {
-            Idle.Play();
+            if (ecombat.Dead()) Die.Play();
+            else if( !Attack.IsPlaying() || ReceiveDamage.IsPlaying() )
+                Idle.Play();
         }
     }
 
@@ -99,19 +103,19 @@ public class EnemyAnimation : MonoBehaviour, IComboListener, ICustomAnimationLis
     //Llamado cuando se cancela un combostep
     public void OnComboStepCancelled(ComboStep step)
     {
-        Debug.Log("Cancelled " + step.GetName());
+        //Debug.Log("Cancelled " + step.GetName());
     }
 
     //Llamado al iniciarse un step
     public void OnComboStepStarted(ComboStep step)
     {
-        Debug.Log("Started " + step.GetName());
+        //Debug.Log("Started " + step.GetName());
     }
 
     //Llamado al finalizar un step
     public void OnComboStepFinished(ComboStep step)
     {
-        Debug.Log("Finished " + step.GetName());
+       // Debug.Log("Finished " + step.GetName());
         GetComponent<EnemyCombat>().OnAttackFinished();
     }
 
@@ -120,18 +124,18 @@ public class EnemyAnimation : MonoBehaviour, IComboListener, ICustomAnimationLis
     //Llamado cuando se ha empezado un combo
     public void OnComboStarted(Combo combo)
     {
-        Debug.Log("Started " + combo.GetName());
+      //  Debug.Log("Started " + combo.GetName());
     }
 
     //Llamado cuando se ha acabado un combo entero
     public void OnComboFinished(Combo combo)
     {
-        Debug.Log("Finished " + combo.GetName());
+      //  Debug.Log("Finished " + combo.GetName());
     }
 
     //Llamado cuando se ha acabado un combo entero
     public void OnComboCancelled(Combo combo)
     {
-        Debug.Log("Cancelled " + combo.GetName());
+      //  Debug.Log("Cancelled " + combo.GetName());
     }
 }

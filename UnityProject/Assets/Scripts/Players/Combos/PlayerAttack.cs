@@ -4,31 +4,45 @@ using System.Collections.Generic;
 
 class PlayerAttack
 {
-    private float attackMultiplier = 1.0f; //Mutiplicador de la fuerza de ataque normal del player
-    private float attackRange = 3.0f;      //Lo lejos que llega el ataque
-    private float attackAngle = 150.0f;     //Lo amplio que llega el ataque (radio del cono)
+    private float attackMultiplier; //Mutiplicador de la fuerza de ataque normal del player
+    private float attackRange;      //Lo lejos que llega el ataque
+    private float attackAngle;     //Lo amplio que llega el ataque (angulo del cono)
 
-    //Indica si el ataque en si(el dano) se efectua al empezar la animacion(true) o al acabarla(false)
-    private bool attackOnAnimationStart = true;    
+    //Indica en que momento del combo se produce el ataque
+    //Siendo 0.0f el inicio, y 1.0f el final
+    private float whenAttack;
+    private bool attackedInThisStep = false; //Guarda si en el actual step ya ha atacado
 
-    public PlayerAttack(float attackRange = 3.0f, float attackAngle = 150.0f, float attackMultiplier = 1.0f, 
-                      bool attackOnAnimationStart = true)
+    public PlayerAttack(float attackRange = 4.0f, float attackAngle = 180.0f, float attackMultiplier = 1.0f, float whenAttack = 0.5f)
     {
         this.attackRange = attackRange;
         this.attackAngle = attackAngle;
         this.attackMultiplier = attackMultiplier;
-        this.attackOnAnimationStart = attackOnAnimationStart;
+        this.whenAttack = whenAttack;
     }
 
-    public bool CanAttack(GameObject from, GameObject to, bool isOnComboStarted)
+    public void Initialize()
     {
-        if (attackOnAnimationStart) { if (!isOnComboStarted) return false; }
-        else if (isOnComboStarted) return false;
+        attackedInThisStep = false;
+    }
+
+    public bool AttackedInThisStep()
+    {
+        return attackedInThisStep;
+    }
+
+    public bool CanAttack(GameObject from, GameObject to, float normalizedAnimationTime)
+    {
+        if (normalizedAnimationTime < whenAttack) return false;
 
         float d = Vector3.Distance(from.transform.position, to.transform.position);
         if (d <= attackRange)
         {
-            return IsInAngle(from.transform.position, to.transform.position, from.transform.forward, attackAngle);
+            if(IsInAngle(from.transform.position, to.transform.position, from.transform.forward, attackAngle))
+            {
+                attackedInThisStep = true;
+                return true;
+            }
         }
 
         return false;

@@ -22,12 +22,9 @@ public class CustomAnimation
     {
         if (listener == null) return;
 
-        if (IsPlaying())
+        if (anim[name].normalizedTime > 1)
         {
-            if (anim[name].normalizedTime > 1)
-            {
-                listener.OnAnimationFinished(this);
-            }
+            listener.OnAnimationFinished(this);
         }
     }
 
@@ -37,6 +34,16 @@ public class CustomAnimation
         {
             anim[name].speed = speed;
             if(listener != null) listener.OnAnimationStarted(this);
+            anim.CrossFade(name);
+        }
+    }
+
+    public void ForcePlay()
+    {
+        if (anim != null && anim.GetClip(name) != null)
+        {
+            anim[name].speed = speed;
+            if (listener != null) listener.OnAnimationStarted(this);
             anim.CrossFade(name);
         }
     }
@@ -53,7 +60,12 @@ public class CustomAnimation
 
     public bool IsPlaying()
     {
-        return anim != null && anim.GetClip(name) != null && anim[name].normalizedTime > 0 && anim[name].normalizedTime < 1;
+        return anim != null && anim.GetClip(name) != null && anim.IsPlaying(name) && anim[name].normalizedTime <= 1;
+    }
+
+    public float GetNormalizedTime()
+    {
+        return anim[name].normalizedTime;
     }
 
     public float GetDuration()

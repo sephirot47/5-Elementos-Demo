@@ -6,7 +6,7 @@ public class EnemyCombat : MonoBehaviour {
     private Enemy enemy;
 	[SerializeField] private float attack = 10.0f; //fuerza de ataque
 	[SerializeField] private float attackRange = 2.0f; //Rango de ataque(lo lejos que llega)
-    [SerializeField] private float attackRate = 1.0f; //Seconds / attack
+    [SerializeField] private float attackRate = 2.5f; //Seconds / attack
     [SerializeField] private float recoverDelay = 1.0f; //Tiempo que tarda en recuperarse despues de recibir un ataque!
     [SerializeField] protected float maxLife = 100.0f; //vida maxima
 

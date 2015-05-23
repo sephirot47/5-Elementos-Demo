@@ -7,20 +7,21 @@ public abstract class Combo
     protected ComboManager comboManager;
     protected List<ComboStep> steps;
 
-    protected float delay = 0.6f, timeDelay = 0.0f;
+    protected float delay, 
+                    timeDelay = 0.0f;
     protected bool started = false, enabled = true;
     protected int currentStep = 0;
     protected string name;
 
-    public Combo(string name, ComboManager cb, float delay = 0.6f)
+    public Combo(string name, ComboManager cb, float delay = 0.5f)
     {
         this.name = name;
         steps = new List<ComboStep>();
         comboManager = cb;
-        this.delay = delay;
+        this.delay = delay; //delay permitido entre step y step
     }
 
-    public void Initialize()
+    public virtual void Initialize()
     {
         started = false;
         timeDelay = 0.0f;
@@ -84,7 +85,7 @@ public abstract class Combo
 
     public void OnStepDoing(ComboStep comboStep, float timePressed)
     {
-        comboManager.OnComboStepFinished(comboStep, timePressed);
+        comboManager.OnComboStepDoing(comboStep, timePressed);
     }
 
     public void OnStepFinished(ComboStep step)

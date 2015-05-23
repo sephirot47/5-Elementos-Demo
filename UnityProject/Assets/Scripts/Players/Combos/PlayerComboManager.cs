@@ -37,10 +37,10 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 
         //GROUND COMBO //////////////////////
         groundCombo = new PlayerComboAttack("ground", comboManager);
-        groundCombo.AppendStep(new InstantComboStep("ground1", attack, anim.ComboGround1), new PlayerAttack() );
-        groundCombo.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2), new PlayerAttack());
-        groundCombo.AppendStep(new InstantComboStep("ground3", attack, anim.ComboGround3), new PlayerAttack());
-        groundCombo.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4), new PlayerAttack());
+        groundCombo.AppendStep(new InstantComboStep("ground1", attack, anim.ComboGround1), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.05f));
+        groundCombo.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2), new PlayerAttack(6.0f, 360.0f, 1.0f, 0.6f));
+        groundCombo.AppendStep(new InstantComboStep("ground3", attack, anim.ComboGround3), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.8f));
+        groundCombo.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.3f));
         comboManager.AddCombo(groundCombo);
         //////////////////////////////////////
 
@@ -51,8 +51,8 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         //Afecta la mitad, pero ataca a todos los de alrededor, y en un rango mayor
         explosionCombo = new PlayerComboAttack("explosion", comboManager);
         explosionCombo.AppendStep(
-            new PersistentComboStep("explosion0", attack, 3.0f, new IComboInput[]{ shift }, anim.Explosion),
-            new PlayerAttack(10.0f, 360.0f, 0.5f, false) );
+            new InstantComboStep("explosion0", attack, new IComboInput[] { shift }, anim.ComboGround2),
+            new PlayerAttack(15.0f, 360.0f, 1.0f, 0.6f));
         comboManager.AddCombo(explosionCombo);
 
         guardCombo = new ControlledCombo("guard", comboManager);
@@ -124,6 +124,8 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
             playerMov.SetSuspendedInAir(false);
         }
 
+        CancelAllCombos();
+
 		//Debug.Log("Finished " + combo.GetName());
         if (!comboManager.AnyComboBeingDone())
 		{
@@ -152,6 +154,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 		if(!player.IsSelected()) return;
 
         comboing = true;
+        GetComponent<PlayerCombat>().OnComboStepDoing(step, time);
         //Debug.Log("Doing step " + step.GetName());
 	}
 
@@ -160,7 +163,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 	{
 		if(!player.IsSelected()) return;
 
-		Debug.Log("Cancelled step " + step.GetName());
+		//Debug.Log("Cancelled step " + step.GetName());
 	}
 
     public void OnComboStepStarted(ComboStep step)
@@ -168,10 +171,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         if (!player.IsSelected()) return;
         ControlledComboStep ccs = null;
 
-        try { ccs = (ControlledComboStep) step;  }
-        catch (InvalidCastException e) { return; }
-
-        GetComponent<PlayerCombat>().OnComboStepStarted(ccs);
+        GetComponent<PlayerCombat>().OnComboStepStarted(step);
         //Debug.Log("Started step " + step.GetName());
     }
 
@@ -180,10 +180,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         if (!player.IsSelected()) return;
         ControlledComboStep ccs = null;
 
-        try { ccs = (ControlledComboStep)step; }
-        catch (InvalidCastException e) { return; }
-
-        GetComponent<PlayerCombat>().OnComboStepFinished(ccs);
+        GetComponent<PlayerCombat>().OnComboStepFinished(step);
         //Debug.Log("Finished step " + step.GetName());
 	}
 
@@ -206,6 +203,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 
 	public void OnReceiveDamage()
 	{
+        CancelAllCombos();
 	}
 
     public bool IsComboingStep(string stepName)

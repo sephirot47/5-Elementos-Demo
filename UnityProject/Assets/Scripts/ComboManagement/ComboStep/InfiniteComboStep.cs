@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 class InfiniteComboStep : ControlledComboStep
 {
-    private float timePressed = 0.0f;
-
     public InfiniteComboStep(String name, IComboInput inputDown, CustomAnimation anim) : base(name, inputDown, anim)
     {
     }
@@ -25,7 +23,7 @@ class InfiniteComboStep : ControlledComboStep
         {
             time += Time.deltaTime;
             parentCombo.OnStepDoing(this, time);
-            if (inputDown.Up())
+            if (inputDown.Up() || (!inputDown.Pressed() && !inputDown.Down()) )
             {
                 parentCombo.OnStepFinished(this);
             }

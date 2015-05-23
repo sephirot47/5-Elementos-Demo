@@ -21,6 +21,7 @@ public class SimulatedComboStep : ComboStep
         if (started)
         {
             time += Time.deltaTime;
+            parentCombo.OnStepDoing(this, time);
             if(time > animation.GetDuration())
             {
                 parentCombo.OnStepFinished(this);

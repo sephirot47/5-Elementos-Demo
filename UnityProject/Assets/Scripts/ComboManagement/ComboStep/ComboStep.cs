@@ -33,6 +33,7 @@ public abstract class ComboStep
 
     public bool Started() {  return started;  }
 
+    public CustomAnimation GetAnimation() { return animation; }
     public Combo GetParentCombo()  { return parentCombo; }
     public string GetName() { return name; }
 

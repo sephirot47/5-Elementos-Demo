@@ -52,7 +52,7 @@ public class EnemyMovement : MonoBehaviour
 				if(time >= wanderTime)
 				{
 					time = 0.0f;
-					if(!IsWalking() || Random.Range(0.0f, 100.0f) > (100.0f * stopProbabilities))
+					if(!IsWandering() || Random.Range(0.0f, 100.0f) > (100.0f * stopProbabilities))
 					{
 						randomDir = dirToOriginal.normalized + GetRandomDeviation();
 						randomDir.y = 0;
@@ -64,7 +64,7 @@ public class EnemyMovement : MonoBehaviour
 					}
 				}
 
-				if( IsWalking() && randomDir != Vector3.zero)
+				if( IsWandering() && randomDir != Vector3.zero)
 				{
 					//Mira hacia donde caminas, suavemente xd
 					transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(randomDir), Time.deltaTime);
@@ -94,8 +94,6 @@ public class EnemyMovement : MonoBehaviour
 			//Miramos hacia el jugador
 			Quaternion newRot =  Quaternion.LookRotation(Core.PlaneVector(target.transform.position - transform.position));
 			transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * GetComponent<EnemyMovement>().rotSpeed);
-
-			controller.Move(movement * Time.deltaTime);
 		}
 
         movement += Vector3.up * Core.gravity; //gravity
@@ -110,7 +108,7 @@ public class EnemyMovement : MonoBehaviour
 
     public Vector3 GetMovement() { return movement; }
 
-	bool IsWalking()
+	bool IsWandering()
 	{
         return randomDir != Vector3.zero;
 	}

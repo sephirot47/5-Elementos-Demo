@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+//Es un click de tecla
 class InstantComboStep : ControlledComboStep
 {
     public InstantComboStep(String name, IComboInput inputDown, CustomAnimation anim) 
@@ -28,7 +29,7 @@ class InstantComboStep : ControlledComboStep
         else
         {
             time += Time.deltaTime;
-
+            parentCombo.OnStepDoing(this, time);
             if( time > animation.GetDuration() - ControlledComboStep.blend)
             {
                 parentCombo.OnStepFinished(this);
