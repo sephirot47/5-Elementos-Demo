@@ -12,6 +12,10 @@ public class HUDLifebarsCanvasManager : MonoBehaviour
     private static Vector3 firstPlanePos, secondPlanePos, thirdPlanePos;
     private static Vector3 firstPlaneScale, secondPlaneScale, thirdPlaneScale;
 
+    private static GameObject kajiFaceActive, kajiFaceIdle;
+    private static GameObject zapFaceActive, zapFaceIdle;
+    private static GameObject lluviaFaceActive, lluviaFaceIdle;
+
     public float transitionSpeed = 5.0f;
 
 	void Start()
@@ -27,6 +31,15 @@ public class HUDLifebarsCanvasManager : MonoBehaviour
         kajiLifebarScale = firstPlaneScale = kajiLifebar.GetComponent<RectTransform>().localScale;
         zapLifebarScale = secondPlaneScale = zapLifebar.GetComponent<RectTransform>().localScale;
         lluviaLifebarScale = thirdPlaneScale = lluviaLifebar.GetComponent<RectTransform>().localScale;
+
+        kajiFaceActive = Core.GetSubGameObject(kajiLifebar, "FaceActive");
+        kajiFaceIdle = Core.GetSubGameObject(kajiLifebar, "FaceIdle");
+
+        zapFaceActive = Core.GetSubGameObject(zapLifebar, "FaceActive");
+        zapFaceIdle = Core.GetSubGameObject(zapLifebar, "FaceIdle");
+
+        lluviaFaceActive = Core.GetSubGameObject(lluviaLifebar, "FaceActive");
+        lluviaFaceIdle = Core.GetSubGameObject(lluviaLifebar, "FaceIdle");
 	}
 
 	void Update() 
@@ -81,40 +94,64 @@ public class HUDLifebarsCanvasManager : MonoBehaviour
 
 	public static void OnPlayerSelected(Player p)
 	{
+        HideAllFaces();
+
         if(p == Core.kaji)
         {
+            CanvasUtils.Show(kajiFaceActive);
+            CanvasUtils.Show(zapFaceIdle);
+            CanvasUtils.Show(lluviaFaceIdle);
+
             kajiLifebarPos = firstPlanePos;
             kajiLifebarScale = firstPlaneScale;
 
-            lluviaLifebarPos = secondPlanePos;
-            lluviaLifebarScale = secondPlaneScale;
-
-            zapLifebarPos = thirdPlanePos;
-            zapLifebarScale = thirdPlaneScale;
-        }
-        else if (p == Core.zap)
-        {
-            kajiLifebarPos = secondPlanePos;
-            kajiLifebarScale = secondPlaneScale;
+            zapLifebarPos = secondPlanePos;
+            zapLifebarScale = secondPlaneScale;
 
             lluviaLifebarPos = thirdPlanePos;
             lluviaLifebarScale = thirdPlaneScale;
+        }
+        else if (p == Core.zap)
+        {
+            CanvasUtils.Show(kajiFaceIdle);
+            CanvasUtils.Show(zapFaceActive);
+            CanvasUtils.Show(lluviaFaceIdle);
+
+            kajiLifebarPos = secondPlanePos;
+            kajiLifebarScale = secondPlaneScale;
 
             zapLifebarPos = firstPlanePos;
             zapLifebarScale = firstPlaneScale;
+
+            lluviaLifebarPos = thirdPlanePos;
+            lluviaLifebarScale = thirdPlaneScale;
         }
         else if (p == Core.lluvia)
         {
+            CanvasUtils.Show(kajiFaceIdle);
+            CanvasUtils.Show(zapFaceIdle);
+            CanvasUtils.Show(lluviaFaceActive);
+
             kajiLifebarPos = thirdPlanePos;
             kajiLifebarScale = thirdPlaneScale;
 
-            lluviaLifebarPos = firstPlanePos;
-            lluviaLifebarScale = firstPlaneScale;
-
             zapLifebarPos = secondPlanePos;
             zapLifebarScale = secondPlaneScale;
+
+            lluviaLifebarPos = firstPlanePos;
+            lluviaLifebarScale = firstPlaneScale;
         }
 	}
+
+    private static void HideAllFaces()
+    {
+        CanvasUtils.Hide(kajiFaceActive);
+        CanvasUtils.Hide(kajiFaceIdle);
+        CanvasUtils.Hide(zapFaceActive);
+        CanvasUtils.Hide(zapFaceIdle);
+        CanvasUtils.Hide(lluviaFaceActive);
+        CanvasUtils.Hide(lluviaFaceIdle);
+    }
 
 	private static void ShowLifebars() 
 	{
