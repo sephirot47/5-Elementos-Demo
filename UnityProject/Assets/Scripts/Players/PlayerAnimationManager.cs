@@ -97,8 +97,8 @@ public class PlayerAnimationManager : MonoBehaviour
             timeSinceNoJump = 0.0f;
             
             Vector3 movement = player.GetMovement();
-            if (!playerMove.IsSecondJumping()) Play(Fall);
-            else Play(Die);
+            if (playerMove.IsFirstJump()) Play(Fall);
+            else if(!playerMove.ComesFromSuspendingInAir()) Play(Die);
         }
 	}
 

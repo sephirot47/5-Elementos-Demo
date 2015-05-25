@@ -137,23 +137,13 @@ public class PlayerMovement : MonoBehaviour
 		if(boost.magnitude > 0.2f) return; //Aun no ha acabado el boost anterior
 		boost = dir * boostForce;
 	}
-	
-	public bool IsJumping()
-	{
-		return jumpsDone > 0;
-	}
-
-    public bool IsSecondJumping()
-    {
-        return jumpsDone == 2;
-    }
 
     public void SetSuspendedInAir(bool suspended)
     {
         suspendedInAir = suspended;
         if(suspended)
         {
-            jumpsDone = 2;
+            jumpsDone = 3; // SIIII 3 !!!! Para que haga la caida en Fall, y no en la animacion del 2o salto!
             movement.y = 0.0f;
         }
     }
@@ -166,5 +156,25 @@ public class PlayerMovement : MonoBehaviour
     public void LookToTarget()
     {
         transform.forward = Core.PlaneVector(player.GetTarget().transform.position - transform.position);
+    }
+
+    public bool IsJumping()
+    {
+        return jumpsDone > 0;
+    }
+
+    public bool IsFirstJump()
+    {
+        return jumpsDone == 1;
+    }
+
+    public bool IsSecondJump()
+    {
+        return jumpsDone == 2;
+    }
+
+    public bool ComesFromSuspendingInAir()
+    {
+        return jumpsDone == 3;
     }
 }
