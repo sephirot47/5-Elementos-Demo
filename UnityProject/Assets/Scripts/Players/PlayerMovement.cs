@@ -12,8 +12,6 @@ public class PlayerMovement : MonoBehaviour
 	
 	private int jumpsDone = 0;
 
-    public GameObject ground;
-
 	public Vector3 boost = Vector3.zero;
 	public Vector3 movement = Vector3.zero;
 
@@ -25,8 +23,6 @@ public class PlayerMovement : MonoBehaviour
 	{
 		player = GetComponent<Player>();
 		controller = GetComponent<CharacterController>();
-
-        ground = Core.GetSubGameObject(this.gameObject, "Base Human");
 	}
 
 	void Update ()
@@ -164,12 +160,7 @@ public class PlayerMovement : MonoBehaviour
 
 	public bool IsGrounded()
 	{
-		RaycastHit hit;
-        if(ground != null)
-        {
-            Physics.CheckSphere(ground.transform.position, 0.1f, ~(1 << LayerMask.NameToLayer("Player")) );
-        }
-        return Physics.Raycast( controller.transform.position, Vector3.down, out hit, 0.1f, ~(1 << LayerMask.NameToLayer("Player")));
+        return controller.isGrounded;
 	}
 
     public void LookToTarget()
