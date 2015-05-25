@@ -32,9 +32,18 @@ public class NPCCanvasManager : MonoBehaviour
 		}
 	}
 
+    public static void OnSpeakingNext()
+    {
+        if (speakingNPC != null) speakingNPC.OnSpeakingNext();
+    }
+
 	public static void OnSpeakingFinish()
 	{
 		CanvasUtils.Hide(speakingPanel);
+        foreach(GameObject npc in GameObject.FindGameObjectsWithTag("NPC"))
+        {
+            npc.GetComponent<NPC>().OnLeaveSpeaking();
+        }
 	}
 
 	public static void SetSpeakingNPC(NPC npc)

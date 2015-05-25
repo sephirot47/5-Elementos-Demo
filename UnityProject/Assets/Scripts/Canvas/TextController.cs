@@ -85,7 +85,8 @@ public class TextController : MonoBehaviour
 		{
 			++currentPart;
 			currentText = "";
-			fullText = textParts[currentPart];
+            fullText = textParts[currentPart];
+            NPCCanvasManager.OnSpeakingNext();
 		}
 		else
 		{

@@ -21,7 +21,6 @@ public class NPC : MonoBehaviour
 	
 	void Update() 
 	{
-
 	}
 
 	public void OnSpeakWithMe(Player p)
@@ -29,10 +28,23 @@ public class NPC : MonoBehaviour
         float d = Vector3.Distance(transform.position, p.transform.position);
         if (d <= GetComponent<NPCMovement>().visionRange)
         {
+            GetComponent<Animation>().CrossFade("Speak");
+            GetComponent<Animation>().CrossFadeQueued("IdleDefault");
             NPCCanvasManager.SetSpeakingNPC(this);
+            transform.LookAt(p.transform.position);
             GameState.ChangeState(GameState.Speaking);
         }
 	}
+
+    public void OnSpeakingNext()
+    {
+        GetComponent<Animation>().CrossFade("Speak");
+    }
+
+    public void OnLeaveSpeaking()
+    {
+        GetComponent<Animation>().CrossFade("IdleDefault");
+    }
 
 	public string GetName()
 	{

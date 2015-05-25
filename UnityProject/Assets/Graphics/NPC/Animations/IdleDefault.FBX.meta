@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 9c1d0220c68fbcd439cd5052bbf762aa
-timeCreated: 1432576922
+guid: 2e957fc0c20ecb843bf7499d88546147
+timeCreated: 1432158117
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -147,17 +147,13 @@ ModelImporter:
     400136: Base HumanTail5 2
     400138: default
     400140: //RootNode
-    2300000: default
-    3300000: IdleDefault
-    4300000: //RootNode
-    4300002: default
-    7400000: //RootNode
-    7400002: IdleDefault
-    9500000: default
+    4300000: default
+    7400000: IdleDefault
+    9500000: //RootNode
     11100000: //RootNode
     13700000: default
   materials:
-    importMaterials: 0
+    importMaterials: 1
     materialName: 0
     materialSearch: 1
   animations:
@@ -317,19 +313,20 @@ ModelImporter:
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
-          HumanTail1/Base HumanTail2
+          HumanTail1/Base HumanTail2 1
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
-          HumanTail1/Base HumanTail2/Base HumanTail3
+          HumanTail1/Base HumanTail2 1/Base HumanTail3 1
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
-          HumanTail1/Base HumanTail2/Base HumanTail3/Base HumanTail4
+          HumanTail1/Base HumanTail2 1/Base HumanTail3 1/Base HumanTail4 2
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
-          HumanTail1/Base HumanTail2/Base HumanTail3/Base HumanTail4/Base HumanTail5
+          HumanTail1/Base HumanTail2 1/Base HumanTail3 1/Base HumanTail4 2/Base HumanTail5
+          1
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
@@ -337,20 +334,19 @@ ModelImporter:
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
-          HumanTail1 1/Base HumanTail2 1
+          HumanTail1 1/Base HumanTail2
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
-          HumanTail1 1/Base HumanTail2 1/Base HumanTail3 1
+          HumanTail1 1/Base HumanTail2/Base HumanTail3
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
-          HumanTail1 1/Base HumanTail2 1/Base HumanTail3 1/Base HumanTail4 1
+          HumanTail1 1/Base HumanTail2/Base HumanTail3/Base HumanTail4
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
-          HumanTail1 1/Base HumanTail2 1/Base HumanTail3 1/Base HumanTail4 1/Base
-          HumanTail5 1
+          HumanTail1 1/Base HumanTail2/Base HumanTail3/Base HumanTail4/Base HumanTail5
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
@@ -366,11 +362,11 @@ ModelImporter:
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
-          HumanTail1 2/Base HumanTail2 2/Base HumanTail3 2/Base HumanTail4 2
+          HumanTail1 2/Base HumanTail2 2/Base HumanTail3 2/Base HumanTail4 1
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
           HumanSpine4/Base HumanRibcage/Base HumanNeck1/Base HumanNeck2/Base HumanHead/Base
-          HumanTail1 2/Base HumanTail2 2/Base HumanTail3 2/Base HumanTail4 2/Base
+          HumanTail1 2/Base HumanTail2 2/Base HumanTail3 2/Base HumanTail4 1/Base
           HumanTail5 2
         weight: 1
       - path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base

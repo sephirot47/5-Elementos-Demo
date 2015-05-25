@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 9c1d0220c68fbcd439cd5052bbf762aa
-timeCreated: 1432576922
+guid: d45da0760ae8ed14c9de88460ba8e87e
+timeCreated: 1432579187
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -148,16 +148,14 @@ ModelImporter:
     400138: default
     400140: //RootNode
     2300000: default
-    3300000: IdleDefault
-    4300000: //RootNode
-    4300002: default
-    7400000: //RootNode
-    7400002: IdleDefault
-    9500000: default
+    3300000: default
+    4300000: default
+    7400000: Run
+    9500000: //RootNode
     11100000: //RootNode
     13700000: default
   materials:
-    importMaterials: 0
+    importMaterials: 1
     materialName: 0
     materialSearch: 1
   animations:
@@ -173,7 +171,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: IdleDefault
+      name: Run
       takeName: Take 001
       firstFrame: 0
       lastFrame: 100

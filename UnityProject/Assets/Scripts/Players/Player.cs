@@ -29,6 +29,14 @@ public class Player : MonoBehaviour
 				}
 			}
 		}
+        else if (GameState.IsSpeaking())
+        {
+            if (GetTarget() != null)
+            {
+                Quaternion newRot = Quaternion.LookRotation(Core.PlaneVector(GetTarget().transform.position - transform.position));
+                transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * 2.0f);
+            }
+        }
 	}
 
 	private void SpeakTo(NPC npc)
