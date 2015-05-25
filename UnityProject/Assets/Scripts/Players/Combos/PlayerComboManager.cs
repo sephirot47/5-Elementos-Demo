@@ -158,9 +158,11 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 	public void OnComboStepDoing(ComboStep step, float time)
 	{
 		if(!player.IsSelected()) return;
-
-        GetComponent<PlayerCombat>().OnComboStepDoing(step, time);
-        player.transform.forward = player.GetTarget().transform.position - player.transform.position;
+        if(player.GetTarget() != null)
+        { 
+            GetComponent<PlayerCombat>().OnComboStepDoing(step, time);
+            player.transform.forward = player.GetTarget().transform.position - player.transform.position;
+        }
         //Debug.Log("Doing step " + step.GetName());
 	}
 

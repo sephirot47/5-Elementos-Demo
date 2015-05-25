@@ -61,7 +61,6 @@ public class CrosshairCanvas : MonoBehaviour
             else if (p == Core.zap) CanvasUtils.Show(zapCrosshair, cursorAlpha);
             else CanvasUtils.Show(lluviaCrosshair, cursorAlpha);
         }
-        else CanvasUtils.Show(defaultCrosshair, cursorAlpha);
     }
 
     private static void UpdateCursorPos()

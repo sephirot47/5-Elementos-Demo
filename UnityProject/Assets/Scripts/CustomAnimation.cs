@@ -65,6 +65,7 @@ public class CustomAnimation
 
     public float GetNormalizedTime()
     {
+        Debug.Log(name);
         return anim[name].normalizedTime;
     }
 
