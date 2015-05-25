@@ -55,6 +55,7 @@ public class PlayerAnimationManager : MonoBehaviour
 	{
         if (player.IsDead()) { Play(Die); return; }
         if (playerComboMan.AnyComboBeingDone()) return;
+
 		if(anim == null) return;
 
         timeSinceNoJump += Time.deltaTime;
@@ -75,7 +76,7 @@ public class PlayerAnimationManager : MonoBehaviour
                 else Play(Idle0);
             }
 
-            if (planeMovement.magnitude > 0.05f)
+            if (planeMovement.magnitude > 0.001f)
             {
                 if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt  )) Play(Walk);
                 else Play(Run);

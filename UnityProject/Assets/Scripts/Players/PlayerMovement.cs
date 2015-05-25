@@ -5,7 +5,7 @@ public class PlayerMovement : MonoBehaviour
 {
 	Player player;
 
-	public float speed = 16.0f, boostFading = 0.95f,
+    public float speed = 16.0f, speedFadeSpeed = 5.0f, boostFading = 0.95f,
 				 rotSpeed = 5.0f,
 				 jumpForce = 25.0f,
 				 boostForce = 100.0f;
@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
 
 	private CharacterController controller;
 
+    private bool movementLockedToTarget = false;
     private bool suspendedInAir = false;
 
 	void Start ()
@@ -55,6 +56,18 @@ public class PlayerMovement : MonoBehaviour
 	
 	private void SelectedMove()
 	{
+		float axisX = Input.GetAxis ("Horizontal"), 
+              axisY = Input.GetAxis ("Vertical");
+
+        if (GetComponent<PlayerComboManager>().IsComboingCombo("chargedJump"))
+        {
+            Vector3 forwardd = Camera.main.transform.forward, rightt = Camera.main.transform.right;
+            forwardd.y = rightt.y = 0.0f;
+            Vector3 dirr = ((forwardd.normalized * axisY) + (rightt.normalized * axisX)).normalized;
+            Quaternion newRot = Quaternion.LookRotation(dirr);
+            transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * rotSpeed);
+        }
+
         if (GetComponent<PlayerComboManager>().AnyComboBeingDone())
         {
             movement.x = 0.0f;
@@ -62,8 +75,13 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-		float axisX = Input.GetAxis ("Horizontal"), 
-              axisY = Input.GetAxis ("Vertical");
+        /* stop fade
+        if(axisX == 0.0f && axisY == 0.0f)
+        {
+            Vector3 movementStopped = new Vector3(0.0f, movement.y, 0.0f);
+            movement = Vector3.Lerp(movement, movementStopped, Time.deltaTime * speedFadeSpeed);
+            return;
+        }*/
 
 		float movementY = movement.y; //Lo reestablecemos al final para que no quede afectado por el movimiento en x, z;
 		movement = Vector3.zero;
@@ -71,15 +89,19 @@ public class PlayerMovement : MonoBehaviour
         bool walking = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
         Vector3 forward = Camera.main.transform.forward, right = Camera.main.transform.right; 
         forward.y = right.y = 0.0f;
-        Vector3 dir = ((forward.normalized * axisY) + (right.normalized * axisX)).normalized;
+        Vector3 dir = Core.PlaneVector(((forward.normalized * axisY) + (right.normalized * axisX))).normalized;
 		movement += dir * speed * (walking ? 0.5f : 1.0f);
 
-		movement.y = 0;
-		if (movement.magnitude > 0.5f) 
-		{
-			Quaternion newRot = Quaternion.LookRotation(movement);
-			transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * speed);
-		}
+        if(dir.magnitude > 0.05)
+        {
+		    movement.y = 0;
+            if (movement.magnitude > 0.05f)
+            {
+                Quaternion newRot = Quaternion.LookRotation(movement);
+                transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * speed);
+            }
+            else transform.forward = dir;
+        }
 		
 		movement.y = movementY; //Reestablecido
 	}
@@ -132,10 +154,10 @@ public class PlayerMovement : MonoBehaviour
         movement.y = jumpForce;
 	}
 	
-	public void Boost(Vector3 dir)
+	public void Boost(Vector3 dir, float multiplier = 1.0f)
 	{
 		if(boost.magnitude > 0.2f) return; //Aun no ha acabado el boost anterior
-		boost = dir * boostForce;
+		boost = dir * boostForce * multiplier;
 	}
 
     public void SetSuspendedInAir(bool suspended)
@@ -176,5 +198,10 @@ public class PlayerMovement : MonoBehaviour
     public bool ComesFromSuspendingInAir()
     {
         return jumpsDone == 3;
+    }
+
+    public void SetMovementLockedToTarget()
+    {
+
     }
 }

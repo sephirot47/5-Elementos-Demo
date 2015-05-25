@@ -161,7 +161,8 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         if(player.GetTarget() != null)
         { 
             GetComponent<PlayerCombat>().OnComboStepDoing(step, time);
-            player.transform.forward = player.GetTarget().transform.position - player.transform.position;
+            if ( !step.GetName().Contains("chargedJump") )
+                player.transform.forward = player.GetTarget().transform.position - player.transform.position;
         }
         //Debug.Log("Doing step " + step.GetName());
 	}
@@ -187,23 +188,23 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         if (step.GetName() == "chargedJump1")
         {
             playerMov.SetSuspendedInAir(false);
-            playerMov.Boost(transform.forward);
+            playerMov.Boost(transform.forward, 1.5f);
         }
         else if(step.GetName() == "dodgeRight0")
         {
-            playerMov.Boost(transform.right);
+            playerMov.Boost(Camera.main.transform.right);
         }
         else if (step.GetName() == "dodgeLeft0")
         {
-            playerMov.Boost(-transform.right);
+            playerMov.Boost(-Camera.main.transform.right);
         }
         else if (step.GetName() == "dodgeForward0")
         {
-            playerMov.Boost(transform.forward);
+            playerMov.Boost(Camera.main.transform.forward);
         }
         else if (step.GetName() == "dodgeBack0")
         {
-            playerMov.Boost(-transform.forward);
+            playerMov.Boost(-Camera.main.transform.forward);
         }
 
         //Debug.Log("Started step " + step.GetName());
