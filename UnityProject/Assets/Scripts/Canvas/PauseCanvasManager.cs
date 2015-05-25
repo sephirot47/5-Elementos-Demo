@@ -5,16 +5,28 @@ using System.Collections;
 public class PauseCanvasManager : MonoBehaviour 
 {
 	private static GameObject pauseCanvas;
-	private static Button resumeButton, exitButton;
+	private static Button resumeButton, exitButton,Bola1,Bola2,Bola3,Bola4,Bola5;
 
 	void Start()
     {
 		pauseCanvas = gameObject;
 		resumeButton = Core.GetSubGameObject(pauseCanvas, "ResumeButton").GetComponent<Button>();
 		exitButton = Core.GetSubGameObject(pauseCanvas, "ExitButton").GetComponent<Button>();
+		//Bolitas del menu
+		Bola1 = Core.GetSubGameObject(pauseCanvas, "Button1").GetComponent<Button>();
+		Bola2 = Core.GetSubGameObject(pauseCanvas, "Button2").GetComponent<Button>();
+		Bola3 = Core.GetSubGameObject(pauseCanvas, "Button3").GetComponent<Button>();
+		Bola4 = Core.GetSubGameObject(pauseCanvas, "Button4").GetComponent<Button>();
+		Bola5 = Core.GetSubGameObject(pauseCanvas, "Button5").GetComponent<Button>();
 
 		resumeButton.onClick.AddListener( () => OnResumeButtonClick() ); //Ni idea de esto, copy pasted, it works
-		exitButton.onClick.AddListener( () => OnExitButtonClick() );
+
+		//Cuando clican aqu
+		Bola1.OnPointerEnter (() => BolaAgrandar(Bola1) );
+		Bola2.OnPointerEnter (() => BolaAgrandar(Bola2) );
+		Bola3.OnPointerEnter (() => BolaAgrandar(Bola3) );
+		Bola4.OnPointerEnter (() => BolaAgrandar(Bola4) );
+		Bola5.OnPointerEnter (() => BolaAgrandar(Bola5) );
 
 		CanvasUtils.Hide(pauseCanvas);
 	}
@@ -31,6 +43,10 @@ public class PauseCanvasManager : MonoBehaviour
 				CanvasUtils.Show(pauseCanvas);
 			}
 		}
+	}
+
+	public static void BolaAgrandar(Button boton){
+		boton.transform.localScale *= 2;
 	}
 
 	public static void OnPauseStart()
