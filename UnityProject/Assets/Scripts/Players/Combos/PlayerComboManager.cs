@@ -19,6 +19,8 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 
     private ComboManager comboManager;
 
+    private bool areaMode = false;
+
 	void Start() 
 	{
 		player = GetComponent<Player>();
@@ -107,6 +109,18 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 	
 	void Update() 
 	{
+        if (areaMode)
+        {
+
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(3))
+        {
+            CancelAllCombos();
+            areaMode = true;
+        }
+
         comboManager.Update();
 
         if (!player.IsSelected())
@@ -147,8 +161,6 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 		if(!player.IsSelected()) return;
         if(player.GetTarget() != null) playerMov.LookToTarget();
 
-	    //Debug.Log("Started " + combo.GetName());
-
         if (combo.GetName().Contains("chargedJump") || combo.GetName().Contains("aerial"))
         {
             playerMov.SetSuspendedInAir(true);
@@ -168,7 +180,6 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
     {
         if (!player.IsSelected()) return;
 
-        //Debug.Log("Cancelled " + combo.GetName());
         playerMov.SetSuspendedInAir(false);
     }
 	
@@ -183,15 +194,12 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
             if ( !step.GetName().Contains("chargedJump") )
                 player.transform.forward = player.GetTarget().transform.position - player.transform.position;
         }
-        //Debug.Log("Doing step " + step.GetName());
 	}
 
 
     public void OnComboStepCancelled(ComboStep step)
 	{
 		if(!player.IsSelected()) return;
-
-		Debug.Log("Cancelled step " + step.GetName());
 	}
 
     public void OnComboStepStarted(ComboStep step)
@@ -230,8 +238,6 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
             transform.forward = Core.PlaneVector(Camera.main.transform.forward);
             playerMov.Boost(Camera.main.transform.forward);
         }
-
-        //Debug.Log("Started step " + step.GetName());
     }
 
 	public void OnComboStepFinished(ComboStep step)
@@ -243,8 +249,6 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         catch (InvalidCastException e) { return; }
 
         GetComponent<PlayerCombat>().OnComboStepFinished(ccs);
-
-        //Debug.Log("Finished step " + step.GetName());
 	}
 
     public void DisableAllCombos()
