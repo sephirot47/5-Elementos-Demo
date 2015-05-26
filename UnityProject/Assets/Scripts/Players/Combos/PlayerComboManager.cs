@@ -12,6 +12,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
     private PlayerComboAttack groundCombo, aerialCombo, explosionCombo;
     private ControlledCombo guardCombo, chargedJumpCombo;
     private ControlledCombo dodgeRight, dodgeLeft, dodgeBack, dodgeForward;
+    private ControlledCombo sprint;
 
     private List<Combo> groundCombos;
     private List<Combo> aerialCombos;
@@ -62,6 +63,11 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         chargedJumpCombo.AppendStep(new InstantComboStep("chargedJump1", jump, new IComboInput[] { shift }, anim.Fall));
         comboManager.AddCombo(chargedJumpCombo);
 
+        sprint = new ControlledCombo("sprint", comboManager);
+        sprint.AppendStep(new InstantComboStep("sprint0", new ComboInputKey(KeyCode.W), null));
+        sprint.AppendStep(new InstantComboStep("sprint1", new ComboInputKey(KeyCode.W), anim.Fall));
+        comboManager.AddCombo(sprint);
+
         /////// DODGES //////////////////////////////////////////////
         dodgeRight = new ControlledCombo("dodgeRight", comboManager);
         dodgeRight.AppendStep(
@@ -91,6 +97,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         groundCombos.Add(dodgeLeft);
         groundCombos.Add(dodgeBack);
         groundCombos.Add(dodgeForward);
+        groundCombos.Add(sprint);
 
         aerialCombos.Add(aerialCombo);
         aerialCombos.Add(chargedJumpCombo);
@@ -120,6 +127,18 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
             DisableAllCombos();
             EnableAerialCombos();
         }
+
+        if(player.GetTarget() == null)
+        {
+            dodgeBack.SetEnabled(false);
+            dodgeForward.SetEnabled(false);
+            dodgeRight.SetEnabled(false);
+            dodgeLeft.SetEnabled(false);
+        }
+        else
+        {
+            sprint.SetEnabled(false);
+        }
 	}
 	
 	//Llamado cuando se ha empezado un combo
@@ -141,7 +160,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 	{
 		if(!player.IsSelected()) return;
 
-        playerMov.SetSuspendedInAir(false);
+        playerMov.SetSuspendedInAir(false); 
 	}
 
     //Llamado cuando se ha acabado un combo entero
@@ -206,6 +225,11 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         {
             playerMov.Boost(-Camera.main.transform.forward);
         }
+        else if (step.GetName() == "sprint1")
+        {
+            transform.forward = Core.PlaneVector(Camera.main.transform.forward);
+            playerMov.Boost(Camera.main.transform.forward);
+        }
 
         //Debug.Log("Started step " + step.GetName());
     }
@@ -219,6 +243,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         catch (InvalidCastException e) { return; }
 
         GetComponent<PlayerCombat>().OnComboStepFinished(ccs);
+
         //Debug.Log("Finished step " + step.GetName());
 	}
 

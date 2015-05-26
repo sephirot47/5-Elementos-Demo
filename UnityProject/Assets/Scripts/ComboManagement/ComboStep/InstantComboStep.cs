@@ -22,7 +22,7 @@ class InstantComboStep : ControlledComboStep
             if (inputDown.Down() && AllSimultaneousPressed() && NoWrongControlKeysPressed())
             {
                 started = true;
-                animation.Play();
+                if(animation != null) animation.Play();
                 parentCombo.OnStepStarted(this);
             }
         }
@@ -30,7 +30,8 @@ class InstantComboStep : ControlledComboStep
         {
             time += Time.deltaTime;
             parentCombo.OnStepDoing(this, time);
-            if( time > animation.GetDuration() - ControlledComboStep.blend)
+            float duration = (animation == null ? 0.0f : animation.GetDuration());
+            if( time > duration - ControlledComboStep.blend)
             {
                 parentCombo.OnStepFinished(this);
             }
