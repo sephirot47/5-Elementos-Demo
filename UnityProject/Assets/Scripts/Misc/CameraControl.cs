@@ -24,7 +24,7 @@ public class CameraControl : MonoBehaviour
 	private float x = 0.0f;
 	private float y = 0.0f;
 
-    private static int raycastLayer;
+    public static int raycastLayer;
 
 	void Start () 
 	{

@@ -12,8 +12,7 @@ public class PlayerAreaAttack : MonoBehaviour
     public float movementSpeed = 8.0f, //Velocidad del lerp de la posicion
                  rotSpeed = 1.0f;      //Velocidad del lerp de la rotacion de la light hacia el terreno
 
-    public Color colorInRange = Color.white, 
-                 colorNotInRange = Color.red;
+    public Color lightColor = Color.white;
     public float damageMultiplierInCenter = 0.5f;
     public float damageRadius = 10.0f;
     public float markRangeRadius = 40.0f;
@@ -40,6 +39,7 @@ public class PlayerAreaAttack : MonoBehaviour
                 areaLight = Instantiate(Resources.Load("AreaLight")) as GameObject;
                 areaLight.transform.position = GetAreaLightPosWithoutHeight();
                 areaLight.transform.forward = -GetAreaLightNormal();
+                areaLight.GetComponent<Light>().color = lightColor;
                 originalLightIntensity = areaLight.GetComponent<Light>().intensity;
             }
             else areaMode = false;
@@ -49,31 +49,41 @@ public class PlayerAreaAttack : MonoBehaviour
 
         if(areaMode)
         {
-            Vector3 newPos = GetAreaLightPos();
-            areaLight.transform.position = Vector3.Lerp(areaLight.transform.position, newPos, Time.deltaTime * movementSpeed);
 
             Vector3 targetNormal = GetAreaLightNormal();
             Quaternion newRot = Quaternion.LookRotation(-targetNormal);
-            areaLight.transform.rotation = Quaternion.Lerp(areaLight.transform.rotation, newRot, Time.deltaTime * rotSpeed);
 
             Vector3 playerForward = Core.PlaneVector(areaLight.transform.position - transform.position).normalized;
             Quaternion newPlayerRot = Quaternion.LookRotation(playerForward);
-            transform.rotation = Quaternion.Lerp(transform.rotation, newPlayerRot, Time.deltaTime * playerMov.rotSpeed);
 
-            float d = Vector3.Distance(transform.position, areaLight.transform.position);
+            Vector3 newPos = Vector3.zero;
+            float d = Vector3.Distance(transform.position, CameraControl.GetMousePoint3D());
             if (d <= markRangeRadius)
             {
-                if (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(0))
-                {
-                    areaMode = false;
-                    Attack();
-                }
-                areaLight.GetComponent<Light>().color = colorInRange;
+                newPos = GetAreaLightPos();
             }
             else
             {
-                areaLight.GetComponent<Light>().color = colorNotInRange;
+                Vector3 dir = Core.PlaneVector(CameraControl.GetMousePoint3D() - transform.position).normalized;
+                newPos = transform.position + dir * markRangeRadius;
+                Ray r = new Ray(Camera.main.transform.position, newPos - Camera.main.transform.position);
+                RaycastHit hitInfo;
+                if (Physics.Raycast(r, out hitInfo, 99999.9f, CameraControl.raycastLayer)) 
+                {
+                    newRot = Quaternion.LookRotation(-hitInfo.normal);
+                    newPos = transform.position + dir * markRangeRadius + lightHeight * hitInfo.normal;
+                }
             }
+
+            if (Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(0))
+            {
+                areaMode = false;
+                Attack();
+            }
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, newPlayerRot, Time.deltaTime * playerMov.rotSpeed);
+            areaLight.transform.position = Vector3.Lerp(areaLight.transform.position, newPos, Time.deltaTime * movementSpeed);
+            areaLight.transform.rotation = Quaternion.Lerp(areaLight.transform.rotation, newRot, Time.deltaTime * rotSpeed);
 
             //float dIntensity =  (d == 0.0f ? 0.1f : d) * 2.0f;
           //  float intensity = Mathf.Min(originalLightIntensity, (range / dIntensity) * originalLightIntensity);
