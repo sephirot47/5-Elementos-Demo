@@ -56,7 +56,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         explosionCombo.AppendStep(
             new InstantComboStep("explosion0", attack, new IComboInput[]{ shift }, anim.ComboGround2),
             new PlayerAttack(8.0f, 360.0f, 0.5f, 0.4f) );
-        comboManager.AddCombo(explosionCombo);
+        //comboManager.AddCombo(explosionCombo);
 
         guardCombo = new ControlledCombo("guard", comboManager);
         guardCombo.AppendStep(new InfiniteComboStep("guard0", shift, anim.GuardBegin));
@@ -190,12 +190,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 	public void OnComboStepDoing(ComboStep step, float time)
 	{
 		if(!player.IsSelected()) return;
-        if(player.GetTarget() != null)
-        { 
-            GetComponent<PlayerCombat>().OnComboStepDoing(step, time);
-            if ( !step.GetName().Contains("chargedJump") )
-                player.transform.forward = player.GetTarget().transform.position - player.transform.position;
-        }
+        GetComponent<PlayerCombat>().OnComboStepDoing(step, time);
 	}
 
 
@@ -213,6 +208,12 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         catch (InvalidCastException e) { return; }
 
         GetComponent<PlayerCombat>().OnComboStepStarted(ccs);
+
+        if (player.GetTarget() != null)
+        {
+            if (!step.GetName().Contains("chargedJump"))
+                player.transform.forward = Core.PlaneVector(player.GetTarget().transform.position - player.transform.position);
+        }
 
         if (step.GetName() == "chargedJump1")
         {

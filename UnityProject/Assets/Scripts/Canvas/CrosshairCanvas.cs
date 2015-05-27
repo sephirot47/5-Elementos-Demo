@@ -8,6 +8,7 @@ public class CrosshairCanvas : MonoBehaviour
 
     private static GameObject kajiCrosshair, zapCrosshair, lluviaCrosshair, defaultCrosshair;
 
+    private static Vector3 originalKajiCrosshairScale, originalZapCrosshairScale, originalLluviaCrosshairScale; 
     private static readonly float cursorScale = 12.0f;
     private static readonly float cursorAlpha = 0.8f;
 
@@ -17,6 +18,10 @@ public class CrosshairCanvas : MonoBehaviour
         zapCrosshair = Core.GetSubGameObject(gameObject, "ZapCrosshair");
         lluviaCrosshair = Core.GetSubGameObject(gameObject, "LluviaCrosshair");
         defaultCrosshair = Core.GetSubGameObject(gameObject, "DefaultCrosshair");
+
+        originalKajiCrosshairScale = kajiCrosshair.GetComponent<RectTransform>().localScale;
+        originalZapCrosshairScale = zapCrosshair.GetComponent<RectTransform>().localScale;
+        originalLluviaCrosshairScale = lluviaCrosshair.GetComponent<RectTransform>().localScale;
 
         HideAll();
 	}
@@ -78,13 +83,13 @@ public class CrosshairCanvas : MonoBehaviour
         float scale = cursorScale / Vector3.Distance(Camera.main.transform.position, crosshairPos);
 
         kajiCrosshair.GetComponent<RectTransform>().transform.position = new Vector3(pos.x, pos.y, 0.0f);
-        kajiCrosshair.GetComponent<RectTransform>().transform.localScale = new Vector3(scale, scale, scale);
+        kajiCrosshair.GetComponent<RectTransform>().transform.localScale = originalKajiCrosshairScale * scale;
 
         zapCrosshair.GetComponent<RectTransform>().transform.position = new Vector3(pos.x, pos.y, 0.0f);
-        zapCrosshair.GetComponent<RectTransform>().transform.localScale = new Vector3(scale, scale, scale);
+        zapCrosshair.GetComponent<RectTransform>().transform.localScale = originalZapCrosshairScale * scale;
 
         lluviaCrosshair.GetComponent<RectTransform>().transform.position = new Vector3(pos.x, pos.y, 0.0f);
-        lluviaCrosshair.GetComponent<RectTransform>().transform.localScale = new Vector3(scale, scale, scale);
+        lluviaCrosshair.GetComponent<RectTransform>().transform.localScale = originalLluviaCrosshairScale * scale;
 
         defaultCrosshair.GetComponent<RectTransform>().transform.position = new Vector3(pos.x, pos.y, 0.0f);
         defaultCrosshair.GetComponent<RectTransform>().transform.localScale = new Vector3(scale, scale, scale);
