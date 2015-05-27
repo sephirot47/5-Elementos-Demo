@@ -9,7 +9,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
     private PlayerMovement playerMov;
 	private PlayerAnimationManager anim;
 
-    private PlayerComboAttack groundCombo, aerialCombo, explosionCombo;
+    private PlayerComboAttack groundCombo, groundAreaCombo, aerialCombo, explosionCombo;
     private ControlledCombo guardCombo, chargedJumpCombo;
     private ControlledCombo dodgeRight, dodgeLeft, dodgeBack, dodgeForward;
     private ControlledCombo sprint;
@@ -37,10 +37,14 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         //GROUND COMBO //////////////////////
         groundCombo = new PlayerComboAttack("ground", comboManager);
         groundCombo.AppendStep(new InstantComboStep("ground1", attack, anim.ComboGround1), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.05f));
-        groundCombo.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2), new PlayerAttack(8.0f, 360.0f, 1.0f, 0.4f));
+       // groundCombo.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2), new PlayerAttack(8.0f, 360.0f, 1.0f, 0.4f));
         groundCombo.AppendStep(new InstantComboStep("ground3", attack, anim.ComboGround3), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.8f));
         groundCombo.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.3f));
         comboManager.AddCombo(groundCombo);
+
+        groundAreaCombo = new PlayerComboAttack("groundAreaCombo", comboManager);
+        groundAreaCombo.AppendStep(new InstantComboStep("groundAreaCombo1", new ComboInputKey(KeyCode.Q), anim.ComboGround2), new PlayerAttack(8.0f, 360.0f, 1.0f, 0.4f, true));
+        comboManager.AddCombo(groundAreaCombo);
         //////////////////////////////////////
 
         aerialCombo = new PlayerComboAttack("aerial", comboManager);
@@ -98,6 +102,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         /////////////////////////////////////////////////////////////////////
 
         groundCombos.Add(groundCombo);
+        groundCombos.Add(groundAreaCombo);
         groundCombos.Add(explosionCombo);
         groundCombos.Add(guardCombo);
         groundCombos.Add(dodgeRight);

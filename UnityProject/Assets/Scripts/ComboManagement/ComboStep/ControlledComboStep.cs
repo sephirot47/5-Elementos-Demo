@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public abstract class ControlledComboStep : ComboStep
 {
-    public static readonly float blend = 0.3f; //segundos en los que puedes pulsar antes de que acabe la animacion
+    public static readonly float blend = 0.2f; //segundos en los que puedes pulsar antes de que acabe la animacion
     private List<IComboInput> controlInputs = new List<IComboInput>();
 	protected IComboInput inputDown; //Boton que se ha de pulsar(DOWN) para que se haga el step (Solo es una tecla)
     protected List<IComboInput> inputSimultaneous; //Botones que hay que mantener pulsados SIMULTANEAMENTE

@@ -11,14 +11,16 @@ class PlayerAttack
     //Indica en que momento del combo se produce el ataque
     //Siendo 0.0f el inicio, y 1.0f el final
     private float whenAttack;
+    private bool isAreaAttack; //Si es false, solo puede atacar al target. Si es true, puede atacar a mas de uno, y no necesariamente el target
     private bool attackedInThisStep = false; //Guarda si en el actual step ya ha atacado
 
-    public PlayerAttack(float attackRange = 4.0f, float attackAngle = 180.0f, float attackMultiplier = 1.0f, float whenAttack = 0.5f)
+    public PlayerAttack(float attackRange = 4.0f, float attackAngle = 180.0f, float attackMultiplier = 1.0f, float whenAttack = 0.5f, bool isAreaAttack = false)
     {
         this.attackRange = attackRange;
         this.attackAngle = attackAngle;
         this.attackMultiplier = attackMultiplier;
         this.whenAttack = whenAttack;
+        this.isAreaAttack = isAreaAttack;
     }
 
     public void Initialize()
@@ -34,6 +36,9 @@ class PlayerAttack
     public bool CanAttack(GameObject from, GameObject to, float normalizedAnimationTime)
     {
         if (normalizedAnimationTime < whenAttack) return false;
+
+        //Si no es en area, solo puede atacar al target
+        if (!isAreaAttack && to != Core.selectedPlayer.GetTarget()) return false;
 
         float d = Vector3.Distance(from.transform.position, to.transform.position);
         if (d <= attackRange)
