@@ -24,9 +24,9 @@ public class HUDLifebarsCanvasManager : MonoBehaviour
 		zapLifebar = Core.GetSubGameObject(gameObject, "ZapLifebar");
 		lluviaLifebar = Core.GetSubGameObject(gameObject, "LluviaLifebar");
 
-        kajiLifebarPos = firstPlanePos = kajiLifebar.GetComponent<RectTransform>().position;
-        zapLifebarPos = secondPlanePos = zapLifebar.GetComponent<RectTransform>().position;
-        lluviaLifebarPos = thirdPlanePos = lluviaLifebar.GetComponent<RectTransform>().position;
+        kajiLifebarPos = firstPlanePos = kajiLifebar.GetComponent<RectTransform>().anchoredPosition;
+        zapLifebarPos = secondPlanePos = zapLifebar.GetComponent<RectTransform>().anchoredPosition;
+        lluviaLifebarPos = thirdPlanePos = lluviaLifebar.GetComponent<RectTransform>().anchoredPosition;
 
         kajiLifebarScale = firstPlaneScale = kajiLifebar.GetComponent<RectTransform>().localScale;
         zapLifebarScale = secondPlaneScale = zapLifebar.GetComponent<RectTransform>().localScale;
@@ -54,13 +54,13 @@ public class HUDLifebarsCanvasManager : MonoBehaviour
 		}
 
         //LERP
-        kajiLifebar.GetComponent<RectTransform>().position = Vector3.Lerp(kajiLifebar.GetComponent<RectTransform>().position, kajiLifebarPos, Time.deltaTime * transitionSpeed);
+        kajiLifebar.GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(kajiLifebar.GetComponent<RectTransform>().anchoredPosition, kajiLifebarPos, Time.deltaTime * transitionSpeed);
         kajiLifebar.GetComponent<RectTransform>().localScale = Vector3.Lerp(kajiLifebar.GetComponent<RectTransform>().localScale, kajiLifebarScale, Time.deltaTime * transitionSpeed);
 
-        zapLifebar.GetComponent<RectTransform>().position = Vector3.Lerp(zapLifebar.GetComponent<RectTransform>().position, zapLifebarPos, Time.deltaTime * transitionSpeed);
+        zapLifebar.GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(zapLifebar.GetComponent<RectTransform>().anchoredPosition, zapLifebarPos, Time.deltaTime * transitionSpeed);
         zapLifebar.GetComponent<RectTransform>().localScale = Vector3.Lerp(zapLifebar.GetComponent<RectTransform>().localScale, zapLifebarScale, Time.deltaTime * transitionSpeed);
 
-        lluviaLifebar.GetComponent<RectTransform>().position = Vector3.Lerp(lluviaLifebar.GetComponent<RectTransform>().position, lluviaLifebarPos, Time.deltaTime * transitionSpeed);
+        lluviaLifebar.GetComponent<RectTransform>().anchoredPosition = Vector3.Lerp(lluviaLifebar.GetComponent<RectTransform>().anchoredPosition, lluviaLifebarPos, Time.deltaTime * transitionSpeed);
         lluviaLifebar.GetComponent<RectTransform>().localScale = Vector3.Lerp(lluviaLifebar.GetComponent<RectTransform>().localScale, lluviaLifebarScale, Time.deltaTime * transitionSpeed);
 	    //
 
