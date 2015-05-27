@@ -24,11 +24,15 @@ public class CameraControl : MonoBehaviour
 	private float x = 0.0f;
 	private float y = 0.0f;
 
+    private static int raycastLayer;
+
 	void Start () 
 	{
 		Vector3 angles = transform.eulerAngles;
 		x = angles.y;
 		y = angles.x;
+
+        raycastLayer = (1 << LayerMask.NameToLayer("Scenario"));
 
 		camPosition = transform.position; 
 		
@@ -96,15 +100,31 @@ public class CameraControl : MonoBehaviour
 		return Mathf.Clamp (angle, min, max);
 	}
 
+    public static Vector3 GetMousePoint3D()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 99999.9f, raycastLayer)) return hit.point;
+        return Vector3.zero;
+    }
+
+    public static Vector3 GetMousePoint3DNormal()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 99999.9f, raycastLayer)) return hit.normal.normalized;
+        return Vector3.up.normalized;
+    }
+
 	public static Vector3 GetLookPoint()
 	{
 		Vector3 screenPoint = GetLookScreenPoint();
 		Ray ray = Camera.main.ScreenPointToRay(screenPoint);
 		RaycastHit hit;
-		
-		int layer = (1 << LayerMask.NameToLayer("Scenario")) | (1 << LayerMask.NameToLayer("Enemies"));
-		
-		if(Physics.Raycast(ray, out hit, 99999.9f, layer)) return hit.point;
+
+        if (Physics.Raycast(ray, out hit, 99999.9f, raycastLayer)) return hit.point;
 		return Vector3.zero;
 	}
 

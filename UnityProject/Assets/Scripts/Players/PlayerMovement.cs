@@ -68,7 +68,7 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, newRot, Time.deltaTime * rotSpeed);
         }
 
-        if (GetComponent<PlayerComboManager>().AnyComboBeingDone())
+        if (GetComponent<PlayerComboManager>().AnyComboBeingDone() || GetComponent<PlayerAreaAttack>().IsInAreaMode())
         {
             movement.x = 0.0f;
             movement.z = 0.0f;
@@ -203,5 +203,10 @@ public class PlayerMovement : MonoBehaviour
     public void SetMovementLockedToTarget()
     {
 
+    }
+
+    internal void SetMovementLocked(bool p)
+    {
+        throw new System.NotImplementedException();
     }
 }

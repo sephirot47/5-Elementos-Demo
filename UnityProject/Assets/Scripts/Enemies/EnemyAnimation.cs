@@ -25,11 +25,13 @@ public class EnemyAnimation : MonoBehaviour, IComboListener, ICustomAnimationLis
         ReceiveDamage = new CustomAnimation("ReceiveDamage", anim, 1.0f, this);
         Die = new CustomAnimation("Die", anim, 1.0f, this);
 
-        comboManager = new ComboManager(this);
+        comboManager = new ComboManager();
         
         comboAttack = new SimulatedCombo("Attack", comboManager);
         comboAttack.AppendStep(new SimulatedComboStep("stepAttack", Attack));
         comboManager.AddCombo(comboAttack);
+
+        comboManager.AddListener(this);
 	}
 	
     public void PlayAttack()

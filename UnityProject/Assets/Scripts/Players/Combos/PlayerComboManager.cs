@@ -19,8 +19,6 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 
     private ComboManager comboManager;
 
-    private bool areaMode = false;
-
 	void Start() 
 	{
 		player = GetComponent<Player>();
@@ -30,7 +28,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         groundCombos = new List<Combo>();
         aerialCombos = new List<Combo>();
 
-        comboManager = new ComboManager(this);
+        comboManager = new ComboManager();
 
         ComboInputKey jump = new ComboInputKey(KeyCode.Space);
         ComboInputKey shift = new ComboInputKey(KeyCode.LeftShift);
@@ -105,20 +103,15 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         aerialCombos.Add(chargedJumpCombo);
 
         DisableAllCombos();
+
+        comboManager.AddListener(this);
 	}
 	
 	void Update() 
 	{
-        if (areaMode)
+        if (GetComponent<PlayerAreaAttack>().IsInAreaMode()) return;
         {
-
             return;
-        }
-
-        if (Input.GetMouseButtonDown(3))
-        {
-            CancelAllCombos();
-            areaMode = true;
         }
 
         comboManager.Update();
