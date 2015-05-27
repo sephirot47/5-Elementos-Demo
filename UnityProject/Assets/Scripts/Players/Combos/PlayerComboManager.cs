@@ -39,7 +39,7 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         groundCombo.AppendStep(new InstantComboStep("ground1", attack, anim.ComboGround1), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.05f));
         groundCombo.AppendStep(new InstantComboStep("ground2", attack, anim.ComboGround2), new PlayerAttack(8.0f, 360.0f, 1.0f, 0.4f));
         groundCombo.AppendStep(new InstantComboStep("ground3", attack, anim.ComboGround3), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.8f));
-        groundCombo.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.6f));
+        groundCombo.AppendStep(new InstantComboStep("ground4", attack, anim.ComboGround4), new PlayerAttack(4.0f, 90.0f, 1.0f, 0.3f));
         comboManager.AddCombo(groundCombo);
         //////////////////////////////////////
 
@@ -63,10 +63,17 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
         chargedJumpCombo.AppendStep(new InstantComboStep("chargedJump1", jump, new IComboInput[] { shift }, anim.Fall));
         comboManager.AddCombo(chargedJumpCombo);
 
-        sprint = new ControlledCombo("sprint", comboManager);
-        sprint.AppendStep(new InstantComboStep("sprint0", new ComboInputKey(KeyCode.W), null));
-        sprint.AppendStep(new InstantComboStep("sprint1", new ComboInputKey(KeyCode.W), anim.Fall));
-        comboManager.AddCombo(sprint);
+
+
+        //Da problemas de conflicto con el movimiento, lo bloquea, hay que poner alguna propiedad a los combos
+        //que indique si deberia bloquear al pj o no :S
+
+          sprint = new ControlledCombo("sprint", comboManager);
+          sprint.AppendStep(new InstantComboStep("sprint0", new ComboInputKey(KeyCode.W), null));
+          sprint.AppendStep(new InstantComboStep("sprint1", new ComboInputKey(KeyCode.W), null));
+       // comboManager.AddCombo(sprint);
+
+
 
         /////// DODGES //////////////////////////////////////////////
         dodgeRight = new ControlledCombo("dodgeRight", comboManager);
@@ -110,9 +117,6 @@ public class PlayerComboManager : MonoBehaviour, IComboListener
 	void Update() 
 	{
         if (GetComponent<PlayerAreaAttack>().IsInAreaMode()) return;
-        {
-            return;
-        }
 
         comboManager.Update();
 

@@ -150,7 +150,10 @@ public class PlayerMovement : MonoBehaviour
 	
 	private void Jump()
 	{
-		++jumpsDone;
+        if (GetComponent<PlayerComboManager>().AnyComboBeingDone() || GetComponent<PlayerAreaAttack>().IsInAreaMode())
+            return;
+        
+        ++jumpsDone;
         movement.y = jumpForce;
 	}
 	

@@ -3,8 +3,8 @@ using System.Collections;
 
 public class CameraControl : MonoBehaviour 
 {
+    public Transform target;
 
-	public Transform target;
 	public float targetHeight = 2.0f;
 	public float distance = 2.8f;
 	public float maxDistance = 10;
@@ -45,13 +45,10 @@ public class CameraControl : MonoBehaviour
 		if(!GameState.IsPlaying() || GameState.AllPlayersDead()) return;
 		if(target == null) return;
 
-		if(Input.GetMouseButton(1) || true)
-		{
-			x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
-			y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
-		}
+        x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
+		y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
 
-		float targetRotationAngle = target.eulerAngles.y;
+		float targetRotationAngle = target.rotation.eulerAngles.y;
 		float currentRotationAngle = transform.eulerAngles.y;
 		if(rotationDampeningEnabled) 
 			x = Mathf.LerpAngle(currentRotationAngle, targetRotationAngle, rotationDampening * Time.deltaTime);
@@ -62,17 +59,17 @@ public class CameraControl : MonoBehaviour
 		y = ClampAngle(y, yMinLimit, yMaxLimit);
 		
 		// ROTATE CAMERA:
-		Quaternion rotation = Quaternion.Euler(y, x, 0);
+        Quaternion rotation = Quaternion.Euler(y, x, 0);
 		transform.rotation = rotation;
 		
 		// POSITION CAMERA:
 		//transform.position = target.position -(rotation * Vector3.forward * distance + new Vector3(0, -targetHeight, 0));
-		camPosition = Vector3.SmoothDamp(camPosition, target.position, ref smoothCamVel, camSmoothing);
+        camPosition = Vector3.SmoothDamp(camPosition, target.position, ref smoothCamVel, camSmoothing);
 		transform.position = camPosition - (rotation * Vector3.forward * distance + new Vector3(0, -targetHeight, 0));
 
 		// IS VIEW BLOCKED?
-		RaycastHit hit; 
-		Vector3 trueTargetPosition = target.position + Vector3.up * 0.5f;
+		RaycastHit hit;
+        Vector3 trueTargetPosition = target.position + Vector3.up * 0.5f;
 		// Cast the line to check:
 		if( Physics.Linecast(trueTargetPosition, transform.position, out hit, (1 << LayerMask.NameToLayer("Scenario")) ) ) 
 		{  
