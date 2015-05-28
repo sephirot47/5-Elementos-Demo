@@ -1,0 +1,165 @@
+fileFormatVersion: 2
+guid: 51fe4be74595d3441b44c6159a8547d9
+timeCreated: 1432344292
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: AutoBahn
+    100002: BRsec
+    100004: BRsection0
+    100006: cityText
+    100008: Light
+    100010: MR-BridgeS
+    100012: Plane
+    100014: Terrain
+    100016: //RootNode
+    100018: TooBig0
+    100020: TooBig1
+    100022: TooBig10
+    100024: TooBig2
+    100026: TooBig3
+    100028: TooBig4
+    100030: TooBig5
+    100032: TooBig6
+    100034: TooBig7
+    100036: TooBig8
+    100038: TooBig9
+    100040: yar__pisti
+    400000: AutoBahn
+    400002: BRsec
+    400004: BRsection0
+    400006: cityText
+    400008: Light
+    400010: MR-BridgeS
+    400012: Plane
+    400014: Terrain
+    400016: //RootNode
+    400018: TooBig0
+    400020: TooBig1
+    400022: TooBig10
+    400024: TooBig2
+    400026: TooBig3
+    400028: TooBig4
+    400030: TooBig5
+    400032: TooBig6
+    400034: TooBig7
+    400036: TooBig8
+    400038: TooBig9
+    400040: yar__pisti
+    2300000: AutoBahn
+    2300002: BRsec
+    2300004: BRsection0
+    2300006: cityText
+    2300008: MR-BridgeS
+    2300010: Plane
+    2300012: Terrain
+    2300014: TooBig0
+    2300016: TooBig1
+    2300018: TooBig10
+    2300020: TooBig2
+    2300022: TooBig3
+    2300024: TooBig4
+    2300026: TooBig5
+    2300028: TooBig6
+    2300030: TooBig7
+    2300032: TooBig8
+    2300034: TooBig9
+    2300036: yar__pisti
+    3300000: AutoBahn
+    3300002: BRsec
+    3300004: BRsection0
+    3300006: cityText
+    3300008: MR-BridgeS
+    3300010: Plane
+    3300012: Terrain
+    3300014: TooBig0
+    3300016: TooBig1
+    3300018: TooBig10
+    3300020: TooBig2
+    3300022: TooBig3
+    3300024: TooBig4
+    3300026: TooBig5
+    3300028: TooBig6
+    3300030: TooBig7
+    3300032: TooBig8
+    3300034: TooBig9
+    3300036: yar__pisti
+    4300000: cityText
+    4300002: AutoBahn
+    4300004: yar__pisti
+    4300006: BRsec
+    4300008: BRsection0
+    4300010: MR-BridgeS
+    4300012: Terrain
+    4300014: TooBig0
+    4300016: TooBig1
+    4300018: TooBig2
+    4300020: TooBig3
+    4300022: TooBig4
+    4300024: TooBig5
+    4300026: TooBig6
+    4300028: TooBig7
+    4300030: TooBig8
+    4300032: TooBig9
+    4300034: TooBig10
+    4300036: Plane
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

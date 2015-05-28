@@ -1,0 +1,18 @@
+NAME
+Soldado pringao
+;
+
+TEXT
+Hola Kaji, que te cuentas?
+Vete del pueblo o te raho.
+....aaaa
+un pinguino naranja
+un gusano rosa
+un pepino lila
+;
+
+TEXT
+Vengo en son de paz.
+Bendiciones!
+:)
+;
